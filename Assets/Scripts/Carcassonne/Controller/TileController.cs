@@ -5,9 +5,9 @@ using UnityEngine;
 
 namespace Carcassonne
 {
-    public class TileControllerScript : MonoBehaviour
+    public class TileController : MonoBehaviour
     {
-        private GameController gameControllerScript;
+        private GameController gameController;
         public Vector3 currentTileEulersOnManip;
         public ParticleSystem drawTileEffect;
         public TileState tiles;
@@ -21,7 +21,7 @@ namespace Carcassonne
                     return null;
                 return tiles.Current.gameObject;
             }
-            set => tiles.Current = value.GetComponent<TileScript>();
+            set => tiles.Current = value.GetComponent<Tile>();
         }
 
         public GameObject drawTile;
@@ -29,9 +29,9 @@ namespace Carcassonne
         public float fTileAimX;
         public float fTileAimZ;
 
-        public TileControllerScript(GameController gameControllerScript)
+        public TileController(GameController gameController)
         {
-            this.gameControllerScript = gameControllerScript;
+            this.gameController = gameController;
         }
 
     }

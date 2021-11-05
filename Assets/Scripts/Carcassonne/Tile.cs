@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Carcassonne
 {
-    public class TileScript : MonoBehaviour
+    public class Tile : MonoBehaviour
     {
     
         /// <summary>
@@ -96,17 +96,17 @@ namespace Carcassonne
         }
 
 
-        public bool IsOccupied(PointScript.Direction direction)  //TODO Fix naming (spelling)
+        public bool IsOccupied(Point.Direction direction)  //TODO Fix naming (spelling)
         {
             switch (direction)
             {
-                case PointScript.Direction.NORTH:
+                case Point.Direction.NORTH:
                     return northOcupied;
-                case PointScript.Direction.SOUTH:
+                case Point.Direction.SOUTH:
                     return southOcupied;
-                case PointScript.Direction.EAST:
+                case Point.Direction.EAST:
                     return eastOcupied;
-                case PointScript.Direction.WEST:
+                case Point.Direction.WEST:
                     return westOcupied;
                 default:
                     return centerOcupied;
@@ -114,20 +114,20 @@ namespace Carcassonne
         }
 
 
-        public void occupy(PointScript.Direction direction)
+        public void occupy(Point.Direction direction)
         {
-            if (direction == PointScript.Direction.NORTH) northOcupied = true;
-            if (direction == PointScript.Direction.SOUTH) southOcupied = true;
-            if (direction == PointScript.Direction.EAST) eastOcupied = true;
-            if (direction == PointScript.Direction.WEST) westOcupied = true;
-            if (direction == PointScript.Direction.CENTER) centerOcupied = true;
-            if (Center == getGeographyAt(direction) && direction != PointScript.Direction.CENTER ||
+            if (direction == Point.Direction.NORTH) northOcupied = true;
+            if (direction == Point.Direction.SOUTH) southOcupied = true;
+            if (direction == Point.Direction.EAST) eastOcupied = true;
+            if (direction == Point.Direction.WEST) westOcupied = true;
+            if (direction == Point.Direction.CENTER) centerOcupied = true;
+            if (Center == getGeographyAt(direction) && direction != Point.Direction.CENTER ||
                 Center == Geography.City)
             {
-                if (getGeographyAt(PointScript.Direction.NORTH) == getGeographyAt(direction)) northOcupied = true;
-                if (getGeographyAt(PointScript.Direction.EAST) == getGeographyAt(direction)) eastOcupied = true;
-                if (getGeographyAt(PointScript.Direction.SOUTH) == getGeographyAt(direction)) southOcupied = true;
-                if (getGeographyAt(PointScript.Direction.WEST) == getGeographyAt(direction)) westOcupied = true;
+                if (getGeographyAt(Point.Direction.NORTH) == getGeographyAt(direction)) northOcupied = true;
+                if (getGeographyAt(Point.Direction.EAST) == getGeographyAt(direction)) eastOcupied = true;
+                if (getGeographyAt(Point.Direction.SOUTH) == getGeographyAt(direction)) southOcupied = true;
+                if (getGeographyAt(Point.Direction.WEST) == getGeographyAt(direction)) westOcupied = true;
             }
 
             if (Center == Geography.City && getGeographyAt(direction) == Geography.City)
@@ -140,12 +140,12 @@ namespace Carcassonne
         /// </summary>
         /// <param name="direction"></param>
         /// <returns></returns>
-        public Geography getGeographyAt(PointScript.Direction direction)
+        public Geography getGeographyAt(Point.Direction direction)
         {
-            if (direction == PointScript.Direction.NORTH) return North;
-            if (direction == PointScript.Direction.SOUTH) return South;
-            if (direction == PointScript.Direction.EAST) return East;
-            if (direction == PointScript.Direction.WEST)
+            if (direction == Point.Direction.NORTH) return North;
+            if (direction == Point.Direction.SOUTH) return South;
+            if (direction == Point.Direction.EAST) return East;
+            if (direction == Point.Direction.WEST)
                 return West;
             return Center;
         }

@@ -6,7 +6,7 @@ namespace Carcassonne
     /// <summary>
     /// Class encapsulating information about tiles that have been played on the board.
     /// </summary>
-    public class PlacedTilesScript : MonoBehaviour
+    public class PlacedTiles : MonoBehaviour
     {
         public Vector3 BasePosition;
 
@@ -20,12 +20,12 @@ namespace Carcassonne
 
         public void InstansiatePlacedTilesArray()
         {
-            tiles.Played = new TileScript[170, 170];
+            tiles.Played = new Tile[170, 170];
         }
 
         public void PlaceTile(int x, int z, GameObject tile)
         {
-            tiles.Played[x, z] = tile.GetComponent<TileScript>();
+            tiles.Played[x, z] = tile.GetComponent<Tile>();
         }
 
         public void removeTile(int x, int z)
@@ -33,7 +33,7 @@ namespace Carcassonne
             tiles.Played[x, z] = null;
         }
 
-        //FIXME This should be changable to a TileScript return type
+        //FIXME This should be changable to a Tile return type
         public GameObject getPlacedTiles(int x, int z)
         {
             var t = tiles.Played[x, z];
@@ -68,7 +68,7 @@ namespace Carcassonne
             return false;
         }
 
-        public bool MatchGeographyOrNull(int x, int y, PointScript.Direction dir, TileScript.Geography geography)
+        public bool MatchGeographyOrNull(int x, int y, Point.Direction dir, Tile.Geography geography)
         {
             if (tiles.Played[x, y] == null)
                 return true;
@@ -79,14 +79,14 @@ namespace Carcassonne
 
         public bool CityTileHasCityCenter(int x, int y)
         {
-            return tiles.Played[x, y].getCenter() == TileScript.Geography.City ||
-                   tiles.Played[x, y].getCenter() == TileScript.Geography.CityRoad;
+            return tiles.Played[x, y].getCenter() == Tile.Geography.City ||
+                   tiles.Played[x, y].getCenter() == Tile.Geography.CityRoad;
         }
 
         public bool CityTileHasGrassOrStreamCenter(int x, int y)
         {
-            return tiles.Played[x, y].getCenter() == TileScript.Geography.Grass ||
-                   tiles.Played[x, y].getCenter() == TileScript.Geography.Stream;
+            return tiles.Played[x, y].getCenter() == Tile.Geography.Grass ||
+                   tiles.Played[x, y].getCenter() == Tile.Geography.Stream;
         }
 
         //Hämtar grannarna till en specifik tile
@@ -118,9 +118,9 @@ namespace Carcassonne
             return Neighbors;
         }
 
-        public TileScript.Geography[] getWeights(int x, int y)
+        public Tile.Geography[] getWeights(int x, int y)
         {
-            var weights = new TileScript.Geography[4];
+            var weights = new Tile.Geography[4];
             var itt = 0;
             if (tiles.Played[x + 1, y] != null)
             {
@@ -144,9 +144,9 @@ namespace Carcassonne
             return weights;
         }
 
-        public TileScript.Geography[] getCenters(int x, int y)
+        public Tile.Geography[] getCenters(int x, int y)
         {
-            var centers = new TileScript.Geography[4];
+            var centers = new Tile.Geography[4];
             var itt = 0;
             if (tiles.Played[x + 1, y] != null)
             {
@@ -170,29 +170,29 @@ namespace Carcassonne
             return centers;
         }
 
-        public PointScript.Direction[] getDirections(int x, int y)
+        public Point.Direction[] getDirections(int x, int y)
         {
-            var directions = new PointScript.Direction[4];
+            var directions = new Point.Direction[4];
             var itt = 0;
             if (tiles.Played[x + 1, y] != null)
             {
-                directions[itt] = PointScript.Direction.EAST;
+                directions[itt] = Point.Direction.EAST;
                 itt++;
             }
 
             if (tiles.Played[x - 1, y] != null)
             {
-                directions[itt] = PointScript.Direction.WEST;
+                directions[itt] = Point.Direction.WEST;
                 itt++;
             }
 
             if (tiles.Played[x, y + 1] != null)
             {
-                directions[itt] = PointScript.Direction.NORTH;
+                directions[itt] = Point.Direction.NORTH;
                 itt++;
             }
 
-            if (tiles.Played[x, y - 1] != null) directions[itt] = PointScript.Direction.SOUTH;
+            if (tiles.Played[x, y - 1] != null) directions[itt] = Point.Direction.SOUTH;
             return directions;
         }
 
@@ -214,7 +214,7 @@ namespace Carcassonne
 
         public bool CheckNeighborsIfTileCanBePlaced(GameObject tile, int x, int y)
         {
-            var script = tile.GetComponent<TileScript>();
+            var script = tile.GetComponent<Tile>();
             var isNotAlone2 = false;
 
             if (tiles.Played[x - 1, y] != null)
@@ -247,7 +247,7 @@ namespace Carcassonne
         //Kontrollerar att tilen får placeras på angivna koordinater
         public bool TilePlacementIsValid(GameObject tile, int x, int z)
         {
-            var script = tile.GetComponent<TileScript>();
+            var script = tile.GetComponent<Tile>();
             var isNotAlone = false;
 
             //Debug.Log(tiles.Played[x - 1, z]);

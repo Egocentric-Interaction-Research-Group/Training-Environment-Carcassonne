@@ -3,14 +3,14 @@ using UnityEngine;
 
 namespace Carcassonne.State
 {
-    [CreateAssetMenu(fileName = "PlayerState", menuName = "States/PlayerState")]
+    [CreateAssetMenu(fileName = "PlayerState", menuName = "State/PlayerState")]
     public class PlayerState : ScriptableObject
     {
         public List<Player> All = new List<Player>();
         public Player Current;
         
         // Derived Properties
-        public List<MeepleScript> Meeples => new List<MeepleScript>();
+        public List<Meeple> Meeples => new List<Meeple>();
         
         private void OnEnable()
         {

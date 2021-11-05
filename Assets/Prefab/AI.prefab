@@ -10,8 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 5049481700367576526}
   - component: {fileID: 2853799783801438643}
-  - component: {fileID: 8409487741341659962}
-  - component: {fileID: 8907524609549090282}
+  - component: {fileID: 4305211684211156123}
+  - component: {fileID: 1543791810850989880}
   m_Layer: 0
   m_Name: AI
   m_TagString: Untagged
@@ -46,7 +46,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   meepleState: {fileID: 0}
---- !u!114 &8409487741341659962
+--- !u!114 &4305211684211156123
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -76,7 +76,7 @@ MonoBehaviour:
   m_UseChildSensors: 1
   m_UseChildActuators: 1
   m_ObservableAttributeHandling: 0
---- !u!114 &8907524609549090282
+--- !u!114 &1543791810850989880
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -92,3 +92,17 @@ MonoBehaviour:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
   MaxStep: 0
+  meeplesLeft: 0
+  boardGridSize: 0
+  phase: 0
+  id: 0
+  x: 85
+  z: 85
+  y: 1
+  rot: 0
+  meepleX: 0
+  meepleZ: 0
+  realX: 0
+  realY: 0
+  realZ: 0
+  realRot: 0

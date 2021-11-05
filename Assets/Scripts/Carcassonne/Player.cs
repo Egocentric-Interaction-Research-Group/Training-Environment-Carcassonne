@@ -8,7 +8,7 @@ public class Player : MonoBehaviour
 {
 
     private readonly int id;
-    private GameObject[] meeples = new GameObject[7];
+    private List<Meeple> meeples = new List<Meeple>();
     private int score;
 
     public MeepleState meepleState;
@@ -22,7 +22,7 @@ public class Player : MonoBehaviour
         Setup();
     }
 
-    public GameObject[] Meeples { get => meeples; set => meeples = value; }
+    public List<Meeple> Meeples { get => meeples; set => meeples = value; }
 
     public int Id => id;
 
@@ -30,11 +30,22 @@ public class Player : MonoBehaviour
 
     private void Setup()
     {
-        var meepleControllerScript = GameObject.Find("GameController").GetComponent<MeepleControllerScript>();
-        for (var i = 0; i < meeples.Length; i++)
+        var meepleControllerScript = GameObject.Find("GameController").GetComponent<MeepleController>();
+        for (var i = 0; i < 7; i++)
         {
             var meeple = meepleControllerScript.GetNewInstance();
+            meeple.playerId = id;
             meepleState.All.Add(meeple);
         }
+    }
+
+    public int AmountOfFreeMeeples()
+    {
+        int count = 0;
+        foreach (Meeple meeple in meeples)
+        {
+            if (meeple.free) { count++; }
+        }
+        return count;
     }
 }

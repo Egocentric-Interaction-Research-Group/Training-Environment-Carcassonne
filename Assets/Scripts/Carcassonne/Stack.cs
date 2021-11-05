@@ -15,7 +15,7 @@ namespace Carcassonne
     /// <summary>
     ///     The Stack of tiles.
     /// </summary>
-    public class StackScript : MonoBehaviour
+    public class Stack : MonoBehaviour
     {
         /// <summary>
         ///     A reference to the prefab Tile, to be used later.
@@ -57,7 +57,7 @@ namespace Carcassonne
         /// <summary>
         /// </summary>
         /// <returns></returns>
-        public StackScript createStackScript()
+        public Stack createStackScript()
         {
             //setAll();
             return this;
@@ -71,14 +71,14 @@ namespace Carcassonne
             //randomIndex = new int[84];
             tileArray = new List<GameObject>(GameObject.FindGameObjectsWithTag("Tile"));
             // Filter out tiles not in set. TODO: This should reference the game rules and pick relevant sets.
-            tileArray = tileArray.Where(t => t.GetComponent<TileScript>().tileSet == TileScript.TileSet.Base && t != firstTile ).ToList();
+            tileArray = tileArray.Where(t => t.GetComponent<Tile>().tileSet == Tile.TileSet.Base && t != firstTile ).ToList();
             
             // This probably indicates that I've coded something incorrectly.
             tiles.Remaining.Clear(); // Remove all remaining tiles from old games so that they do not persist.
 
             foreach (var t in tileArray)
             {
-                tiles.Remaining.Add(t.GetComponent<TileScript>());
+                tiles.Remaining.Add(t.GetComponent<Tile>());
             }
             
             Debug.Log($"Tile array is populated. {tiles.Remaining.Count} items remain in the stack.");

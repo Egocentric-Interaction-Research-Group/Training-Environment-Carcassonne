@@ -2,7 +2,7 @@
 
 namespace Carcassonne
 {
-    public class TurnScript : MonoBehaviour
+    public class Turn : MonoBehaviour
     {
         private int iterator;
         private int nbrOfplayers;
