@@ -5,14 +5,14 @@ using UnityEngine;
 
 namespace Carcassonne.State
 {
-    [CreateAssetMenu(fileName = "TileState", menuName = "State/TileState")]
+    [CreateAssetMenu(fileName = "TileState", menuName = "ScriptableObjects/TileState")]
     public class TileState : ScriptableObject
     {
         public List<Tile> Remaining;
         [CanBeNull] public Tile Current;
         public Tile[,] Played;
 
-        private void Awake()
+        private void OnEnabled()
         {
             Remaining = new List<Tile>();
             Current = null;

@@ -1,8 +1,6 @@
 using Carcassonne;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
 using Carcassonne.State;
 public class GameController : MonoBehaviour
 {
@@ -19,10 +17,6 @@ public class GameController : MonoBehaviour
     public GameState gameState;
 
     public bool startGame, pcRotate, isManipulating;
-
-   // public GameObject trainingTable;
-
-   // [FormerlySerializedAs("state")] public Phases phase;
 
     private bool cityIsFinished;
 
@@ -42,17 +36,14 @@ public class GameController : MonoBehaviour
 
     private bool[,] visited;
 
-    private PlacedTiles placedTiles;
+    public PlacedTiles placedTiles;
 
     internal Player currentPlayer;
 
-    public Carcassonne.Stack stackScript;
+    public Stack stack;
 
-    public Player PlayerTest
-    {
-        set => currentPlayer = value;
-        get => currentPlayer;
-    }
+    public Point point;
+
 
     public PlacedTiles PlacedTiles
     {
@@ -81,9 +72,11 @@ public class GameController : MonoBehaviour
 
     private void FixedUpdate()
     {
+       
         if (startGame)
         {
             NewGame();
+            Debug.Log("Finished starting new game session");
             startGame = false;
         }
 
@@ -95,35 +88,34 @@ public class GameController : MonoBehaviour
 
     public void NewGame()
     {
-        
-        placedTiles = GetComponent<PlacedTiles>();
+        Debug.Log("Starting new game session");
         placedTiles.InstansiatePlacedTilesArray();
 
-        //trainingTable = GameObject.Find("TrainingTable");
-
-        stackScript = GetComponent<Carcassonne.Stack>().createStackScript();
-
-        stackScript.PopulateTileArray();
-
-        currentPlayer = GetComponent<Player>();
+        stack.PopulateTileArray();
+        
 
         BaseTileCreation();
         for (int i = 0; i < 2; i++)
-        {
-            gameState.Players.All.Add(Instantiate(aiPrefab).GetComponent<Player>());
+        {          
+            Player player = Instantiate(aiPrefab).GetComponent<Player>();
+            player.meepleState = gameState.Meeples;
+            if (i == 0)
+            {
+                currentPlayer = player;
+            }
+            gameState.Players.All.Add(player);
         }
-
         PlaceTile(tileController.currentTile, 85, 85, true);
 
         currentPlayer = gameState.Players.All[0];
 
         gameState.phase = Phase.NewTurn;
+        Debug.Log("End of NewGame()");
     }
 
     private void BaseTileCreation()
     {
-        tileController.currentTile = stackScript.firstTile;
-        //tileController.currentTile.transform.parent = trainingTable.transform;
+        tileController.currentTile = stack.firstTile;
     }
 
     public bool CityIsFinishedDirection(int x, int y, Point.Direction direction)
@@ -303,7 +295,7 @@ public class GameController : MonoBehaviour
         tempY = z;
         tile.GetComponent<Tile>().vIndex = VertexItterator;
 
-        GetComponent<Point>().placeVertex(VertexItterator, placedTiles.GetNeighbors(tempX, tempY),
+        point.placeVertex(VertexItterator, placedTiles.GetNeighbors(tempX, tempY),
             placedTiles.getWeights(tempX, tempY), tileController.currentTile.GetComponent<Tile>().getCenter(),
             placedTiles.getCenters(tempX, tempY), placedTiles.getDirections(tempX, tempY));
 
@@ -324,7 +316,7 @@ public class GameController : MonoBehaviour
     {
         if (gameState.phase == Phase.NewTurn)
         {
-            stackScript.Pop();
+            stack.Pop();
             if (!TileCanBePlaced(gameState.Tiles.Current))
             {
                 Debug.Log("Tile not possible to place: discarding and drawing a new one. " + "Tile id: " + tileController.currentTile.GetComponent<Tile>().id);
@@ -377,7 +369,7 @@ public class GameController : MonoBehaviour
         {
             calculatePoints(true, false);
             NewTileRotation = 0;
-            if (stackScript.isEmpty())
+            if (stack.isEmpty())
             {
                 GameOver();
             }
@@ -420,20 +412,15 @@ public class GameController : MonoBehaviour
                         if (CityIsFinishedDirection(meeple.x, meeple.z, meeple.direction))
                         {
 
-                            finalscore = GetComponent<Point>()
+                            finalscore = point
                                 .startDfsDirection(
                                     placedTiles.getPlacedTiles(meeple.x, meeple.z).GetComponent<Tile>()
                                         .vIndex, meeple.geography, meeple.direction, GameEnd);
                         }
 
-                        //else
-                        //{
-                        //    GetComponent<Point>().startDfsDirection(placedTiles.getPlacedTiles(meeple.x, meeple.z).
-                        //        GetComponent<Tile>().vIndex, meeple.geography, meeple.direction, GameEnd);
-                        //}
                         if (GameEnd)
                         {
-                            finalscore = GetComponent<Point>()
+                            finalscore = point
                                 .startDfsDirection(
                                     placedTiles.getPlacedTiles(meeple.x, meeple.z).GetComponent<Tile>()
                                         .vIndex, meeple.geography, meeple.direction, GameEnd);
@@ -443,14 +430,14 @@ public class GameController : MonoBehaviour
                     {
                         //CITY NO DIRECTION
                         if (CityIsFinished(meeple.x, meeple.z))
-                            finalscore = GetComponent<Point>()
+                            finalscore = point
                                 .startDfs(
                                     placedTiles.getPlacedTiles(meeple.x, meeple.z).GetComponent<Tile>()
                                         .vIndex, meeple.geography, GameEnd);
                         if (GameEnd)
                         {
                             Debug.Log("GAME END I ELSE");
-                            finalscore = GetComponent<Point>()
+                            finalscore = point
                                 .startDfsDirection(
                                     placedTiles.getPlacedTiles(meeple.x, meeple.z).GetComponent<Tile>()
                                         .vIndex, meeple.geography, meeple.direction, GameEnd);
@@ -465,7 +452,7 @@ public class GameController : MonoBehaviour
                         placedTiles.getPlacedTiles(meeple.x, meeple.z).GetComponent<Tile>().getCenter() ==
                         Tile.Geography.Grass)
                     {
-                        finalscore = GetComponent<Point>().startDfsDirection(placedTiles
+                        finalscore = point.startDfsDirection(placedTiles
                             .getPlacedTiles(meeple.x, meeple.z)
                             .GetComponent<Tile>().vIndex, meeple.geography, meeple.direction, GameEnd);
                         if (GameEnd)
@@ -473,7 +460,7 @@ public class GameController : MonoBehaviour
                     }
                     else
                     {
-                        finalscore = GetComponent<Point>()
+                        finalscore = point
                             .startDfs(
                                 placedTiles.getPlacedTiles(meeple.x, meeple.z).GetComponent<Tile>().vIndex,
                                 meeple.geography, GameEnd);

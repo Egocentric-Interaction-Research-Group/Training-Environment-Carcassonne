@@ -16,7 +16,6 @@ public class Player : MonoBehaviour
     public Player(int id)
     {
         this.id = id;
-
         Score = 0;
 
         Setup();
@@ -30,10 +29,10 @@ public class Player : MonoBehaviour
 
     private void Setup()
     {
-        var meepleControllerScript = GameObject.Find("GameController").GetComponent<MeepleController>();
-        for (var i = 0; i < 7; i++)
+        MeepleController meepleController = GameObject.Find("MeepleController").GetComponent<MeepleController>();
+        for (int i = 0; i < 7; i++)
         {
-            var meeple = meepleControllerScript.GetNewInstance();
+            Meeple meeple = meepleController.GetNewInstance();
             meeple.playerId = id;
             meepleState.All.Add(meeple);
         }

@@ -27,7 +27,6 @@ namespace Carcassonne
 
         // Instantiation Stuff
         public GameObject prefab;
-        public GameObject parent;
 
         /// <summary>
         /// Instantiate a new Meeple with the chosen prefab and parent object in the hierarchy.
@@ -35,10 +34,8 @@ namespace Carcassonne
         /// <returns>GameObject : An instance of MeepleScript.prefab.</returns>
         public Meeple GetNewInstance()
         {
-            // return Instantiate(prefab, meepleSpawnPosition.transform.position, Quaternion.identity, GameObject.Find("Table").transform).GetComponent<MeepleScript>();
             meepleCount++;
-            GameObject newMeeple = Instantiate(prefab, parent.transform.position, Quaternion.identity);//, GameObject.Find("Table").transform);
-            newMeeple.gameObject.transform.parent = parent.transform;
+            GameObject newMeeple = Instantiate(prefab, new Vector3(), Quaternion.identity);
             newMeeple.gameObject.name = $"Meeple {meepleCount}";
             newMeeple.SetActive(false);
 
@@ -46,14 +43,10 @@ namespace Carcassonne
         }
 
 
-        public ParticleSystem drawMeepleEffect;
-        [HideInInspector] public GameObject meepleMesh;
-        [HideInInspector] public GameObject MeeplePrefab;
-        public GameObject meepleSpawnPosition;
+
         internal int iMeepleAimX;
         internal int iMeepleAimZ;
         public Tile.Geography meepleGeography;
-        public RaycastHit meepleHitTileDirection;
 
         public Meeple FindMeeple(int x, int y, Tile.Geography geography)
         {

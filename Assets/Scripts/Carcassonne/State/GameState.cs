@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Carcassonne.State
 {
-    [CreateAssetMenu(fileName = "GameState", menuName = "State/GameState")]
+    [CreateAssetMenu(fileName = "GameState", menuName = "ScriptableObjects/GameState")]
     public class GameState : ScriptableObject
     {
         public GameRules Rules;
@@ -15,7 +15,6 @@ namespace Carcassonne.State
 
         public TileState Tiles;
         public MeepleState Meeples;
-        public FeatureState Features;
         public PlayerState Players;
 
         public GameState()

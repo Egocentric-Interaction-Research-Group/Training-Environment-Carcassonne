@@ -5,7 +5,6 @@ MonoImporter:
   serializedVersion: 2
   defaultReferences:
   - gameState: {instanceID: 0}
-  - trainingTable: {instanceID: 0}
   - aiPrefab: {fileID: 2598782832212889485, guid: c9686d6fa98efc2468f526b4b37003b2, type: 3}
   - stackScript: {instanceID: 0}
   - meepleController: {instanceID: 0}

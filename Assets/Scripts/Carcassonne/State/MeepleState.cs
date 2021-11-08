@@ -9,7 +9,7 @@ namespace Carcassonne.State
     /// MeepleState hold all of the information about the position, availability, and ownership of meeples.
     /// Player meeple list derive from this information store.
     /// </summary>
-    [CreateAssetMenu(fileName = "MeepleState", menuName = "State/MeepleState")]
+    [CreateAssetMenu(fileName = "MeepleState", menuName = "ScriptableObjects/MeepleState")]
     public class MeepleState : ScriptableObject
     {
         public List<Meeple> All= new List<Meeple>();

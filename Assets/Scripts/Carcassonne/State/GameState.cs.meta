@@ -1,3 +1,14 @@
-﻿fileFormatVersion: 2
+fileFormatVersion: 2
 guid: 2537e24168594e0dabf93da86c6138b5
-timeCreated: 1632996849
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - Tiles: {instanceID: 0}
+  - Meeples: {instanceID: 0}
+  - Players: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

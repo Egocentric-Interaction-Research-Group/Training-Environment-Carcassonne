@@ -342,7 +342,6 @@ public class CarcassonneAgent : Agent
         y = 1;
         rot = 0;
         placement = "";
-
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }

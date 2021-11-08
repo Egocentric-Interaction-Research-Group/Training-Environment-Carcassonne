@@ -12,3 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 530fc94294014d61b6000c5e1ebab543, type: 3}
   m_Name: PlayerState
   m_EditorClassIdentifier: 
+  All: []
+  Current: {fileID: 0}

@@ -12,14 +12,20 @@ namespace Carcassonne
 
         public TileState tiles;
 
-        // public GameObject[,] tiles.Played;
-
         private void Start()
         {
         }
 
         public void InstansiatePlacedTilesArray()
         {
+            if(tiles == null)
+            {
+                Debug.Log("TileState is null");
+            }
+            else
+            {
+                Debug.Log("TileState is not null");
+            }
             tiles.Played = new Tile[170, 170];
         }
 

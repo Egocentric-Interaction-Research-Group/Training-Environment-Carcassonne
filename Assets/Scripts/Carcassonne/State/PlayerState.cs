@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Carcassonne.State
 {
-    [CreateAssetMenu(fileName = "PlayerState", menuName = "State/PlayerState")]
+    [CreateAssetMenu(fileName = "PlayerState", menuName = "ScriptableObjects/PlayerState")]
     public class PlayerState : ScriptableObject
     {
         public List<Player> All = new List<Player>();

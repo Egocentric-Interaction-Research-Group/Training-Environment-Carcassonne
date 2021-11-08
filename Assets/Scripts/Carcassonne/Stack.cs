@@ -17,10 +17,6 @@ namespace Carcassonne
     /// </summary>
     public class Stack : MonoBehaviour
     {
-        /// <summary>
-        ///     A reference to the prefab Tile, to be used later.
-        /// </summary>
-        public GameObject tile;
 
         public Transform basePositionTransform;
 
