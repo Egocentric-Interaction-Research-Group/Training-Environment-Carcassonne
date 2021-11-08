@@ -12,5 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2eee725a24e4c838866e904db3caf6b, type: 3}
   m_Name: TileState
   m_EditorClassIdentifier: 
-  Remaining: []
+  Remaining:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   Current: {fileID: 0}

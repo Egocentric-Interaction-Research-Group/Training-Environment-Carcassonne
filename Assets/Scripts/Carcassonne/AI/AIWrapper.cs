@@ -10,15 +10,16 @@ namespace Assets.Scripts.Carcassonne.AI
         public GameState gs; //Contains TileState, MeepleState, FeatureState, PlayerState and a GameLog.
         public Player player;
 
-        public AIWrapper()
+        public AIWrapper(Player player)
         {
             gc = GameObject.Find("GameController").GetComponent<GameController>();
             gs = gc.gameState;
+            this.player = player;
         }
 
         public bool IsAITurn()
         {
-            return player.Id == gs.Players.Current.Id;
+            return player.id == gc.currentPlayer.id;
         }
 
         public int GetBoardSize()

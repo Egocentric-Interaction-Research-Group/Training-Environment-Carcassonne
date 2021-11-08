@@ -7,27 +7,13 @@ using Carcassonne.State;
 public class Player : MonoBehaviour
 {
 
-    private readonly int id;
-    private List<Meeple> meeples = new List<Meeple>();
-    private int score;
+    public int id;
+    public int score = 0;
 
+    public List<Meeple> meeples = new List<Meeple>();
     public MeepleState meepleState;
 
-    public Player(int id)
-    {
-        this.id = id;
-        Score = 0;
-
-        Setup();
-    }
-
-    public List<Meeple> Meeples { get => meeples; set => meeples = value; }
-
-    public int Id => id;
-
-    public int Score { get => score; set => score = value; }
-
-    private void Setup()
+    public void Setup()
     {
         MeepleController meepleController = GameObject.Find("MeepleController").GetComponent<MeepleController>();
         for (int i = 0; i < 7; i++)

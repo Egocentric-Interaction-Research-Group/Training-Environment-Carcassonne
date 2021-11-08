@@ -72,33 +72,33 @@ public class GameController : MonoBehaviour
 
     private void FixedUpdate()
     {
-       
         if (startGame)
         {
             NewGame();
-            Debug.Log("Finished starting new game session");
             startGame = false;
         }
 
         else if (gameState.phase == Phase.GameOver)
         {
-            //Säg till agenterna att resetta och starta om en ny runda
+            startGame = true;
         }
     }
 
     public void NewGame()
     {
-        Debug.Log("Starting new game session");
         placedTiles.InstansiatePlacedTilesArray();
 
         stack.PopulateTileArray();
         
 
         BaseTileCreation();
-        for (int i = 0; i < 2; i++)
+        for (int i = 0; i < 1; i++)
         {          
             Player player = Instantiate(aiPrefab).GetComponent<Player>();
+            player.id = 0;
             player.meepleState = gameState.Meeples;
+            player.Setup();
+            
             if (i == 0)
             {
                 currentPlayer = player;
@@ -107,10 +107,8 @@ public class GameController : MonoBehaviour
         }
         PlaceTile(tileController.currentTile, 85, 85, true);
 
-        currentPlayer = gameState.Players.All[0];
 
         gameState.phase = Phase.NewTurn;
-        Debug.Log("End of NewGame()");
     }
 
     private void BaseTileCreation()
@@ -306,8 +304,7 @@ public class GameController : MonoBehaviour
         placedTiles.PlaceTile(x, z, tile);
 
 
-
-
+     
         calculatePoints(false, false);
     }
 
@@ -393,7 +390,7 @@ public class GameController : MonoBehaviour
     public void calculatePoints(bool RealCheck, bool GameEnd)
     {
         foreach (var p in gameState.Players.All)
-            foreach (Meeple meeple in p.Meeples)
+            foreach (Meeple meeple in p.meeples)
             {
                 var tileID = placedTiles.getPlacedTiles(meeple.x, meeple.z).GetComponent<Tile>().id;
                 var finalscore = 0;
@@ -436,7 +433,6 @@ public class GameController : MonoBehaviour
                                         .vIndex, meeple.geography, GameEnd);
                         if (GameEnd)
                         {
-                            Debug.Log("GAME END I ELSE");
                             finalscore = point
                                 .startDfsDirection(
                                     placedTiles.getPlacedTiles(meeple.x, meeple.z).GetComponent<Tile>()
@@ -477,7 +473,7 @@ public class GameController : MonoBehaviour
 
                 if (finalscore > 0 && RealCheck)
                 {
-                    p.Score += finalscore;
+                    p.score += finalscore;
                 }
             }
     }

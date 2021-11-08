@@ -76,15 +76,11 @@ namespace Carcassonne
         public TileSet tileSet = TileSet.Base;
 
         /// <summary>
-        ///     Decides whether this tile has a shield or not
-        /// </summary>
-        private bool shield;
-
-        /// <summary>
         ///     Geography locations set to different local directions.
         /// </summary>
         private Geography Up, Down, Left, Right;
 
+        private bool shield;
 
         /// <summary>
         ///     Simple getter for the centerGeography

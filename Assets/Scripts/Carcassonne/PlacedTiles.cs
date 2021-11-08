@@ -18,14 +18,6 @@ namespace Carcassonne
 
         public void InstansiatePlacedTilesArray()
         {
-            if(tiles == null)
-            {
-                Debug.Log("TileState is null");
-            }
-            else
-            {
-                Debug.Log("TileState is not null");
-            }
             tiles.Played = new Tile[170, 170];
         }
 

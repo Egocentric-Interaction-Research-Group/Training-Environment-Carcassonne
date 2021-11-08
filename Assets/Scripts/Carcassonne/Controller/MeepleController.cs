@@ -123,7 +123,7 @@ namespace Carcassonne
         {
             if (gameController.gameState.phase == Phase.TileDown)
             {
-                foreach (Meeple meeple in players.Current.Meeples) //TODO Inefficient. Just want the first free meeple.
+                foreach (Meeple meeple in gameController.currentPlayer.meeples) //TODO Inefficient. Just want the first free meeple.
                 {
                     GameObject meepleGameObject = meeple.gameObject;
                     if (meeple.free)

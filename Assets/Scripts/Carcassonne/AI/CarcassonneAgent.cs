@@ -67,7 +67,7 @@ public class CarcassonneAgent : Agent
     public override void Initialize()
     {
         base.Initialize();
-        wrapper = new AIWrapper();
+        wrapper = new AIWrapper(GetComponent<Player>());
     }
 
 
@@ -99,23 +99,27 @@ public class CarcassonneAgent : Agent
     }
 
     private void TileDrawnAction(ActionBuffers actionBuffers)
-    {
+    {        
         AddReward(-0.001f); //Each call to this method comes with a very minor penalty to promote performing quick actions.
         if (actionBuffers.DiscreteActions[0] == 0f)
         {
             z += 1; //Up
+            Debug.Log("AI moving tile up");
         }
         else if (actionBuffers.DiscreteActions[0] == 1f)
         {
             z -= 1; //Down
+            Debug.Log("AI moving tile down");
         }
         else if (actionBuffers.DiscreteActions[0] == 2f)
         {
             x -= 1; //Left
+            Debug.Log("AI moving tile left");
         }
         else if (actionBuffers.DiscreteActions[0] == 3f)
         {
             x += 1; //Right
+            Debug.Log("AI moving tile right");
         }
         else if (actionBuffers.DiscreteActions[0] == 4f)
         {
@@ -128,9 +132,11 @@ public class CarcassonneAgent : Agent
                 //Punishment for rotating more than needed, i.e. returning back to default rotation state.
                 //AddReward(-0.01f); 
             }
+            Debug.Log("AI rotating tile");
         }
         else if (actionBuffers.DiscreteActions[0] == 5f)
         {
+            Debug.Log("AI tries to place tile at " + x + "," + y + " with rotation " + rot*90 + " degrees");
             //Rotates the tile the amount of times AI has chosen (0-3).
             for (int i = 0; i < rot; i++)
             {
@@ -156,6 +162,7 @@ public class CarcassonneAgent : Agent
             //Outside table area, reset values and add significant punishment.
             ResetAttributes();
             AddReward(-1f);
+            Debug.Log("AI placed tile outside of the board");
         }
 
         //These are only used to monitor the ai (shown on the AI gameobject in the scene while it plays). Ignore them.
@@ -258,6 +265,7 @@ public class CarcassonneAgent : Agent
     {
         //This occurs every X steps (Max Steps). It only serves to reset tile position if AI is stuck, and for AI to process current learning
         ResetAttributes();
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
 
@@ -341,7 +349,6 @@ public class CarcassonneAgent : Agent
         z = 85;
         y = 1;
         rot = 0;
-        placement = "";
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        placement = "";      
     }
 }

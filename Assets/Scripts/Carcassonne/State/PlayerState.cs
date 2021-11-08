@@ -7,7 +7,6 @@ namespace Carcassonne.State
     public class PlayerState : ScriptableObject
     {
         public List<Player> All = new List<Player>();
-        public Player Current;
         
         // Derived Properties
         public List<Meeple> Meeples => new List<Meeple>();
@@ -15,7 +14,6 @@ namespace Carcassonne.State
         private void OnEnable()
         {
             All.Clear();
-            Current = null;
         }
     }
 }
