@@ -32,15 +32,15 @@ namespace Carcassonne
         }
 
         //FIXME This should be changable to a Tile return type
-        public GameObject getPlacedTiles(int x, int z)
+        public Tile getPlacedTile(int x, int z)
         {
-            var t = tiles.Played[x, z];
+            Tile t = tiles.Played[x, z];
             if (t is null)
             {
                 return null;
             }
 
-            return t.gameObject;
+            return t;
         }
 
 

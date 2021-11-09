@@ -14,27 +14,22 @@ public class GameController : MonoBehaviour
         GameOver
     }
 
-    public GameState gameState;
+    public bool startGame, pcRotate, isManipulating, cityIsFinished;
 
-    public bool startGame, pcRotate, isManipulating;
-
-    private bool cityIsFinished;
-
-    private Point.Direction direction;
-
-    public GameObject aiPrefab;
-
+    private bool[,] visited;
 
     public int iTileAimX, iTileAimZ;
 
-    private int NewTileRotation;
+    private int NewTileRotation, tempX, tempY, VertexItterator;
 
-    private int tempX;
-    private int tempY;
+    public GameState gameState;
 
-    private int VertexItterator;
 
-    private bool[,] visited;
+    private Point.Direction direction;
+
+    public GameObject ai, visualizationBoard;
+
+    private CarcassonneVisualization shader;
 
     public PlacedTiles placedTiles;
 
@@ -86,28 +81,26 @@ public class GameController : MonoBehaviour
 
     public void NewGame()
     {
+        shader = visualizationBoard.GetComponent<CarcassonneVisualization>();
+
+
         placedTiles.InstansiatePlacedTilesArray();
-
         stack.PopulateTileArray();
-        
-
         BaseTileCreation();
+        PlaceTile(tileController.currentTile, 85, 85, true);
+
         for (int i = 0; i < 1; i++)
         {          
-            Player player = Instantiate(aiPrefab).GetComponent<Player>();
+            Player player = Instantiate(ai).GetComponent<Player>();
             player.id = 0;
             player.meepleState = gameState.Meeples;
-            player.Setup();
-            
+            player.Setup();       
             if (i == 0)
             {
                 currentPlayer = player;
             }
             gameState.Players.All.Add(player);
         }
-        PlaceTile(tileController.currentTile, 85, 85, true);
-
-
         gameState.phase = Phase.NewTurn;
     }
 
@@ -149,9 +142,9 @@ public class GameController : MonoBehaviour
     {
         visited[x, y] = true;
         if (direction == Point.Direction.NORTH)
-            if (placedTiles.getPlacedTiles(x, y).GetComponent<Tile>().North == Tile.Geography.City)
+            if (placedTiles.getPlacedTile(x, y).GetComponent<Tile>().North == Tile.Geography.City)
             {
-                if (placedTiles.getPlacedTiles(x, y + 1) != null)
+                if (placedTiles.getPlacedTile(x, y + 1) != null)
                 {
                     if (!visited[x, y + 1]) RecursiveCityIsFinished(x, y + 1);
                 }
@@ -162,9 +155,9 @@ public class GameController : MonoBehaviour
             }
 
         if (direction == Point.Direction.EAST)
-            if (placedTiles.getPlacedTiles(x, y).GetComponent<Tile>().East == Tile.Geography.City)
+            if (placedTiles.getPlacedTile(x, y).GetComponent<Tile>().East == Tile.Geography.City)
             {
-                if (placedTiles.getPlacedTiles(x + 1, y) != null)
+                if (placedTiles.getPlacedTile(x + 1, y) != null)
                 {
                     if (!visited[x + 1, y]) RecursiveCityIsFinished(x + 1, y);
                 }
@@ -175,9 +168,9 @@ public class GameController : MonoBehaviour
             }
 
         if (direction == Point.Direction.SOUTH)
-            if (placedTiles.getPlacedTiles(x, y).GetComponent<Tile>().South == Tile.Geography.City)
+            if (placedTiles.getPlacedTile(x, y).GetComponent<Tile>().South == Tile.Geography.City)
             {
-                if (placedTiles.getPlacedTiles(x, y - 1) != null)
+                if (placedTiles.getPlacedTile(x, y - 1) != null)
                 {
                     if (!visited[x, y - 1]) RecursiveCityIsFinished(x, y - 1);
                 }
@@ -188,9 +181,9 @@ public class GameController : MonoBehaviour
             }
 
         if (direction == Point.Direction.WEST)
-            if (placedTiles.getPlacedTiles(x, y).GetComponent<Tile>().West == Tile.Geography.City)
+            if (placedTiles.getPlacedTile(x, y).GetComponent<Tile>().West == Tile.Geography.City)
             {
-                if (placedTiles.getPlacedTiles(x - 1, y) != null)
+                if (placedTiles.getPlacedTile(x - 1, y) != null)
                 {
                     if (!visited[x - 1, y]) RecursiveCityIsFinished(x - 1, y);
                 }
@@ -205,7 +198,7 @@ public class GameController : MonoBehaviour
     {
         for (var i = 0; i < placedTiles.GetLength(0); i++)
             for (var j = 0; j < placedTiles.GetLength(1); j++)
-                if (placedTiles.HasNeighbor(i, j) && placedTiles.getPlacedTiles(i, j) == null)
+                if (placedTiles.HasNeighbor(i, j) && placedTiles.getPlacedTile(i, j) == null)
                     for (var k = 0; k < 4; k++)
                     {
                         if (placedTiles.MatchGeographyOrNull(i - 1, j, Point.Direction.EAST, script.West))
@@ -230,12 +223,12 @@ public class GameController : MonoBehaviour
         visited[x, y] = true;
 
 
-        if (placedTiles.getPlacedTiles(x, y) != null)
+        if (placedTiles.getPlacedTile(x, y) != null)
         {
-            if (placedTiles.getPlacedTiles(x, y).GetComponent<Tile>().North == Tile.Geography.City)
+            if (placedTiles.getPlacedTile(x, y).GetComponent<Tile>().North == Tile.Geography.City)
                 if (!placedTiles.CityTileHasGrassOrStreamCenter(x, y))
                 {
-                    if (placedTiles.getPlacedTiles(x, y + 1) != null)
+                    if (placedTiles.getPlacedTile(x, y + 1) != null)
 
                     {
                         if (!visited[x, y + 1]) RecursiveCityIsFinished(x, y + 1);
@@ -246,10 +239,10 @@ public class GameController : MonoBehaviour
                     }
                 }
 
-            if (placedTiles.getPlacedTiles(x, y).GetComponent<Tile>().East == Tile.Geography.City)
+            if (placedTiles.getPlacedTile(x, y).GetComponent<Tile>().East == Tile.Geography.City)
                 if (!placedTiles.CityTileHasGrassOrStreamCenter(x, y))
                 {
-                    if (placedTiles.getPlacedTiles(x + 1, y) != null)
+                    if (placedTiles.getPlacedTile(x + 1, y) != null)
                     {
                         if (!visited[x + 1, y]) RecursiveCityIsFinished(x + 1, y);
                     }
@@ -259,10 +252,10 @@ public class GameController : MonoBehaviour
                     }
                 }
 
-            if (placedTiles.getPlacedTiles(x, y).GetComponent<Tile>().South == Tile.Geography.City)
+            if (placedTiles.getPlacedTile(x, y).GetComponent<Tile>().South == Tile.Geography.City)
                 if (!placedTiles.CityTileHasGrassOrStreamCenter(x, y))
                 {
-                    if (placedTiles.getPlacedTiles(x, y - 1) != null)
+                    if (placedTiles.getPlacedTile(x, y - 1) != null)
                     {
                         if (!visited[x, y - 1]) RecursiveCityIsFinished(x, y - 1);
                     }
@@ -272,10 +265,10 @@ public class GameController : MonoBehaviour
                     }
                 }
 
-            if (placedTiles.getPlacedTiles(x, y).GetComponent<Tile>().West == Tile.Geography.City)
+            if (placedTiles.getPlacedTile(x, y).GetComponent<Tile>().West == Tile.Geography.City)
                 if (!placedTiles.CityTileHasGrassOrStreamCenter(x, y))
                 {
-                    if (placedTiles.getPlacedTiles(x - 1, y) != null)
+                    if (placedTiles.getPlacedTile(x - 1, y) != null)
                     {
                         if (!visited[x - 1, y]) RecursiveCityIsFinished(x - 1, y);
                     }
@@ -292,19 +285,11 @@ public class GameController : MonoBehaviour
         tempX = x;
         tempY = z;
         tile.GetComponent<Tile>().vIndex = VertexItterator;
-
         point.placeVertex(VertexItterator, placedTiles.GetNeighbors(tempX, tempY),
             placedTiles.getWeights(tempX, tempY), tileController.currentTile.GetComponent<Tile>().getCenter(),
             placedTiles.getCenters(tempX, tempY), placedTiles.getDirections(tempX, tempY));
-
         VertexItterator++;
-
-
-
-        placedTiles.PlaceTile(x, z, tile);
-
-
-     
+        placedTiles.PlaceTile(x, z, tile); 
         calculatePoints(false, false);
     }
 
@@ -335,7 +320,6 @@ public class GameController : MonoBehaviour
             if (placedTiles.TilePlacementIsValid(tileController.currentTile, iTileAimX, iTileAimZ))
             {
                 PlaceTile(tileController.currentTile, iTileAimX, iTileAimZ, false);
-
                 gameState.phase = Phase.TileDown;
             }
         }
@@ -381,7 +365,7 @@ public class GameController : MonoBehaviour
                 }
 
                 if (firstTurnCounter != 0) firstTurnCounter -= 1;
-
+                shader.VisualizeBoard(gameState.Tiles.Played, gameState.Meeples.All);
                 gameState.phase = Phase.NewTurn;
             }
         }
@@ -392,18 +376,18 @@ public class GameController : MonoBehaviour
         foreach (var p in gameState.Players.All)
             foreach (Meeple meeple in p.meeples)
             {
-                var tileID = placedTiles.getPlacedTiles(meeple.x, meeple.z).GetComponent<Tile>().id;
+                var tileID = placedTiles.getPlacedTile(meeple.x, meeple.z).GetComponent<Tile>().id;
                 var finalscore = 0;
                 if (meeple.geography == Tile.Geography.City)
                 {
                     //CITY DIRECTION
-                    if (placedTiles.getPlacedTiles(meeple.x, meeple.z).GetComponent<Tile>().getCenter() ==
+                    if (placedTiles.getPlacedTile(meeple.x, meeple.z).GetComponent<Tile>().getCenter() ==
                         Tile.Geography.Stream ||
-                        placedTiles.getPlacedTiles(meeple.x, meeple.z).GetComponent<Tile>().getCenter() ==
+                        placedTiles.getPlacedTile(meeple.x, meeple.z).GetComponent<Tile>().getCenter() ==
                         Tile.Geography.Grass ||
-                        placedTiles.getPlacedTiles(meeple.x, meeple.z).GetComponent<Tile>().getCenter() ==
+                        placedTiles.getPlacedTile(meeple.x, meeple.z).GetComponent<Tile>().getCenter() ==
                         Tile.Geography.Road ||
-                        placedTiles.getPlacedTiles(meeple.x, meeple.z).GetComponent<Tile>().getCenter() ==
+                        placedTiles.getPlacedTile(meeple.x, meeple.z).GetComponent<Tile>().getCenter() ==
                         Tile.Geography.Village)
                     {
                         if (CityIsFinishedDirection(meeple.x, meeple.z, meeple.direction))
@@ -411,7 +395,7 @@ public class GameController : MonoBehaviour
 
                             finalscore = point
                                 .startDfsDirection(
-                                    placedTiles.getPlacedTiles(meeple.x, meeple.z).GetComponent<Tile>()
+                                    placedTiles.getPlacedTile(meeple.x, meeple.z).GetComponent<Tile>()
                                         .vIndex, meeple.geography, meeple.direction, GameEnd);
                         }
 
@@ -419,7 +403,7 @@ public class GameController : MonoBehaviour
                         {
                             finalscore = point
                                 .startDfsDirection(
-                                    placedTiles.getPlacedTiles(meeple.x, meeple.z).GetComponent<Tile>()
+                                    placedTiles.getPlacedTile(meeple.x, meeple.z).GetComponent<Tile>()
                                         .vIndex, meeple.geography, meeple.direction, GameEnd);
                         }
                     }
@@ -429,13 +413,13 @@ public class GameController : MonoBehaviour
                         if (CityIsFinished(meeple.x, meeple.z))
                             finalscore = point
                                 .startDfs(
-                                    placedTiles.getPlacedTiles(meeple.x, meeple.z).GetComponent<Tile>()
+                                    placedTiles.getPlacedTile(meeple.x, meeple.z).GetComponent<Tile>()
                                         .vIndex, meeple.geography, GameEnd);
                         if (GameEnd)
                         {
                             finalscore = point
                                 .startDfsDirection(
-                                    placedTiles.getPlacedTiles(meeple.x, meeple.z).GetComponent<Tile>()
+                                    placedTiles.getPlacedTile(meeple.x, meeple.z).GetComponent<Tile>()
                                         .vIndex, meeple.geography, meeple.direction, GameEnd);
                         }
                     }
@@ -443,13 +427,13 @@ public class GameController : MonoBehaviour
                 else
                 {
                     ///ROAD
-                    if (placedTiles.getPlacedTiles(meeple.x, meeple.z).GetComponent<Tile>().getCenter() ==
+                    if (placedTiles.getPlacedTile(meeple.x, meeple.z).GetComponent<Tile>().getCenter() ==
                         Tile.Geography.Village ||
-                        placedTiles.getPlacedTiles(meeple.x, meeple.z).GetComponent<Tile>().getCenter() ==
+                        placedTiles.getPlacedTile(meeple.x, meeple.z).GetComponent<Tile>().getCenter() ==
                         Tile.Geography.Grass)
                     {
                         finalscore = point.startDfsDirection(placedTiles
-                            .getPlacedTiles(meeple.x, meeple.z)
+                            .getPlacedTile(meeple.x, meeple.z)
                             .GetComponent<Tile>().vIndex, meeple.geography, meeple.direction, GameEnd);
                         if (GameEnd)
                             finalscore--;
@@ -458,14 +442,14 @@ public class GameController : MonoBehaviour
                     {
                         finalscore = point
                             .startDfs(
-                                placedTiles.getPlacedTiles(meeple.x, meeple.z).GetComponent<Tile>().vIndex,
+                                placedTiles.getPlacedTile(meeple.x, meeple.z).GetComponent<Tile>().vIndex,
                                 meeple.geography, GameEnd);
                         if (GameEnd)
                             finalscore--;
                     }
 
                     //CLOISTER
-                    if (placedTiles.getPlacedTiles(meeple.x, meeple.z).GetComponent<Tile>().getCenter() ==
+                    if (placedTiles.getPlacedTile(meeple.x, meeple.z).GetComponent<Tile>().getCenter() ==
                         Tile.Geography.Cloister &&
                         meeple.direction == Point.Direction.CENTER)
                         finalscore = placedTiles.CheckSurroundedCloister(meeple.x, meeple.z, GameEnd);
