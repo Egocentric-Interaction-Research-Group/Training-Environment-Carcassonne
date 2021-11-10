@@ -15,9 +15,9 @@ public class CarcassonneAgent : Agent
 {
     //Observations from real game (use getter properties, don't call these directly)
     public int meeplesLeft;
-    public int boardGridSize;
     public Phase phase;
     public int id;
+    public TileState tiles;
 
     //AI Specific
     public AIWrapper wrapper;
@@ -104,22 +104,22 @@ public class CarcassonneAgent : Agent
         if (actionBuffers.DiscreteActions[0] == 0f)
         {
             z += 1; //Up
-            Debug.Log("AI moving tile up");
+            //Debug.Log("AI moving tile up");
         }
         else if (actionBuffers.DiscreteActions[0] == 1f)
         {
             z -= 1; //Down
-            Debug.Log("AI moving tile down");
+            //Debug.Log("AI moving tile down");
         }
         else if (actionBuffers.DiscreteActions[0] == 2f)
         {
             x -= 1; //Left
-            Debug.Log("AI moving tile left");
+            //Debug.Log("AI moving tile left");
         }
         else if (actionBuffers.DiscreteActions[0] == 3f)
         {
             x += 1; //Right
-            Debug.Log("AI moving tile right");
+            //Debug.Log("AI moving tile right");
         }
         else if (actionBuffers.DiscreteActions[0] == 4f)
         {
@@ -132,11 +132,11 @@ public class CarcassonneAgent : Agent
                 //Punishment for rotating more than needed, i.e. returning back to default rotation state.
                 //AddReward(-0.01f); 
             }
-            Debug.Log("AI rotating tile");
+            //Debug.Log("AI rotating tile");
         }
         else if (actionBuffers.DiscreteActions[0] == 5f)
         {
-            Debug.Log("AI tries to place tile at " + x + "," + y + " with rotation " + rot*90 + " degrees");
+            //Debug.Log("AI tries to place tile at " + x + "," + y + " with rotation " + rot*90 + " degrees");
             //Rotates the tile the amount of times AI has chosen (0-3).
             for (int i = 0; i < rot; i++)
             {
@@ -145,7 +145,7 @@ public class CarcassonneAgent : Agent
 
             //Values are loaded into GameController that are used in the ConfirmPlacementRPC call.
             wrapper.PlaceTile(x, z);
-
+          
             if (Phase == Phase.TileDown) //If the placement was successful, the phase changes to TileDown.
             {
                 AddReward(1f);
@@ -162,7 +162,6 @@ public class CarcassonneAgent : Agent
             //Outside table area, reset values and add significant punishment.
             ResetAttributes();
             AddReward(-1f);
-            Debug.Log("AI placed tile outside of the board");
         }
 
         //These are only used to monitor the ai (shown on the AI gameobject in the scene while it plays). Ignore them.
@@ -265,6 +264,7 @@ public class CarcassonneAgent : Agent
     {
         //This occurs every X steps (Max Steps). It only serves to reset tile position if AI is stuck, and for AI to process current learning
         ResetAttributes();
+        Debug.Log("Max steps reached, a new episode begins");
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
@@ -286,6 +286,15 @@ public class CarcassonneAgent : Agent
         sensor.AddObservation(z);
         sensor.AddObservation(meepleX);
         sensor.AddObservation(meepleZ);
+        
+        for(int i = 0; i < tiles.PlayedId.GetLength(0); i++)
+        {
+            for(int j = 0; j < tiles.PlayedId.GetLength(1); j++)
+            {
+                sensor.AddObservation(tiles.PlayedId[i, j]);
+            }
+        }
+        
 
 
 

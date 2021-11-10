@@ -25,7 +25,7 @@ namespace Carcassonne
             m_mat = GetComponent<Renderer>().material;
             
             // For testing purposes.
-            UpdateWithTestData();
+            // UpdateWithTestData();
         }
 
         /// <summary>

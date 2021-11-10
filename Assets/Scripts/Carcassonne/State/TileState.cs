@@ -11,6 +11,7 @@ namespace Carcassonne.State
         public List<Tile> Remaining;
         [CanBeNull] public Tile Current;
         public Tile[,] Played;
+        public float[,] PlayedId;
 
         private void OnEnabled()
         {

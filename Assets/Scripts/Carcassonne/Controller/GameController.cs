@@ -20,16 +20,15 @@ public class GameController : MonoBehaviour
 
     public int iTileAimX, iTileAimZ;
 
-    private int NewTileRotation, tempX, tempY, VertexItterator;
+    private int NewTileRotation, tempX, tempY, VertexItterator, tileCounter;
 
     public GameState gameState;
 
+    private CarcassonneVisualization shader;
 
     private Point.Direction direction;
 
     public GameObject ai, visualizationBoard;
-
-    private CarcassonneVisualization shader;
 
     public PlacedTiles placedTiles;
 
@@ -38,7 +37,6 @@ public class GameController : MonoBehaviour
     public Stack stack;
 
     public Point point;
-
 
     public PlacedTiles PlacedTiles
     {
@@ -65,6 +63,11 @@ public class GameController : MonoBehaviour
     internal TileController tileController;
     private int firstTurnCounter;
 
+    private void Start()
+    {
+        shader = visualizationBoard.GetComponent<CarcassonneVisualization>();
+    }
+
     private void FixedUpdate()
     {
         if (startGame)
@@ -81,14 +84,12 @@ public class GameController : MonoBehaviour
 
     public void NewGame()
     {
-        shader = visualizationBoard.GetComponent<CarcassonneVisualization>();
-
+        tileCounter = 0;     
 
         placedTiles.InstansiatePlacedTilesArray();
         stack.PopulateTileArray();
         BaseTileCreation();
         PlaceTile(tileController.currentTile, 85, 85, true);
-
         for (int i = 0; i < 1; i++)
         {          
             Player player = Instantiate(ai).GetComponent<Player>();
@@ -291,6 +292,18 @@ public class GameController : MonoBehaviour
         VertexItterator++;
         placedTiles.PlaceTile(x, z, tile); 
         calculatePoints(false, false);
+        //shader.VisualizeBoard(gameState.Tiles.Played, gameState.Meeples.All);
+        tileCounter++;
+        if(tileCounter != 1)
+        {
+            Debug.Log("AI Placed tile on " + x + "," + z);
+            Debug.Log("Number of tiles placed: " + tileCounter);
+        }      
+    }
+
+    public void PlaceMeeple(GameObject meeple)
+    {
+
     }
 
     //Metod för att plocka upp en ny tile
@@ -300,8 +313,7 @@ public class GameController : MonoBehaviour
         {
             stack.Pop();
             if (!TileCanBePlaced(gameState.Tiles.Current))
-            {
-                Debug.Log("Tile not possible to place: discarding and drawing a new one. " + "Tile id: " + tileController.currentTile.GetComponent<Tile>().id);
+            {            
                 Destroy(tileController.currentTile);
                 PickupTile();
             }
@@ -365,7 +377,6 @@ public class GameController : MonoBehaviour
                 }
 
                 if (firstTurnCounter != 0) firstTurnCounter -= 1;
-                shader.VisualizeBoard(gameState.Tiles.Played, gameState.Meeples.All);
                 gameState.phase = Phase.NewTurn;
             }
         }

@@ -66,7 +66,6 @@ namespace Carcassonne
         {
             //randomIndex = new int[84];
             tileArray = new List<GameObject>(GameObject.FindGameObjectsWithTag("Tile"));
-            Debug.Log("tileArray Count " + tileArray.Count);
             // Filter out tiles not in set. TODO: This should reference the game rules and pick relevant sets.
             tileArray = tileArray.Where(t => t.GetComponent<Tile>().tileSet == Tile.TileSet.Base && t != firstTile ).ToList();
             
@@ -76,7 +75,6 @@ namespace Carcassonne
             
             foreach (var t in tileArray)
             {
-                Debug.Log("Adding tile to tiles.Remaining");
                 tiles.Remaining.Add(t.GetComponent<Tile>());
             }
         }

@@ -20,7 +20,6 @@ public class AIDecisionRequester : MonoBehaviour
         {
             return;
         }
-        Debug.Log("Decision Requesting");
         switch (ai.wrapper.GetGamePhase())
         {
             case Phase.NewTurn: // Picks a new tile automatically
@@ -40,6 +39,5 @@ public class AIDecisionRequester : MonoBehaviour
 
         //ToDo: Add this info to some form of GUI-display instead to visualize many separate agents values concurrently.
         reward = ai.GetCumulativeReward();
-        Debug.Log("AI " + ai.GetComponent<Player>().id +" Reward is currently " + reward);
     }
 }

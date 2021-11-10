@@ -19,16 +19,19 @@ namespace Carcassonne
         public void InstansiatePlacedTilesArray()
         {
             tiles.Played = new Tile[170, 170];
+            tiles.PlayedId = new float[170, 170];
         }
 
         public void PlaceTile(int x, int z, GameObject tile)
         {
             tiles.Played[x, z] = tile.GetComponent<Tile>();
+            tiles.PlayedId[x, z] = tile.GetComponent<Tile>().id;
         }
 
         public void removeTile(int x, int z)
         {
             tiles.Played[x, z] = null;
+            tiles.PlayedId[x, z] = 0; //id 0 means no tile
         }
 
         //FIXME This should be changable to a Tile return type
