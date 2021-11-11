@@ -292,7 +292,7 @@ public class GameController : MonoBehaviour
         VertexItterator++;
         placedTiles.PlaceTile(x, z, tile); 
         calculatePoints(false, false);
-        //shader.VisualizeBoard(gameState.Tiles.Played, gameState.Meeples.All);
+        shader.VisualizeBoard(gameState.Tiles.Played, gameState.Meeples.All);
         tileCounter++;
         if(tileCounter != 1)
         {

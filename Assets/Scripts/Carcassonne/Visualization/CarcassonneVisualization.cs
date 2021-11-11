@@ -75,6 +75,7 @@ namespace Carcassonne
                 {
                     if (allTiles[col, row] == null) // Valid tile
                         continue;
+
                     if (minRow == int.MaxValue) // Has not yet found upper-most
                         minRow = row;
 
@@ -82,10 +83,10 @@ namespace Carcassonne
                         minCol = col;
 
                     if (row > maxRow)
-                        maxCol = row;
+                        maxRow = row + 1;
 
                     if (col > maxCol)
-                        maxCol = col;
+                        maxCol = col + 1;
                 }
             }
 
@@ -239,7 +240,8 @@ namespace Carcassonne
                 }
             }
 
-            m_mat.SetFloatArray("_Tiles", tiles);
+            if (tiles.Length > 0)
+                m_mat.SetFloatArray("_Tiles", tiles);
         }
 
         //---- FOR TESTING -----------------------------------------------------------------------//
