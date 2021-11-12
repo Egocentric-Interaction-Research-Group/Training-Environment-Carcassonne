@@ -25,7 +25,14 @@ namespace Carcassonne
         void Awake()
         {
             m_mat = GetComponent<Renderer>().material;
-            
+
+            int boardSize = MAX_BOARD_DIMENSION * MAX_BOARD_DIMENSION * 3 * 3;
+            float[] tilesInit = new float[boardSize];
+            for (int i = 0; i < boardSize; i++)
+                tilesInit[i] = -1.0f;
+
+            m_mat.SetFloatArray("_Tiles", tilesInit);
+
             // For testing purposes.
             // UpdateWithTestData();
         }
