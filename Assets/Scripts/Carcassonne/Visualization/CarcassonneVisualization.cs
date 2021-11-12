@@ -18,6 +18,8 @@ namespace Carcassonne
     [RequireComponent(typeof(Renderer))]
     public class CarcassonneVisualization : MonoBehaviour
     {
+        private const int MAX_BOARD_DIMENSION = 21; // The maximum nbr of tiles in each axis. This is limited by the shader.
+
         private Material m_mat;
 
         void Awake()
@@ -127,6 +129,18 @@ namespace Carcassonne
         {
             Vector2Int updateDim = new Vector2Int(
                 updateTiles.GetLength(0), updateTiles.GetLength(1));
+
+            // Clamp the dimensions of the tile data to be sent to the shader.
+            if (updateDim.x > MAX_BOARD_DIMENSION ||
+                updateDim.y > MAX_BOARD_DIMENSION)
+            {
+                updateTiles = Get2DSubSection(updateTiles, 
+                    new Vector2Int(MAX_BOARD_DIMENSION, MAX_BOARD_DIMENSION), 
+                    new Vector2Int(0, 0));
+
+                updateDim.x = updateTiles.GetLength(0);
+                updateDim.y = updateTiles.GetLength(1);
+            }
 
             // Make sure to always display 1:1 column-row ratio.
             Vector2Int displayDim = updateDim;
