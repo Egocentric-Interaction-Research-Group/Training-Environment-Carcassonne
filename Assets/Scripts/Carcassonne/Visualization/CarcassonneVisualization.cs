@@ -18,23 +18,32 @@ namespace Carcassonne
     [RequireComponent(typeof(Renderer))]
     public class CarcassonneVisualization : MonoBehaviour
     {
-        private const int MAX_BOARD_DIMENSION = 21; // The maximum nbr of tiles in each axis. This is limited by the shader.
+        private const int MAX_BOARD_DIMENSION = 31; // The maximum nbr of tiles in each axis. This is limited by the shader.
 
         private Material m_mat;
 
         void Awake()
         {
+            Init();
+
+            // For testing purposes.
+            //UpdateWithTestData();
+        }
+
+        /// <summary>
+        /// Initializes the board with empty tile and meeple data.
+        /// </summary>
+        public void Init()
+        {
             m_mat = GetComponent<Renderer>().material;
 
-            int boardSize = MAX_BOARD_DIMENSION * MAX_BOARD_DIMENSION * 3 * 3;
+            int boardSize = MAX_BOARD_DIMENSION * MAX_BOARD_DIMENSION;
             float[] tilesInit = new float[boardSize];
             for (int i = 0; i < boardSize; i++)
                 tilesInit[i] = -1.0f;
 
-            m_mat.SetFloatArray("_Tiles", tilesInit);
-
-            // For testing purposes.
-            // UpdateWithTestData();
+            m_mat.SetFloatArray("_TileGeography", tilesInit);
+            m_mat.SetFloatArray("_MeeplePlacement", tilesInit);
         }
 
         /// <summary>
@@ -91,10 +100,10 @@ namespace Carcassonne
                     if (col < minCol)
                         minCol = col;
 
-                    if (row > maxRow)
+                    if (row >= maxRow)
                         maxRow = row + 1;
 
-                    if (col > maxCol)
+                    if (col >= maxCol)
                         maxCol = col + 1;
                 }
             }
@@ -159,110 +168,101 @@ namespace Carcassonne
             m_mat.SetInt("_DisplayColumns", displayDim.x);
             m_mat.SetInt("_DisplayRows", displayDim.y);
 
-            // Create a dictionary with key (col, row) and value (playerId+1).
+            // Create a dictionary with key (col, row) and value array (playerId+1 for each direction).
             // This maps a certain location with the player that occupies it.
-            Dictionary<(int, int), int> playerMeeples = new Dictionary<(int, int), int>();
+            Dictionary<(int, int), int[]> playerMeeples = new Dictionary<(int, int), int[]>();
             foreach (Meeple m in allMeeples)
             {
                 if (m.free)
                     continue;
 
-                (int, int) loc = ((m.x - updateOffset.x) * 3, (m.z - updateOffset.y) * 3);
+                (int, int) loc = (m.x - updateOffset.x, m.z - updateOffset.y);
 
                 // Cull meeples that are outside the dimensions shown.
-                if (loc.Item1 < 0 || loc.Item1 >= displayDim.x * 3 ||
-                    loc.Item2 < 0 || loc.Item2 >= displayDim.y * 3)
+                if (loc.Item1 < 0 || loc.Item1 >= displayDim.x ||
+                    loc.Item2 < 0 || loc.Item2 >= displayDim.y)
                     continue;
 
-                if (m.direction == Direction.NORTH)       { loc.Item1 += 1; }
-                else if (m.direction == Direction.EAST)   { loc.Item1 += 2; loc.Item2 += 1; }
-                else if (m.direction == Direction.SOUTH)  { loc.Item1 += 1; loc.Item2 += 2; }
-                else if (m.direction == Direction.WEST)   { loc.Item2 += 1; }
-                else if (m.direction == Direction.CENTER) { loc.Item1 += 1; loc.Item2 += 1; }
+                int[] playersAtDirections;
+                if (!playerMeeples.TryGetValue(loc, out playersAtDirections))
+                {
+                    playersAtDirections = new int[5];
+                    for (int i = 0; i < 5; i++)
+                        playersAtDirections[i] = 0;
+                }
 
-                playerMeeples[loc] = m.playerId + 1;
+                if (m.direction == Direction.CENTER)      playersAtDirections[0] = m.playerId + 1;
+                else if (m.direction == Direction.EAST)   playersAtDirections[1] = m.playerId + 1;
+                else if (m.direction == Direction.NORTH)  playersAtDirections[2] = m.playerId + 1;
+                else if (m.direction == Direction.WEST)   playersAtDirections[3] = m.playerId + 1;
+                else if (m.direction == Direction.SOUTH)  playersAtDirections[4] = m.playerId + 1;
+
+                playerMeeples[loc] = playersAtDirections;
             }
 
-            // Prepare a float array of sub-tile data to send to the shader. The data represents
-            //   the geography and player that occupies that sub-tile with a meeple. All using
-            //   a single float value.
-            // Note: Needs to send a *float* array to the shader because shaders seem to use floats
+            // Prepare two arrays to send to the shader. One array contains the geographies of each,
+            // while the other contains the player id associated with each direction of each tile
+            // (this indicates that the player of the given id has placed a meeple there).
+            // All geography data is encoded into a single float, as is the meeple/player id data
+            // (one float for geograpies, one float for meeples).
+            // Note: Needs to send *float* arrays to the shader because shaders seem to use floats
             //   internally anyway, and there is no interface for sending int arrays.
-            float[] tiles = new float[displayDim.x * displayDim.y * 3 * 3];
+            float[] tiles = new float[displayDim.x * displayDim.y];
+            float[] meeples = new float[displayDim.x * displayDim.y];
             for (int row = 0; row < displayDim.y; row++)
             {
                 for (int col = 0; col < displayDim.x; col++)
                 {
-                    int left = col * 3;
-                    int center = col * 3 + 1;
-                    int right = col * 3 + 2;
-                    int top = (row * 3) * displayDim.x * 3;
-                    int middle = (row * 3 + 1) * displayDim.x * 3;
-                    int bottom = (row * 3 + 2) * displayDim.x * 3;
+                    int idx = col + row * displayDim.x;
 
                     // Discard if the tile isn't in updateTile.
                     if (col >= updateDim.x || row >= updateDim.y)
                     {
-                        tiles[left   + top]    = -1.0f;
-                        tiles[center + top]    = -1.0f;
-                        tiles[right  + top]    = -1.0f;
-                        tiles[left   + middle] = -1.0f;
-                        tiles[center + middle] = -1.0f;
-                        tiles[right  + middle] = -1.0f;
-                        tiles[left   + bottom] = -1.0f;
-                        tiles[center + bottom] = -1.0f;
-                        tiles[right  + bottom] = -1.0f;
+                        tiles[idx] = -1.0f;
+                        meeples[idx] = 0.0f;
                         continue;
                     }
-
-                    // Diagonal geographies is not implemented in the game,
-                    // so use a default geography for NE, NW, SE, and SW.
-                    const Geography defaultGeo = Geography.Grass;
-
-                    // Helper lambda for setting the value for the sub-tile at coord
-                    // (sub-tile space) based on the given geography.
-                    Action<int, Geography> SetSubTile = (coord, geography) =>
-                    {
-                        (int, int) mtxCoords = (coord % (displayDim.x * 3),
-                                                coord / (displayDim.x * 3));
-
-                        int player;
-                        if (!playerMeeples.TryGetValue(mtxCoords, out player))
-                            player = 0;
-
-                        tiles[coord] = ((float)geography) + ((float)player * 100);
-                    };
 
                     // Only set values for existing Tiles.
                     if (updateTiles.GetValue(col, row) is Tile t)
                     {
-                        SetSubTile(left   + top,    defaultGeo);
-                        SetSubTile(center + top,    t.North);
-                        SetSubTile(right  + top,    defaultGeo);
-                        SetSubTile(left   + middle, t.West);
-                        SetSubTile(center + middle, t.Center);
-                        SetSubTile(right  + middle, t.East);
-                        SetSubTile(left   + bottom, defaultGeo);
-                        SetSubTile(center + bottom, t.South);
-                        SetSubTile(right  + bottom, defaultGeo);
+                        // Combine all 5 tile geographies into a single float.
+                        float tileGeography = (float)t.Center;
+                        tileGeography += (float)t.East  * 10;
+                        tileGeography += (float)t.North * 100;
+                        tileGeography += (float)t.West  * 1000;
+                        tileGeography += (float)t.South * 10000;
+
+                        int[] playersIds;
+                        if (!playerMeeples.TryGetValue((col ,row), out playersIds))
+                        {
+                            playersIds = new int[] { 0, 0, 0, 0, 0};
+                        }
+
+                        // Combine all meeple placement on this tile into a single float.
+                        float tileMeeple = playersIds[0];
+                        tileMeeple += playersIds[1] * 10;
+                        tileMeeple += playersIds[2] * 100;
+                        tileMeeple += playersIds[3] * 1000;
+                        tileMeeple += playersIds[4] * 10000;
+
+                        // Store in the arrays that will be sent to the shader.
+                        tiles[idx]   = tileGeography;
+                        meeples[idx] = tileMeeple;
                     }
                     else // Invalid or non-existent Tile.
                     {
-                        tiles[left   + top]    = -1.0f;
-                        tiles[center + top]    = -1.0f;
-                        tiles[right  + top]    = -1.0f;
-                        tiles[left   + middle] = -1.0f;
-                        tiles[center + middle] = -1.0f;
-                        tiles[right  + middle] = -1.0f;
-                        tiles[left   + bottom] = -1.0f;
-                        tiles[center + bottom] = -1.0f;
-                        tiles[right  + bottom] = -1.0f;
+                        tiles[idx] = -1.0f;
+                        meeples[idx] = 0.0f;
                     }
                 }
             }
 
             if (tiles.Length > 0)
-                m_mat.SetFloatArray("_Tiles", tiles);
+            {
+                m_mat.SetFloatArray("_TileGeography", tiles);
+                m_mat.SetFloatArray("_MeeplePlacement", meeples);
+            }
         }
 
         //---- FOR TESTING -----------------------------------------------------------------------//
