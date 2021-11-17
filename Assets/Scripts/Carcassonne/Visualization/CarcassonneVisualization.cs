@@ -18,24 +18,32 @@ namespace Carcassonne
     [RequireComponent(typeof(Renderer))]
     public class CarcassonneVisualization : MonoBehaviour
     {
-        private const int MAX_BOARD_DIMENSION = 10; // The maximum nbr of tiles in each axis. This is limited by the shader.
+        private const int MAX_BOARD_DIMENSION = 31; // The maximum nbr of tiles in each axis. This is limited by the shader.
 
         private Material m_mat;
 
         void Awake()
         {
+            Init();
+
+            // For testing purposes.
+            //UpdateWithTestData();
+        }
+
+        /// <summary>
+        /// Initializes the board with empty tile and meeple data.
+        /// </summary>
+        public void Init()
+        {
             m_mat = GetComponent<Renderer>().material;
 
-            int boardSize = MAX_BOARD_DIMENSION * MAX_BOARD_DIMENSION * 3 * 3;
+            int boardSize = MAX_BOARD_DIMENSION * MAX_BOARD_DIMENSION;
             float[] tilesInit = new float[boardSize];
             for (int i = 0; i < boardSize; i++)
                 tilesInit[i] = -1.0f;
 
             m_mat.SetFloatArray("_TileGeography", tilesInit);
             m_mat.SetFloatArray("_MeeplePlacement", tilesInit);
-
-            // For testing purposes.
-            UpdateWithTestData();
         }
 
         /// <summary>
@@ -92,10 +100,10 @@ namespace Carcassonne
                     if (col < minCol)
                         minCol = col;
 
-                    if (row > maxRow)
+                    if (row >= maxRow)
                         maxRow = row + 1;
 
-                    if (col > maxCol)
+                    if (col >= maxCol)
                         maxCol = col + 1;
                 }
             }
@@ -192,10 +200,12 @@ namespace Carcassonne
                 playerMeeples[loc] = playersAtDirections;
             }
 
-            // Prepare a float array of sub-tile data to send to the shader. The data represents
-            //   the geography and player that occupies that sub-tile with a meeple. All using
-            //   a single float value.
-            // Note: Needs to send a *float* array to the shader because shaders seem to use floats
+            // Prepare two arrays to send to the shader. One array contains the geographies of each,
+            // while the other contains the player id associated with each direction of each tile
+            // (this indicates that the player of the given id has placed a meeple there).
+            // All geography data is encoded into a single float, as is the meeple/player id data
+            // (one float for geograpies, one float for meeples).
+            // Note: Needs to send *float* arrays to the shader because shaders seem to use floats
             //   internally anyway, and there is no interface for sending int arrays.
             float[] tiles = new float[displayDim.x * displayDim.y];
             float[] meeples = new float[displayDim.x * displayDim.y];
@@ -236,6 +246,7 @@ namespace Carcassonne
                         tileMeeple += playersIds[3] * 1000;
                         tileMeeple += playersIds[4] * 10000;
 
+                        // Store in the arrays that will be sent to the shader.
                         tiles[idx]   = tileGeography;
                         meeples[idx] = tileMeeple;
                     }

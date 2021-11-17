@@ -12,8 +12,8 @@ Shader "Carcassonne/Visualization"
 {
     Properties
     {
-        _DisplayColumns     ("Visible Columns", int)       = 4
-        _DisplayRows        ("Visible Rows", int)          = 4
+        _DisplayColumns     ("Visible Columns", int)       = 1
+        _DisplayRows        ("Visible Rows", int)          = 1
     }
     SubShader
     {
@@ -44,15 +44,17 @@ Shader "Carcassonne/Visualization"
 
             static const int2 gridSubDimensions = int2(3, 3); // 3x3 sub-tiles per tile.
             static const int  subcellPerTile = gridSubDimensions.x * gridSubDimensions.y;
-            static const int2 totalDimensions = int2(32, 32); // Larger numbers will fail the shader compilation.
+            static const int2 totalDimensions = int2(31, 31); // Larger numbers will fail the shader compilation.
             static const int  totalTiles = totalDimensions.x * totalDimensions.y;
             static const int  totalSubtiles = totalTiles * subcellPerTile;
             
-            static const float4 colCloister = float4(0.65, 0.12, 0.06, 1.00);
-            static const float4 colVillage  = float4(0.41, 0.15, 0.05, 1.00);
+            static const float4 colCloister = float4(0.75, 0.12, 0.06, 1.00);
+            static const float4 colVillage  = float4(0.46, 0.20, 0.10, 1.00);
             static const float4 colGrass    = float4(0.08, 0.38, 0.01, 1.00);
             static const float4 colRoad     = float4(0.52, 0.56, 0.60, 1.00);
             static const float4 colCity     = float4(0.90, 0.55, 0.20, 1.00);
+            static const float4 colStream   = float4(0.00, 0.10, 0.80, 1.00);
+            static const float4 colCityRoad = float4(0.80, 0.45, 0.10, 1.00);
 
             static const float4 colPlayer1 = float4(0.00, 0.00, 1.00, 1.00);
             static const float4 colPlayer2 = float4(0.01, 0.60, 0.01, 1.00);
@@ -104,6 +106,8 @@ Shader "Carcassonne/Visualization"
                 else if (geoEnumValue == 2) return colRoad;
                 else if (geoEnumValue == 3) return colGrass;
                 else if (geoEnumValue == 4) return colCity;
+                else if (geoEnumValue == 5) return colStream;
+                else if (geoEnumValue == 8) return colCityRoad;
 
                 return float4(1.0, 0.0, 1.0, 1.0);
             }
