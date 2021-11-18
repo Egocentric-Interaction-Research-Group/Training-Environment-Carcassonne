@@ -95,7 +95,7 @@ MonoBehaviour:
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
-  MaxStep: 1000
+  MaxStep: 200
   meeplesLeft: 0
   phase: 0
   id: 0

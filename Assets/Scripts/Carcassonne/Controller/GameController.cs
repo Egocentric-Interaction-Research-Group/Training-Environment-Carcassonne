@@ -86,11 +86,13 @@ public class GameController : MonoBehaviour
 
     public void NewGame()
     {
-        tileCounter = 0;     
-
+        tileCounter = 0;
+        VertexItterator = 0;
         placedTiles.InstansiatePlacedTilesArray();
         stack.PopulateTileArray();
         BaseTileCreation();
+        pcRotate = true;
+        RotateTile();
         PlaceTile(tileController.currentTile, 85, 85, true);
         for (int i = 0; i < 1; i++)
         {          
@@ -294,11 +296,11 @@ public class GameController : MonoBehaviour
         VertexItterator++;
         placedTiles.PlaceTile(x, z, tile); 
         calculatePoints(false, false);
-        //shader.VisualizeBoard(gameState.Tiles.Played, gameState.Meeples.All);
+        shader.VisualizeBoard(gameState.Tiles.Played, gameState.Meeples.All);
         tileCounter++;
         if(tileCounter != 1)
         {
-            Debug.Log("AI Placed tile on " + x + "," + z);
+            Debug.Log("AI Placed tile with id " + tile.GetComponent<Tile>().id + "on " + x + "," + z);
             Debug.Log(" Number of tiles placed: " + tileCounter + " At step " + Academy.Instance.StepCount + " of episode");
         }      
     }
