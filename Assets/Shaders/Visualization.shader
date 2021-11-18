@@ -134,7 +134,7 @@ Shader "Carcassonne/Visualization"
                 uint playerId = 0;                  // Player id of the meeple placed (0 if not placed).
                 
                 // Top column sub-tiles
-                if (fracY >= 0.000 && fracY < 0.333) 
+                if (fracY >= 0.666 && fracY < 1.0) 
                 {
                     if (fracX >= 0.333 && fracX < 0.666) // North
                     {
@@ -162,7 +162,7 @@ Shader "Carcassonne/Visualization"
                     }
                 }
                 // Bottom column sub-tiles
-                else if (fracY >= 0.666 && fracY < 1.0) 
+                else if (fracY >= 0.000 && fracY < 0.333) 
                 {
                     if (fracX >= 0.333 && fracX < 0.666) // South
                     {
