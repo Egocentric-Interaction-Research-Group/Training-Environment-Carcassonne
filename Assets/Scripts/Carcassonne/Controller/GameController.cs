@@ -2,6 +2,8 @@ using Carcassonne;
 using System.Collections.Generic;
 using UnityEngine;
 using Carcassonne.State;
+using Unity.MLAgents;
+
 public class GameController : MonoBehaviour
 {
     public enum Phases
@@ -292,12 +294,12 @@ public class GameController : MonoBehaviour
         VertexItterator++;
         placedTiles.PlaceTile(x, z, tile); 
         calculatePoints(false, false);
-        shader.VisualizeBoard(gameState.Tiles.Played, gameState.Meeples.All);
+        //shader.VisualizeBoard(gameState.Tiles.Played, gameState.Meeples.All);
         tileCounter++;
         if(tileCounter != 1)
         {
             Debug.Log("AI Placed tile on " + x + "," + z);
-            Debug.Log("Number of tiles placed: " + tileCounter);
+            Debug.Log(" Number of tiles placed: " + tileCounter + " At step " + Academy.Instance.StepCount + " of episode");
         }      
     }
 

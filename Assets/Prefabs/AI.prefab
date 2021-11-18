@@ -95,7 +95,7 @@ MonoBehaviour:
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
-  MaxStep: 3000
+  MaxStep: 1000
   meeplesLeft: 0
   phase: 0
   id: 0
@@ -106,10 +106,6 @@ MonoBehaviour:
   rot: 0
   meepleX: 0
   meepleZ: 0
-  realX: 0
-  realY: 0
-  realZ: 0
-  realRot: 0
 --- !u!114 &7394643959341201063
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -30,6 +30,7 @@ public class AIDecisionRequester : MonoBehaviour
                 ai.wrapper.EndTurn();
                 break;
             case Phase.GameOver: //ToDo: Add reinforcement based on score
+                Debug.Log("Game Over");
                 ai.EndEpisode();
                 break;
             default: //Calls for one AI action repeatedly with each FixedUpdate until the phase changes.

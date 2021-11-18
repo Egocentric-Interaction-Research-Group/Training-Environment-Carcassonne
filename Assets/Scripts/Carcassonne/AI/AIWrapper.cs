@@ -82,5 +82,10 @@ namespace Assets.Scripts.Carcassonne.AI
             gc.meepleController.FreeMeeple(gs.Meeples.Current, gc);
         }
 
+        public void Reset()
+        {
+            gc.startGame = true;
+        }
+
     }
 }
