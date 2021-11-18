@@ -1,3 +1,4 @@
+using Carcassonne;
 using Carcassonne.State;
 using UnityEngine;
 using Unity.MLAgents;
@@ -215,6 +216,20 @@ public class CarcassonneAgent : Agent
         }
     }
 
+    private void AddPackedTileObservations(VectorSensor sensor)
+    {
+        // TODO: implement tile observation, with as little data as possible.
+        for (int row = 0; row < tiles.Played.GetLength(0); row++)
+        {
+            for (int col = 0; col < tiles.Played.GetLength(1); col++)
+            {
+                Tile tile = tiles.Played[col, row];
+                int packedData = -1;
+                sensor.AddObservation(packedData);
+            }
+        }
+
+    }
 
     /// <summary>
     /// Read inputs from the keyboard and convert them to a list of actions.
