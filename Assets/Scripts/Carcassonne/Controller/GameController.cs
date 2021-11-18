@@ -67,6 +67,18 @@ public class GameController : MonoBehaviour
 
     private void Start()
     {
+        for (int i = 0; i < 1; i++)
+        {
+            Player player = Instantiate(ai).GetComponent<Player>();
+            player.id = 0;
+            player.meepleState = gameState.Meeples;
+            player.Setup();
+            if (i == 0)
+            {
+                currentPlayer = player;
+            }
+            gameState.Players.All.Add(player);
+        }
         shader = visualizationBoard.GetComponent<CarcassonneVisualization>();
     }
 
@@ -74,6 +86,7 @@ public class GameController : MonoBehaviour
     {
         if (startGame)
         {
+        
             NewGame();
             startGame = false;
         }
@@ -94,18 +107,7 @@ public class GameController : MonoBehaviour
         pcRotate = true;
         RotateTile();
         PlaceTile(tileController.currentTile, 85, 85, true);
-        for (int i = 0; i < 1; i++)
-        {          
-            Player player = Instantiate(ai).GetComponent<Player>();
-            player.id = 0;
-            player.meepleState = gameState.Meeples;
-            player.Setup();       
-            if (i == 0)
-            {
-                currentPlayer = player;
-            }
-            gameState.Players.All.Add(player);
-        }
+       
         gameState.phase = Phase.NewTurn;
     }
 
