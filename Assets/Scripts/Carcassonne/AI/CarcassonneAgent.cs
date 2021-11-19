@@ -218,13 +218,42 @@ public class CarcassonneAgent : Agent
 
     private void AddPackedTileObservations(VectorSensor sensor)
     {
-        // TODO: implement tile observation, with as little data as possible.
         for (int row = 0; row < tiles.Played.GetLength(0); row++)
         {
             for (int col = 0; col < tiles.Played.GetLength(1); col++)
             {
                 Tile tile = tiles.Played[col, row];
-                int packedData = -1;
+                int packedData = 0x0;
+                
+                if (tile == null)
+                {
+                    packedData = unchecked((int)0xFFFFFFFF); // No data = -1.
+                    sensor.AddObservation(packedData);
+                    continue;
+                }
+
+                const int bitMask4  = 0xF; // 4-bit mask.
+                const int bitMask3  = 0x7; // 3-bit mask.
+                int meeplePlayerId  = -1;   // TODO: implement when there is a way to access the meeple from a tile.
+                int meepleDirection = 0;   // TODO: see above.
+
+                packedData |= ((int)tile.Center & bitMask4);
+                packedData |= (((int)tile.East  & bitMask4) << 4);
+                packedData |= (((int)tile.North & bitMask4) << 8);
+                packedData |= (((int)tile.West  & bitMask4) << 12);
+                packedData |= (((int)tile.South & bitMask4) << 16);
+
+                if (meeplePlayerId >= 0) // If there IS a meeple placed on this tile.
+                {
+                    packedData |= ((int)meeplePlayerId        & bitMask3)  << 20; // Insert 3-bit player id for meeple. Should be between 0-7.
+                    packedData |= (((int)meepleDirection + 1) & bitMask3)  << 23; // Insert 3-bit value for meeple direction.
+                }
+
+                // If there is no meeple placed on a tile, bits 23-25 should be 0b000.
+
+                // In total, 26 of 32 bits are used to store geography data and meeple placement,
+                // and the id of its owner.
+
                 sensor.AddObservation(packedData);
             }
         }
@@ -271,14 +300,19 @@ public class CarcassonneAgent : Agent
         sensor.AddObservation(z);
         sensor.AddObservation(meepleX);
         sensor.AddObservation(meepleZ);
-        
-        for(int i = 0; i < tiles.PlayedId.GetLength(0); i++)
-        {
-            for(int j = 0; j < tiles.PlayedId.GetLength(1); j++)
-            {
-                sensor.AddObservation(tiles.PlayedId[i, j]);
-            }
-        } 
+
+        // Add tile and meeple observation the "packed" way.
+        // The data is contained in a 32-bit int (only uses 26 bits) per tile.
+        // If there is no tile, it defaults to -1 (0xFFFFFFFF).
+        AddPackedTileObservations(sensor);
+
+        //for(int i = 0; i < tiles.PlayedId.GetLength(0); i++)
+        //{
+        //    for(int j = 0; j < tiles.PlayedId.GetLength(1); j++)
+        //    {
+        //        sensor.AddObservation(tiles.PlayedId[i, j]);
+        //    }
+        //} 
     }
 
     /// <summary>
