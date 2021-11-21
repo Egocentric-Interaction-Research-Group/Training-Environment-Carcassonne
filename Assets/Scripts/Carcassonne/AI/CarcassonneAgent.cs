@@ -11,9 +11,6 @@ using Assets.Scripts.Carcassonne.AI;
 public class CarcassonneAgent : Agent
 {
     //Observations from real game (use getter properties, don't call these directly)
-    public int meeplesLeft;
-    public Phase phase;
-    public int id;
     public TileState tiles;
 
     //AI Specific
@@ -49,7 +46,7 @@ public class CarcassonneAgent : Agent
         }
     }
 
-    public int Id
+    public int CurrentTileId
     {
         get
         {
@@ -247,7 +244,7 @@ public class CarcassonneAgent : Agent
 
         sensor.AddObservation((int)Phase); //This one might need to be changed, read up on One-Hot observation
         sensor.AddObservation(MeeplesLeft);
-        sensor.AddObservation(Id);
+        sensor.AddObservation(CurrentTileId);
         sensor.AddObservation(rot);
         sensor.AddObservation(x);
         sensor.AddObservation(z);

@@ -5,40 +5,38 @@ namespace Assets.Scripts.Carcassonne.AI
 {
     public class AIWrapper : InterfaceAIWrapper
     {
-        public GameController gc;
-        public GameState gs; //Contains TileState, MeepleState, FeatureState, PlayerState and a GameLog.
+        public GameController controller;
+        public GameState state;
         public Player player;
 
         public AIWrapper(Player player)
         {
-            gc = GameObject.Find("GameController").GetComponent<GameController>();
-            gs = gc.gameState;
             this.player = player;
         }
 
         public bool IsAITurn()
         {
-            return player.id == gc.currentPlayer.id;
+            return player.id == controller.currentPlayer.id;
         }
 
         public int GetBoardSize()
         {
-            return gs.Tiles.Played.GetLength(0);
+            return state.tiles.Played.GetLength(0);
         }
 
         public void PickUpTile()
         {
-            gc.PickupTile();
+            controller.PickupTile();
         }
 
         public int GetCurrentTileId()
         {
-            return gs.Tiles.Current.id;
+            return state.tiles.Current.id;
         }
 
         public Phase GetGamePhase()
         {
-            return gs.phase;
+            return state.phase;
         }
 
         public int GetMeeplesLeft()
@@ -48,42 +46,42 @@ namespace Assets.Scripts.Carcassonne.AI
 
         public void EndTurn()
         {
-            gc.EndTurn();
+            controller.EndTurn();
         }
 
         public void DrawMeeple()
         {
-            gc.meepleController.DrawMeeple();
+            controller.meepleController.DrawMeeple();
         }
 
         public void RotateTile()
         {
-            gc.pcRotate = true;
-            gc.RotateTile();
+            controller.pcRotate = true;
+            controller.RotateTile();
         }
 
         public void PlaceTile(int x, int z)
         {
-            gc.iTileAimX = x;
-            gc.iTileAimZ = z;
-            gc.ConfirmPlacement();
+            controller.iTileAimX = x;
+            controller.iTileAimZ = z;
+            controller.ConfirmPlacement();
         }
 
         public void PlaceMeeple(float x, float z)
         {
             
-            gc.ConfirmPlacement();
+            controller.ConfirmPlacement();
 
         }
 
         public void FreeCurrentMeeple()
         {
-            gc.meepleController.FreeMeeple(gs.Meeples.Current, gc);
+            controller.meepleController.FreeMeeple(state.meeples.Current, controller);
         }
 
         public void Reset()
         {
-            gc.startGame = true;
+            controller.startGame = true;
         }
 
     }

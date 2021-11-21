@@ -357,7 +357,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7772352709677269000}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: -1}
+  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: -0.7071068}
   m_LocalPosition: {x: 0, y: 0.59, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -384,7 +384,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 8
-  rotation: 2
+  rotation: 1
   meeple: 0
   vIndex: 0
   northCollider: {fileID: 5222331833268034530}
@@ -430,10 +430,10 @@ MonoBehaviour:
   - {fileID: 2800000, guid: 98f290ddde7a6eb4fae69793f3e07620, type: 3}
   - {fileID: 2800000, guid: 6a5dc6ba82bbba941abc126b392750ff, type: 3}
   - {fileID: 2800000, guid: cb40f6c67066ce44582c39cb9ff79704, type: 3}
-  North: 3
-  South: 4
-  West: 2
-  East: 2
+  North: 2
+  South: 2
+  West: 3
+  East: 4
   Center: 2
   tileSet: 0
 --- !u!65 &1316755951972139804

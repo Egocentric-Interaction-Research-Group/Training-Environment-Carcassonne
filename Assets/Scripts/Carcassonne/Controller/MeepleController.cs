@@ -75,7 +75,7 @@ public class MeepleController : MonoBehaviour
     public void PlaceMeeple(GameObject meeple, int xs, int zs, Point.Direction direction,
         Tile.Geography meepleGeography, GameController gameController)
     {
-        var currentTile = gameController.TileController.currentTile.GetComponent<Tile>();
+        var currentTile = gameController.tileController.currentTile.GetComponent<Tile>();
         var currentCenter = currentTile.getCenter();
         bool res;
         if (currentCenter == Tile.Geography.Village || currentCenter == Tile.Geography.Grass ||
@@ -104,7 +104,7 @@ public class MeepleController : MonoBehaviour
             meeple.GetComponent<Meeple>().assignAttributes(xs, zs, direction, meepleGeography);
 
 
-            gameController.gameState.phase = Phase.MeepleDown;
+            gameController.state.phase = Phase.MeepleDown;
         }
     }
 
@@ -112,12 +112,12 @@ public class MeepleController : MonoBehaviour
     public void FreeMeeple(Meeple meeple, GameController gameController)
     {
         meeple.GetComponent<Meeple>().free = true;
-        gameController.gameState.phase = Phase.TileDown;
+        gameController.state.phase = Phase.TileDown;
     }
 
     public void DrawMeeple()
     {
-        if (gameController.gameState.phase == Phase.TileDown)
+        if (gameController.state.phase == Phase.TileDown)
         {
             foreach (Meeple meeple in gameController.currentPlayer.meeples) //TODO Inefficient. Just want the first free meeple.
             {
@@ -125,7 +125,7 @@ public class MeepleController : MonoBehaviour
                 if (meeple.free)
                 {
                     meeples.Current = meepleGameObject.GetComponent<Meeple>();
-                    gameController.gameState.phase = Phase.MeepleDrawn;
+                    gameController.state.phase = Phase.MeepleDrawn;
                     break;
                 }
             }

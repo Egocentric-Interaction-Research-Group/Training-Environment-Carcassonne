@@ -5,16 +5,6 @@ using Unity.MLAgents;
 
 public class GameController : MonoBehaviour
 {
-    public enum Phases
-    {
-        NewTurn,
-        TileDrawn,
-        TileDown,
-        MeepleDrawn,
-        MeepleDown,
-        GameOver
-    }
-
     public bool startGame, pcRotate, isManipulating, cityIsFinished;
 
     private bool[,] visited;
@@ -23,7 +13,7 @@ public class GameController : MonoBehaviour
 
     private int NewTileRotation, tempX, tempY, VertexItterator, tileCounter;
 
-    public GameState gameState;
+    public GameState state = new GameState();
 
     private CarcassonneVisualization shader;
 
@@ -39,44 +29,35 @@ public class GameController : MonoBehaviour
 
     public Point point;
 
-    public PlacedTiles PlacedTiles
-    {
-        set => placedTiles = value;
-        get => placedTiles;
-    }
-
-    public TileController TileController
-    {
-        set => TileController = value;
-        get => TileController;
-    }
-
-    public Point.Direction Direction
-    {
-        set => direction = value;
-        get => direction;
-    }
+    [SerializeField]
+    public MeepleController meepleController;
 
     [SerializeField]
-    internal MeepleController meepleController;
+    public TileController tileController;
 
-    [SerializeField]
-    internal TileController tileController;
     private int firstTurnCounter;
 
     private void Start()
     {
+        stack.tiles = state.tiles;
+        placedTiles.tiles = state.tiles;
+        tileController.tiles = state.tiles;
+        meepleController.meeples = state.meeples;
         for (int i = 0; i < 1; i++)
         {
-            Player player = Instantiate(ai).GetComponent<Player>();
-            player.id = 0;
-            player.meepleState = gameState.Meeples;
+            GameObject Agent = Instantiate(ai);
+            Agent.GetComponent<CarcassonneAgent>().tiles = state.tiles;
+            Agent.GetComponent<CarcassonneAgent>().wrapper.state = state;
+            Agent.GetComponent<CarcassonneAgent>().wrapper.controller = this;
+            Player player = Agent.GetComponent<Player>();
+            player.id = i;
+            player.meepleState = state.meeples;
             player.Setup();
             if (i == 0)
             {
                 currentPlayer = player;
             }
-            gameState.Players.All.Add(player);
+            state.players.All.Add(player);
         }
         shader = visualizationBoard.GetComponent<CarcassonneVisualization>();
     }
@@ -85,12 +66,12 @@ public class GameController : MonoBehaviour
     {
         if (startGame)
         {
-            gameState.ResetStates();
+            state.ResetStates();
             NewGame();
             startGame = false;
         }
 
-        else if (gameState.phase == Phase.GameOver)
+        else if (state.phase == Phase.GameOver)
         {
             startGame = true;
         }
@@ -100,14 +81,13 @@ public class GameController : MonoBehaviour
     {
         tileCounter = 0;
         VertexItterator = 0;
-        placedTiles.InstansiatePlacedTilesArray();
         stack.PopulateTileArray();
         BaseTileCreation();
         pcRotate = true;
         RotateTile();
         PlaceTile(tileController.currentTile, 85, 85, true);
        
-        gameState.phase = Phase.NewTurn;
+        state.phase = Phase.NewTurn;
     }
 
     private void BaseTileCreation()
@@ -297,7 +277,7 @@ public class GameController : MonoBehaviour
         VertexItterator++;
         placedTiles.PlaceTile(x, z, tile); 
         calculatePoints(false, false);
-        shader.VisualizeBoard(gameState.Tiles.Played, gameState.Meeples.All);
+        shader.VisualizeBoard(state.tiles.Played, state.meeples.All);
         tileCounter++;
         if(tileCounter != 1)
         {
@@ -314,10 +294,10 @@ public class GameController : MonoBehaviour
     //Metod för att plocka upp en ny tile
     public void PickupTile()
     {
-        if (gameState.phase == Phase.NewTurn)
+        if (state.phase == Phase.NewTurn)
         {
             stack.Pop();
-            if (!TileCanBePlaced(gameState.Tiles.Current))
+            if (!TileCanBePlaced(state.tiles.Current))
             {            
                 Destroy(tileController.currentTile);
                 PickupTile();
@@ -325,37 +305,37 @@ public class GameController : MonoBehaviour
             else
             {
                 ResetTileRotation();
-                gameState.phase = Phase.TileDrawn;
+                state.phase = Phase.TileDrawn;
             }
         }
     }
 
     public void ConfirmPlacement()
     {
-        if (gameState.phase == Phase.TileDrawn)
+        if (state.phase == Phase.TileDrawn)
         {
             if (placedTiles.TilePlacementIsValid(tileController.currentTile, iTileAimX, iTileAimZ))
             {
                 PlaceTile(tileController.currentTile, iTileAimX, iTileAimZ, false);
-                gameState.phase = Phase.TileDown;
+                state.phase = Phase.TileDown;
             }
         }
-        else if (gameState.phase == Phase.MeepleDrawn)
+        else if (state.phase == Phase.MeepleDrawn)
         {
-            if (gameState.Meeples.Current != null)
+            if (state.meeples.Current != null)
             {
                 if (meepleController.meepleGeography == Tile.Geography.City ||
                     meepleController.meepleGeography == Tile.Geography.Cloister ||
                     meepleController.meepleGeography == Tile.Geography.Road)
                 {
-                    meepleController.PlaceMeeple(gameState.Meeples.Current.gameObject,
+                    meepleController.PlaceMeeple(state.meeples.Current.gameObject,
                         meepleController.iMeepleAimX, meepleController.iMeepleAimZ,
-                        Direction, meepleController.meepleGeography, this);
+                        direction, meepleController.meepleGeography, this);
                 }
 
                 else
                 {
-                    meepleController.FreeMeeple(gameState.Meeples.Current, this);
+                    meepleController.FreeMeeple(state.meeples.Current, this);
                 }
             }
         }
@@ -363,7 +343,7 @@ public class GameController : MonoBehaviour
 
     public void EndTurn()
     {
-        if (gameState.phase == Phase.TileDown || gameState.phase == Phase.MeepleDown)
+        if (state.phase == Phase.TileDown || state.phase == Phase.MeepleDown)
         {
             calculatePoints(true, false);
             NewTileRotation = 0;
@@ -373,23 +353,23 @@ public class GameController : MonoBehaviour
             }
             else
             {
-                if (gameState.Players.All.Count > 1)
+                if (state.players.All.Count > 1)
                 {
-                    if (currentPlayer == gameState.Players.All[0])
-                        currentPlayer = gameState.Players.All[1];
+                    if (currentPlayer == state.players.All[0])
+                        currentPlayer = state.players.All[1];
                     else
-                        currentPlayer = gameState.Players.All[0];
+                        currentPlayer = state.players.All[0];
                 }
 
                 if (firstTurnCounter != 0) firstTurnCounter -= 1;
-                gameState.phase = Phase.NewTurn;
+                state.phase = Phase.NewTurn;
             }
         }
     }
 
     public void calculatePoints(bool RealCheck, bool GameEnd)
     {
-        foreach (var p in gameState.Players.All)
+        foreach (var p in state.players.All)
             foreach (Meeple meeple in p.meeples)
             {
                 var tileID = placedTiles.getPlacedTile(meeple.x, meeple.z).GetComponent<Tile>().id;
@@ -479,11 +459,11 @@ public class GameController : MonoBehaviour
     }
     public void RotateTile()
     {
-        if (gameState.phase == Phase.TileDrawn)
+        if (state.phase == Phase.TileDrawn)
         {
             NewTileRotation++;
             if (NewTileRotation > 3) NewTileRotation = 0;
-            gameState.Tiles.Current.Rotate();
+            state.tiles.Current.Rotate();
 
             if (pcRotate) tileController.currentTile.transform.Rotate(0.0f, 90.0f, 0.0f, Space.Self);
         }
@@ -492,18 +472,18 @@ public class GameController : MonoBehaviour
     public void ResetTileRotation()
     {
         NewTileRotation = 0;
-        gameState.Tiles.Current.rotation = 0;
+        state.tiles.Current.rotation = 0;
     }
 
     private void GameOver()
     {
         calculatePoints(true, true);
-        gameState.phase = Phase.GameOver;
+        state.phase = Phase.GameOver;
     }
 
     public void ChangeStateToNewTurn()
     {
-        gameState.phase = Phase.NewTurn;
+        state.phase = Phase.NewTurn;
     }
 
 }

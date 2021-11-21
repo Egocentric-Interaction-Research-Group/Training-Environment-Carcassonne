@@ -14,12 +14,6 @@ public class PlacedTiles : MonoBehaviour
     {
     }
 
-    public void InstansiatePlacedTilesArray()
-    {
-        tiles.Played = new Tile[170, 170];
-        tiles.PlayedId = new float[170, 170];
-    }
-
     public void PlaceTile(int x, int z, GameObject tile)
     {
         tiles.Played[x, z] = tile.GetComponent<Tile>();

@@ -10,11 +10,6 @@ using Random = System.Random;
 /// </summary>
 public class Stack : MonoBehaviour
 {
-
-    public Transform basePositionTransform;
-
-    public int[] randomIndexArray;
-
     /// <summary>
     ///     The array of tiles
     /// </summary>
@@ -48,7 +43,6 @@ public class Stack : MonoBehaviour
     /// <returns></returns>
     public Stack createStackScript()
     {
-        //setAll();
         return this;
     }
 
@@ -61,10 +55,6 @@ public class Stack : MonoBehaviour
         tileArray = new List<GameObject>(GameObject.FindGameObjectsWithTag("Tile"));
         // Filter out tiles not in set. TODO: This should reference the game rules and pick relevant sets.
         tileArray = tileArray.Where(t => t.GetComponent<Tile>().tileSet == Tile.TileSet.Base && t != firstTile).ToList();
-
-        // This probably indicates that I've coded something incorrectly.
-        tiles.Remaining.Clear(); // Remove all remaining tiles from old games so that they do not persist.
-
 
         foreach (var t in tileArray)
         {

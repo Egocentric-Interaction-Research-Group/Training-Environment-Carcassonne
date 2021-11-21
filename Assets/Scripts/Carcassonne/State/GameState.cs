@@ -2,35 +2,33 @@ using System;
 
 public class GameState
 {
-    public GameRules Rules;
-
-    /// <summary>
-    /// Describes what is happening currently in the game.
-    /// </summary>
+    public GameRules rules;
     public Phase phase;
-
-    public TileState Tiles;
-    public MeepleState Meeples;
-    public PlayerState Players;
+    public TileState tiles;
+    public MeepleState meeples;
+    public PlayerState players;
 
     public GameState()
     {
-        Rules = new GameRules();
+        rules = new GameRules();
+        tiles = new TileState();
+        meeples = new MeepleState();
+        players = new PlayerState();
     }
 
     public void ResetStates()
     {
         //TileState
-        Tiles.Current = null;
-        Tiles.Remaining.Clear();
-        Array.Clear(Tiles.Played, 0, Tiles.Played.Length);
-        Array.Clear(Tiles.PlayedId, 0, Tiles.Played.Length);
+        tiles.Current = null;
+        tiles.Remaining.Clear();
+        Array.Clear(tiles.Played, 0, tiles.Played.Length);
+        Array.Clear(tiles.PlayedId, 0, tiles.Played.Length);
 
         //MeepleState
-        Meeples.Current = null;
-        Meeples.All.Clear();
+        meeples.Current = null;
+        meeples.All.Clear();
 
         //PlayerState
-        Players.All.Clear();
+        players.All.Clear();
     }
 }

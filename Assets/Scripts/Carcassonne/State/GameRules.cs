@@ -1,3 +1,4 @@
+
 public struct GameRules
 {
     public bool Abbots;

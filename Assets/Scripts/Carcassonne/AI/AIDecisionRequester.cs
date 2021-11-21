@@ -6,9 +6,6 @@ using UnityEngine;
 public class AIDecisionRequester : MonoBehaviour
 {
     public CarcassonneAgent ai;
-    public float reward = 0; //Used for displaying the reward in the Unity editor.
-    private Phase startPhase;
-
 
     /// <summary>
     /// Acts on its own or repeatedly requests actions from the actual AI depending the game phase and state.
@@ -36,8 +33,5 @@ public class AIDecisionRequester : MonoBehaviour
                 ai.RequestDecision();
                 break;
         }
-
-        //ToDo: Add this info to some form of GUI-display instead to visualize many separate agents values concurrently.
-        reward = ai.GetCumulativeReward();
     }
 }
