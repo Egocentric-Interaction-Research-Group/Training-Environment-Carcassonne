@@ -1,7 +1,6 @@
 using Carcassonne;
 using System.Collections.Generic;
 using UnityEngine;
-using Carcassonne.State;
 using Unity.MLAgents;
 
 public class GameController : MonoBehaviour
@@ -86,7 +85,7 @@ public class GameController : MonoBehaviour
     {
         if (startGame)
         {
-        
+            gameState.ResetStates();
             NewGame();
             startGame = false;
         }

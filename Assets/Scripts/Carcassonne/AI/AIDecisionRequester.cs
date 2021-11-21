@@ -1,5 +1,4 @@
 using UnityEngine;
-using Carcassonne.State;
 
 /// <summary>
 /// The AIDecisionRequester sets up the allowed number of actions for the AI and and requests a decision when needed.

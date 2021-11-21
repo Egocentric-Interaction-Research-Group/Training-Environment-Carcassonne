@@ -1,11 +1,8 @@
-using Carcassonne.State;
-using UnityEngine;
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Sensors;
 using System;
 using Assets.Scripts.Carcassonne.AI;
-using UnityEngine.SceneManagement;
 
 /// <summary>
 /// The AI for the player. An AI user contains both a regular PlayerScript and this AI script to observe and take actions.
@@ -133,7 +130,7 @@ public class CarcassonneAgent : Agent
                 //Outside table area, reset values and add significant punishment.
                 ResetAttributes();
                 AddReward(-1f);
-                Debug.Log("AI got -1 reward for placing tile incorrectly");
+                //Debug.Log("AI got -1 reward for placing tile incorrectly");
             }
             else
             {
@@ -149,7 +146,7 @@ public class CarcassonneAgent : Agent
                 if (Phase == Phase.TileDown) //If the placement was successful, the phase changes to TileDown.
                 {                
                     AddReward(1f);
-                    Debug.Log("AI got 1 reward for placing tile correctly");
+                    //Debug.Log("AI got 1 reward for placing tile correctly");
                 }
             }      
         }
@@ -235,7 +232,7 @@ public class CarcassonneAgent : Agent
         //This occurs every X steps (Max Steps). It only serves to reset tile position if AI is stuck, and for AI to process current learning
         ResetAttributes();
         wrapper.Reset();
-        Debug.Log("New episode");
+        //Debug.Log("New episode");
     }
 
 

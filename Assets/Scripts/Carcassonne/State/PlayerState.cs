@@ -1,19 +1,10 @@
 using System.Collections.Generic;
-using UnityEngine;
-
-namespace Carcassonne.State
+using Carcassonne;
+public class PlayerState
 {
-    [CreateAssetMenu(fileName = "PlayerState", menuName = "ScriptableObjects/PlayerState")]
-    public class PlayerState : ScriptableObject
-    {
-        public List<Player> All = new List<Player>();
-        
-        // Derived Properties
-        public List<Meeple> Meeples => new List<Meeple>();
-        
-        private void OnEnable()
-        {
-            All.Clear();
-        }
-    }
+    public List<Player> All = new List<Player>();
+
+    // Derived Properties
+    public List<Meeple> Meeples => new List<Meeple>();
+
 }

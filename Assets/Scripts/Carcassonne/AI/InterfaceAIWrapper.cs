@@ -1,32 +1,29 @@
-using Carcassonne.State;
 
-namespace Assets.Scripts.Carcassonne.AI
+public interface InterfaceAIWrapper
 {
-    public interface InterfaceAIWrapper
-    {
-        //Further methods may be needed to handle the observation of placed tiles.
-        public Phase GetGamePhase();
+    //Further methods may be needed to handle the observation of placed tiles.
+    public Phase GetGamePhase();
 
-        public int GetMeeplesLeft();
+    public int GetMeeplesLeft();
 
-        public void PickUpTile();
+    public void PickUpTile();
 
-        public int GetCurrentTileId();
+    public int GetCurrentTileId();
 
-        public int GetBoardSize();
+    public int GetBoardSize();
 
-        public void EndTurn();
+    public void EndTurn();
 
-        public void DrawMeeple();
+    public void DrawMeeple();
 
-        public void RotateTile();
+    public void RotateTile();
 
-        public void PlaceTile(int x, int z);
+    public void PlaceTile(int x, int z);
 
-        public void PlaceMeeple(float x, float z);
+    public void PlaceMeeple(float x, float z);
 
-        public void FreeCurrentMeeple();
+    public void FreeCurrentMeeple();
 
-        public bool IsAITurn();
-    }
+    public bool IsAITurn();
 }
+
