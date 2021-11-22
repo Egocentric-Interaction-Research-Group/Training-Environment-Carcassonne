@@ -1,11 +1,12 @@
 using Carcassonne.State;
+using Carcassonne;
 using UnityEngine;
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Sensors;
 using System;
 using Assets.Scripts.Carcassonne.AI;
-using UnityEngine.SceneManagement;
+using static Carcassonne.Point;
 
 /// <summary>
 /// The AI for the player. An AI user contains both a regular PlayerScript and this AI script to observe and take actions.
@@ -13,20 +14,24 @@ using UnityEngine.SceneManagement;
 
 public class CarcassonneAgent : Agent
 {
-    //Observations from real game (use getter properties, don't call these directly)
-    public int meeplesLeft;
-    public Phase phase;
-    public int id;
-    public TileState tiles;
+    //Static observations for normalization
+    private float meeplesMax;
+    private float boardMaxSize;
+    private float tileIdMax;
+
+    //Dynamic observations from real game (use getter properties if they exist, don't call these directly)
+    //private int meeplesLeft;
+    //private Phase phase;
+    //private int id;
+    private Direction meepleDirection = Direction.SELF;
 
     //AI Specific
     public AIWrapper wrapper;
     private const int maxBranchSize = 6;
     public int x = 85, z = 85, y = 1, rot = 0;
-    public float meepleX, meepleZ;
 
     //Monitoring
-    private string placement = "";
+    public float realX, realY, realZ, realRot;
 
     public Phase Phase
     {
@@ -44,14 +49,6 @@ public class CarcassonneAgent : Agent
         }
     }
 
-    public int BoardGridSize
-    {
-        get
-        {
-            return wrapper.GetBoardSize();
-        }
-    }
-
     public int Id
     {
         get
@@ -66,7 +63,11 @@ public class CarcassonneAgent : Agent
     public override void Initialize()
     {
         base.Initialize();
-        wrapper = new AIWrapper(GetComponent<Player>());
+        wrapper = new AIWrapper();
+        wrapper.player = gameObject.GetComponent<Player>();
+        boardMaxSize = wrapper.GetMaxBoardSize();
+        meeplesMax = wrapper.GetMaxMeeples();
+        tileIdMax = wrapper.GetMaxTileId();
     }
 
 
@@ -98,7 +99,7 @@ public class CarcassonneAgent : Agent
     }
 
     private void TileDrawnAction(ActionBuffers actionBuffers)
-    {        
+    {
         AddReward(-0.001f); //Each call to this method comes with a very minor penalty to promote performing quick actions.
         if (actionBuffers.DiscreteActions[0] == 0f)
         {
@@ -123,90 +124,128 @@ public class CarcassonneAgent : Agent
             if (rot == 4)
             {
                 rot = 0;
+
+                //Punishment for rotating more than needed, i.e. returning back to default rotation state.
+                //AddReward(-0.01f); 
             }
         }
-        else if (actionBuffers.DiscreteActions[0] == 5f)
+        else if (actionBuffers.DiscreteActions[0] == 5f) //Place tile
         {
-            //After choice checks.
-            if (x < 0 || x >= BoardGridSize || z < 0 || z >= BoardGridSize)
+            //Rotates the tile the amount of times AI has chosen (0-3).
+            for (int i = 0; i <= rot; i++)
             {
-                //Outside table area, reset values and add significant punishment.
-                ResetAttributes();
-                AddReward(-1f);
-                Debug.Log("AI got -1 reward for placing tile incorrectly");
+                wrapper.RotateTile();
             }
-            else
+
+            //Values are loaded into GameController that are used in the ConfirmPlacementRPC call.
+            wrapper.PlaceTile(x, z);
+
+            if (Phase == Phase.TileDown) //If the placement was successful, the phase changes to TileDown.
             {
-                //Rotates the tile the amount of times AI has chosen (0-3).
-                for (int i = 0; i < rot; i++)
-                {
-                    wrapper.RotateTile();
-                }
+                AddReward(0.1f);
 
-                //Values are loaded into GameController that are used in the ConfirmPlacementRPC call.
-                wrapper.PlaceTile(x, z);
-
-                if (Phase == Phase.TileDown) //If the placement was successful, the phase changes to TileDown.
-                {                
-                    AddReward(1f);
-                    Debug.Log("AI got 1 reward for placing tile correctly");
-                }
-            }      
+                //Line below is only used for debugging. Ignore it.
+                //Debug.LogError("Tile placed: " + wrapper.GetCurrentTile().transform.localPosition.x + ", Y: " + wrapper.GetCurrentTile().transform.localPosition.y + ", Z: " + wrapper.GetCurrentTile().transform.localPosition.z + ", Rotation: " + wrapper.GetCurrentTile().transform.rotation.eulerAngles.y);
+            }
         }
+
+
+        //After choice checks.
+        if (x < 0 || x >= boardMaxSize || z < 0 || z >= boardMaxSize)
+        {
+            //Outside table area, reset values and add significant punishment.
+            ResetAttributes();
+            AddReward(-0.1f);
+        }
+
+        //The rows below are only used to monitor the ai (shown on the AI gameobject in the scene while it plays). Ignore them.
+
+        /*realX = wrapper.GetCurrentTile().transform.localPosition.x;
+        realY = wrapper.GetCurrentTile().transform.localPosition.y;
+        realZ = wrapper.GetCurrentTile().transform.localPosition.z;
+        realRot = wrapper.GetCurrentTile().transform.rotation.eulerAngles.y;*/
     }
 
     /// <summary>
     /// Places the meeple on one of the 5 places available on the tile (Uses the tile to find the positions).
     /// </summary>
     /// <param name="actionBuffers"></param>
+    //TODO: Fixa bättre lösning för meeple location. Enum? Lagt till meepleDirection högst upp.
     private void MeepleDrawnAction(ActionBuffers actionBuffers)
     {
-        AddReward(-0.1f); //Each call (each change of position) gets a negative reward to avoid getting stuck in this stage.
+        AddReward(-0.01f); //Each call gets a negative reward to avoid getting stuck just moving the meeple around in this stage.
         if (actionBuffers.DiscreteActions[0] == 0f)
         {
-            placement = "North";
-            meepleX = 0.000f;
-            meepleZ = 0.011f;
+            meepleDirection = Direction.NORTH;
+            //meepleX = 0.000f;
+            //meepleZ = 0.011f;
         }
         else if (actionBuffers.DiscreteActions[0] == 1f)
         {
-            placement = "South";
-            meepleX = 0.000f;
-            meepleZ = -0.011f;
+            meepleDirection = Direction.SOUTH;
+            //meepleX = 0.000f;
+            //meepleZ = -0.011f;
         }
         else if (actionBuffers.DiscreteActions[0] == 2f)
         {
-            placement = "West";
-            meepleX = -0.011f;
-            meepleZ = 0.000f;
+            meepleDirection = Direction.WEST;
+            //meepleX = -0.011f;
+            //meepleZ = 0.000f;
         }
         else if (actionBuffers.DiscreteActions[0] == 3f)
         {
-            placement = "East";
-            meepleX = 0.011f;
-            meepleZ = 0.000f;
+            meepleDirection = Direction.EAST;
+            //meepleX = 0.011f;
+            //meepleZ = 0.000f;
         }
         else if (actionBuffers.DiscreteActions[0] == 4f)
         {
-            placement = "Center";
-            meepleX = 0.000f;
-            meepleZ = 0.000f;
+            meepleDirection = Direction.CENTER;
+            //meepleX = 0.000f;
+            //meepleZ = 0.000f;
         }
         else if (actionBuffers.DiscreteActions[0] == 5f)
         {
-            if (!String.IsNullOrEmpty(placement)) //Checks so that a choice has been made since meeple was drawn.
+            if (meepleDirection != Direction.SELF) //Checks so that a choice has been made since meeple was drawn.
             {
+                float meepleX = 0;
+                float meepleZ = 0;
+                if (meepleDirection == Direction.NORTH || meepleDirection == Direction.SOUTH || meepleDirection == Direction.CENTER)
+                {
+                    meepleX = 0.000f;
+                }
+                else if (meepleDirection == Direction.EAST)
+                {
+                    meepleX = 0.011f;
+                }
+                else if (meepleDirection == Direction.WEST)
+                {
+                    meepleX = -0.011f;
+                }
+
+                if (meepleDirection == Direction.WEST || meepleDirection == Direction.EAST || meepleDirection == Direction.CENTER)
+                {
+                    meepleZ = 0.000f;
+                }
+                else if (meepleDirection == Direction.NORTH)
+                {
+                    meepleZ = 0.011f;
+                }
+                else if (meepleDirection == Direction.SOUTH)
+                {
+                    meepleZ = -0.011f;
+                }
                 wrapper.PlaceMeeple(meepleX, meepleZ);  //Either confirms and places the meeple if possible, or returns meeple and goes back to phase TileDown.
             }
 
 
             if (Phase == Phase.MeepleDown) //If meeple is placed.
             {
-                AddReward(1f); //Rewards successfully placing a meeple
+                AddReward(0.1f); //Rewards successfully placing a meeple
             }
             else if (Phase == Phase.TileDown) //If meeple gets returned.
             {
-                AddReward(-1f); //Punishes returning a meeple & going back a phase (note: no punishment for never drawing a meeple).
+                AddReward(-0.1f); //Punishes returning a meeple & going back a phase (note: no punishment for never drawing a meeple).
             }
             else //Workaround for a bug where you can draw an unconfirmable meeple and never be able to change phase.
             {
@@ -234,36 +273,57 @@ public class CarcassonneAgent : Agent
     {
         //This occurs every X steps (Max Steps). It only serves to reset tile position if AI is stuck, and for AI to process current learning
         ResetAttributes();
-        wrapper.Reset();
-        Debug.Log("New episode");
     }
 
 
     /// <summary>
-    /// Collect all non-Raycast observations
+    /// Collect all observations, normalized.
     /// </summary>
     /// <param name="sensor">The vector sensor to add observations to</param>
     public override void CollectObservations(VectorSensor sensor)
     {
-        //ToDo: All these should be Normalized for optimal learning. Read up on Normalization
+        //sensor.AddObservation(MeeplesLeft / meeplesMax); Dos not work as meeples don't seem to be implemented at all at the moment
+        sensor.AddObservation(Id / tileIdMax);
+        sensor.AddObservation(rot / 3f);
+        sensor.AddObservation(x / boardMaxSize);
+        sensor.AddObservation(z / boardMaxSize);
+        sensor.AddObservation((int)meepleDirection);
+
+        //One-Hot observations of enums (can be done with less code, but this is more readable)
+        int MAX_PHASES = Enum.GetValues(typeof(Phase)).Length;
+        int MAX_DIRECTIONS = Enum.GetValues(typeof(Direction)).Length;
+
+        sensor.AddOneHotObservation((int)Phase.TileDrawn, MAX_PHASES);
+        sensor.AddOneHotObservation((int)Phase.TileDown, MAX_PHASES);
+        sensor.AddOneHotObservation((int)Phase.MeepleDrawn, MAX_PHASES);
+
+        sensor.AddOneHotObservation((int)Direction.NORTH, MAX_DIRECTIONS);
+        sensor.AddOneHotObservation((int)Direction.EAST, MAX_DIRECTIONS);
+        sensor.AddOneHotObservation((int)Direction.SOUTH, MAX_DIRECTIONS);
+        sensor.AddOneHotObservation((int)Direction.WEST, MAX_DIRECTIONS);
+        sensor.AddOneHotObservation((int)Direction.CENTER, MAX_DIRECTIONS);
+        sensor.AddOneHotObservation((int)Direction.SELF, MAX_DIRECTIONS);
 
 
-        sensor.AddObservation((int)Phase); //This one might need to be changed, read up on One-Hot observation
-        sensor.AddObservation(MeeplesLeft);
-        sensor.AddObservation(Id);
-        sensor.AddObservation(rot);
-        sensor.AddObservation(x);
-        sensor.AddObservation(z);
-        sensor.AddObservation(meepleX);
-        sensor.AddObservation(meepleZ);
-        
-        for(int i = 0; i < tiles.PlayedId.GetLength(0); i++)
+
+
+        //Code below handles the input of the entire board, which is really ineffective in its current implemenetation.
+
+        //The most reasonable approach seems to have a matrix of floats, each float representing one tile. The matrix should be the size
+        //of the entire board, padded with 0 wherever a tile has not been placed. Read the entire board or just the placed tiles.
+
+        /*foreach (TileScript tile in gameState.Tiles.Played)
         {
-            for(int j = 0; j < tiles.PlayedId.GetLength(1); j++)
+            if (tile != null)
             {
-                sensor.AddObservation(tiles.PlayedId[i, j]);
+                sensor.AddObservation(tile.id);
+                sensor.AddObservation(tile.rotation);
+                sensor.AddObservation(tile.transform.position.x);
+                sensor.AddObservation(tile.transform.position.z);
             }
-        } 
+        }*/
+
+        //Possibly relevant to add each player's scores for multiplayer as well, so AI knows if it is losing or not.
     }
 
     /// <summary>
@@ -305,6 +365,6 @@ public class CarcassonneAgent : Agent
         z = 85;
         y = 1;
         rot = 0;
-        placement = "";      
+        meepleDirection = Direction.CENTER;
     }
 }

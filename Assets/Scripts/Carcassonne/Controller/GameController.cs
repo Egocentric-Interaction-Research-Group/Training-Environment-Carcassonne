@@ -69,7 +69,8 @@ public class GameController : MonoBehaviour
     {
         for (int i = 0; i < 1; i++)
         {
-            Player player = Instantiate(ai).GetComponent<Player>();
+            Instantiate(ai);
+            Player player = ai.GetComponent<Player>();
             player.id = 0;
             player.meepleState = gameState.Meeples;
             player.Setup();
