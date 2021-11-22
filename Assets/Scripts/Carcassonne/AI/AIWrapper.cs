@@ -96,5 +96,9 @@ namespace Assets.Scripts.Carcassonne.AI
             return 33; //I have no clue how to get this in a more error safe manner at the moment.
         }
 
+        public float[,] GetPlacedTiles()
+        {
+            return gs.Tiles.PlayedId;
+        }
     }
 }

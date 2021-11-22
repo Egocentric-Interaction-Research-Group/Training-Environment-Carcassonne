@@ -311,17 +311,11 @@ public class CarcassonneAgent : Agent
 
         //The most reasonable approach seems to have a matrix of floats, each float representing one tile. The matrix should be the size
         //of the entire board, padded with 0 wherever a tile has not been placed. Read the entire board or just the placed tiles.
-
-        /*foreach (TileScript tile in gameState.Tiles.Played)
+        float[,] playedTiles = wrapper.GetPlacedTiles();
+        foreach (float f in playedTiles)
         {
-            if (tile != null)
-            {
-                sensor.AddObservation(tile.id);
-                sensor.AddObservation(tile.rotation);
-                sensor.AddObservation(tile.transform.position.x);
-                sensor.AddObservation(tile.transform.position.z);
-            }
-        }*/
+            sensor.AddObservation(f);
+        }
 
         //Possibly relevant to add each player's scores for multiplayer as well, so AI knows if it is losing or not.
     }
