@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.43668088, g: 0.48427403, b: 0.5645295, a: 1}
+  m_IndirectSpecularColor: {r: 0.4366756, g: 0.48427194, b: 0.5645252, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1030,7 +1030,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   BasePosition: {x: 0, y: 0, z: 0}
-  tiles: {fileID: 11400000, guid: fb9ca0a9355cf2a4dbbaa81a4ea1b06f, type: 2}
 --- !u!1 &24926301
 GameObject:
   m_ObjectHideFlags: 0
@@ -1107,14 +1106,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 24926301}
-  m_LocalRotation: {x: 0.49781358, y: -0.5021769, z: 0.49781358, w: 0.5021769}
-  m_LocalPosition: {x: 0.5, y: 1.6, z: 1.068464}
+  m_LocalRotation: {x: 0.5, y: -0.5, z: 0.5, w: 0.5}
+  m_LocalPosition: {x: 0.12, y: 0.41, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1119343729}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 89.5, y: -90, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: -90, z: 0}
 --- !u!4 &27694649 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 284563910072841226, guid: 61414777fd38ad942b5078ea6df47c65, type: 3}
@@ -1392,11 +1391,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30232011132780d4eb8cb8256d4a18a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  basePositionTransform: {fileID: 0}
-  randomIndexArray: 
   tileArray: []
   firstTile: {fileID: 7772352709677269000, guid: 87149045a2f36004a8ad321cba62ceb3, type: 3}
-  tiles: {fileID: 11400000, guid: fb9ca0a9355cf2a4dbbaa81a4ea1b06f, type: 2}
 --- !u!4 &38048766
 Transform:
   m_ObjectHideFlags: 0
@@ -2464,8 +2460,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameController: {fileID: 1887384526}
   MeeplesInCity: []
-  meeples: {fileID: 11400000, guid: 69dccb832fe837d4b85c0018d3bd7127, type: 2}
-  players: {fileID: 11400000, guid: 9b5ed8d82361dd54a92938b26a7467b6, type: 2}
   prefab: {fileID: 4676006369845777705, guid: 5b8940dd6691dcc4db0ac1f49fe0e531, type: 3}
   meepleGeography: 0
 --- !u!1001 &78074930
@@ -3216,7 +3210,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 119399408}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -10, y: 0, z: 10}
+  m_LocalPosition: {x: -2, y: 0, z: 2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 438610758}
@@ -3972,8 +3966,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameController: {fileID: 511713852}
   MeeplesInCity: []
-  meeples: {fileID: 11400000, guid: 69dccb832fe837d4b85c0018d3bd7127, type: 2}
-  players: {fileID: 11400000, guid: 9b5ed8d82361dd54a92938b26a7467b6, type: 2}
   prefab: {fileID: 4676006369845777705, guid: 5b8940dd6691dcc4db0ac1f49fe0e531, type: 3}
   meepleGeography: 0
 --- !u!1001 &150637364
@@ -4852,7 +4844,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentTileEulersOnManip: {x: 0, y: 0, z: 0}
   drawTileEffect: {fileID: 0}
-  tiles: {fileID: 11400000, guid: fb9ca0a9355cf2a4dbbaa81a4ea1b06f, type: 2}
   drawTile: {fileID: 0}
   tileSpawnPosition: {fileID: 0}
   fTileAimX: 0
@@ -5273,7 +5264,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   BasePosition: {x: 0, y: 0, z: 0}
-  tiles: {fileID: 11400000, guid: fb9ca0a9355cf2a4dbbaa81a4ea1b06f, type: 2}
 --- !u!1001 &208147557
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5634,7 +5624,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentTileEulersOnManip: {x: 0, y: 0, z: 0}
   drawTileEffect: {fileID: 0}
-  tiles: {fileID: 11400000, guid: fb9ca0a9355cf2a4dbbaa81a4ea1b06f, type: 2}
   drawTile: {fileID: 0}
   tileSpawnPosition: {fileID: 0}
   fTileAimX: 0
@@ -6427,11 +6416,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30232011132780d4eb8cb8256d4a18a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  basePositionTransform: {fileID: 0}
-  randomIndexArray: 
   tileArray: []
   firstTile: {fileID: 7772352709677269000, guid: 87149045a2f36004a8ad321cba62ceb3, type: 3}
-  tiles: {fileID: 11400000, guid: fb9ca0a9355cf2a4dbbaa81a4ea1b06f, type: 2}
 --- !u!4 &255102663
 Transform:
   m_ObjectHideFlags: 0
@@ -7917,7 +7903,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   BasePosition: {x: 0, y: 0, z: 0}
-  tiles: {fileID: 11400000, guid: fb9ca0a9355cf2a4dbbaa81a4ea1b06f, type: 2}
 --- !u!4 &317786227 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3250234864680344057, guid: 3add9b0caf60907478286baed947159a, type: 3}
@@ -9682,7 +9667,6 @@ MonoBehaviour:
   cityIsFinished: 0
   iTileAimX: 0
   iTileAimZ: 0
-  gameState: {fileID: 11400000, guid: 7096259ae1cef27498c0791887b759c8, type: 2}
   ai: {fileID: 2598782832212889485, guid: c9686d6fa98efc2468f526b4b37003b2, type: 3}
   visualizationBoard: {fileID: 1436356002}
   placedTiles: {fileID: 22310646}
@@ -9796,7 +9780,6 @@ MonoBehaviour:
   cityIsFinished: 0
   iTileAimX: 0
   iTileAimZ: 0
-  gameState: {fileID: 11400000, guid: 7096259ae1cef27498c0791887b759c8, type: 2}
   ai: {fileID: 2598782832212889485, guid: c9686d6fa98efc2468f526b4b37003b2, type: 3}
   visualizationBoard: {fileID: 813747379}
   placedTiles: {fileID: 317274650}
@@ -10813,7 +10796,6 @@ MonoBehaviour:
   cityIsFinished: 0
   iTileAimX: 0
   iTileAimZ: 0
-  gameState: {fileID: 11400000, guid: 7096259ae1cef27498c0791887b759c8, type: 2}
   ai: {fileID: 2598782832212889485, guid: c9686d6fa98efc2468f526b4b37003b2, type: 3}
   visualizationBoard: {fileID: 1118284775}
   placedTiles: {fileID: 988314319}
@@ -11170,7 +11152,6 @@ MonoBehaviour:
   cityIsFinished: 0
   iTileAimX: 0
   iTileAimZ: 0
-  gameState: {fileID: 11400000, guid: 7096259ae1cef27498c0791887b759c8, type: 2}
   ai: {fileID: 2598782832212889485, guid: c9686d6fa98efc2468f526b4b37003b2, type: 3}
   visualizationBoard: {fileID: 1809643416}
   placedTiles: {fileID: 1882798762}
@@ -11986,8 +11967,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameController: {fileID: 1929307145}
   MeeplesInCity: []
-  meeples: {fileID: 11400000, guid: 69dccb832fe837d4b85c0018d3bd7127, type: 2}
-  players: {fileID: 11400000, guid: 9b5ed8d82361dd54a92938b26a7467b6, type: 2}
   prefab: {fileID: 4676006369845777705, guid: 5b8940dd6691dcc4db0ac1f49fe0e531, type: 3}
   meepleGeography: 0
 --- !u!4 &471578469 stripped
@@ -12888,7 +12867,6 @@ MonoBehaviour:
   cityIsFinished: 0
   iTileAimX: 0
   iTileAimZ: 0
-  gameState: {fileID: 11400000, guid: 7096259ae1cef27498c0791887b759c8, type: 2}
   ai: {fileID: 2598782832212889485, guid: c9686d6fa98efc2468f526b4b37003b2, type: 3}
   visualizationBoard: {fileID: 500095463}
   placedTiles: {fileID: 207842980}
@@ -13502,11 +13480,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30232011132780d4eb8cb8256d4a18a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  basePositionTransform: {fileID: 0}
-  randomIndexArray: 
   tileArray: []
   firstTile: {fileID: 7772352709677269000, guid: 87149045a2f36004a8ad321cba62ceb3, type: 3}
-  tiles: {fileID: 11400000, guid: fb9ca0a9355cf2a4dbbaa81a4ea1b06f, type: 2}
 --- !u!4 &538972627
 Transform:
   m_ObjectHideFlags: 0
@@ -13737,8 +13712,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameController: {fileID: 384102161}
   MeeplesInCity: []
-  meeples: {fileID: 11400000, guid: 69dccb832fe837d4b85c0018d3bd7127, type: 2}
-  players: {fileID: 11400000, guid: 9b5ed8d82361dd54a92938b26a7467b6, type: 2}
   prefab: {fileID: 4676006369845777705, guid: 5b8940dd6691dcc4db0ac1f49fe0e531, type: 3}
   meepleGeography: 0
 --- !u!1001 &543841032
@@ -14827,11 +14800,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30232011132780d4eb8cb8256d4a18a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  basePositionTransform: {fileID: 0}
-  randomIndexArray: 
   tileArray: []
   firstTile: {fileID: 7772352709677269000, guid: 87149045a2f36004a8ad321cba62ceb3, type: 3}
-  tiles: {fileID: 11400000, guid: fb9ca0a9355cf2a4dbbaa81a4ea1b06f, type: 2}
 --- !u!4 &571738609
 Transform:
   m_ObjectHideFlags: 0
@@ -15180,7 +15150,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 586032105}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -10, y: 0, z: -10}
+  m_LocalPosition: {x: -2, y: 0, z: -2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1929307146}
@@ -15744,7 +15714,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   BasePosition: {x: 0, y: 0, z: 0}
-  tiles: {fileID: 11400000, guid: fb9ca0a9355cf2a4dbbaa81a4ea1b06f, type: 2}
 --- !u!4 &611028682 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6895221059562646452, guid: 736826e7270d1fa43b545d3e2d76fc9b, type: 3}
@@ -16458,7 +16427,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   BasePosition: {x: 0, y: 0, z: 0}
-  tiles: {fileID: 11400000, guid: fb9ca0a9355cf2a4dbbaa81a4ea1b06f, type: 2}
 --- !u!4 &650077295
 Transform:
   m_ObjectHideFlags: 0
@@ -17018,7 +16986,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   BasePosition: {x: 0, y: 0, z: 0}
-  tiles: {fileID: 11400000, guid: fb9ca0a9355cf2a4dbbaa81a4ea1b06f, type: 2}
 --- !u!1001 &676929653
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -19051,7 +19018,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentTileEulersOnManip: {x: 0, y: 0, z: 0}
   drawTileEffect: {fileID: 0}
-  tiles: {fileID: 11400000, guid: fb9ca0a9355cf2a4dbbaa81a4ea1b06f, type: 2}
   drawTile: {fileID: 0}
   tileSpawnPosition: {fileID: 0}
   fTileAimX: 0
@@ -20141,7 +20107,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 776475556}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 10, y: 0, z: 10}
+  m_LocalPosition: {x: 2, y: 0, z: 2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 380910467}
@@ -20184,7 +20150,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 777707075}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 10, y: 0, z: -10}
+  m_LocalPosition: {x: 2, y: 0, z: -2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 384102162}
@@ -20800,11 +20766,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30232011132780d4eb8cb8256d4a18a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  basePositionTransform: {fileID: 0}
-  randomIndexArray: 
   tileArray: []
   firstTile: {fileID: 7772352709677269000, guid: 87149045a2f36004a8ad321cba62ceb3, type: 3}
-  tiles: {fileID: 11400000, guid: fb9ca0a9355cf2a4dbbaa81a4ea1b06f, type: 2}
 --- !u!4 &810220036
 Transform:
   m_ObjectHideFlags: 0
@@ -21475,7 +21438,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentTileEulersOnManip: {x: 0, y: 0, z: 0}
   drawTileEffect: {fileID: 0}
-  tiles: {fileID: 11400000, guid: fb9ca0a9355cf2a4dbbaa81a4ea1b06f, type: 2}
   drawTile: {fileID: 0}
   tileSpawnPosition: {fileID: 0}
   fTileAimX: 0
@@ -21923,7 +21885,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 850720648}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 10}
+  m_LocalPosition: {x: 0, y: 0, z: 2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1887384527}
@@ -22568,8 +22530,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameController: {fileID: 430467333}
   MeeplesInCity: []
-  meeples: {fileID: 11400000, guid: 69dccb832fe837d4b85c0018d3bd7127, type: 2}
-  players: {fileID: 11400000, guid: 9b5ed8d82361dd54a92938b26a7467b6, type: 2}
   prefab: {fileID: 4676006369845777705, guid: 5b8940dd6691dcc4db0ac1f49fe0e531, type: 3}
   meepleGeography: 0
 --- !u!1001 &875356927
@@ -22746,7 +22706,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentTileEulersOnManip: {x: 0, y: 0, z: 0}
   drawTileEffect: {fileID: 0}
-  tiles: {fileID: 11400000, guid: fb9ca0a9355cf2a4dbbaa81a4ea1b06f, type: 2}
   drawTile: {fileID: 0}
   tileSpawnPosition: {fileID: 0}
   fTileAimX: 0
@@ -23949,7 +23908,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 927065446}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -10, y: 0, z: 0}
+  m_LocalPosition: {x: -2, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 511713853}
@@ -24380,8 +24339,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameController: {fileID: 2061966571}
   MeeplesInCity: []
-  meeples: {fileID: 11400000, guid: 69dccb832fe837d4b85c0018d3bd7127, type: 2}
-  players: {fileID: 11400000, guid: 9b5ed8d82361dd54a92938b26a7467b6, type: 2}
   prefab: {fileID: 4676006369845777705, guid: 5b8940dd6691dcc4db0ac1f49fe0e531, type: 3}
   meepleGeography: 0
 --- !u!4 &946969792 stripped
@@ -25758,7 +25715,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   BasePosition: {x: 0, y: 0, z: 0}
-  tiles: {fileID: 11400000, guid: fb9ca0a9355cf2a4dbbaa81a4ea1b06f, type: 2}
 --- !u!1001 &988326216
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -26046,11 +26002,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30232011132780d4eb8cb8256d4a18a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  basePositionTransform: {fileID: 0}
-  randomIndexArray: 
   tileArray: []
   firstTile: {fileID: 7772352709677269000, guid: 87149045a2f36004a8ad321cba62ceb3, type: 3}
-  tiles: {fileID: 11400000, guid: fb9ca0a9355cf2a4dbbaa81a4ea1b06f, type: 2}
 --- !u!4 &1001256948
 Transform:
   m_ObjectHideFlags: 0
@@ -27984,7 +27937,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   BasePosition: {x: 0, y: 0, z: 0}
-  tiles: {fileID: 11400000, guid: fb9ca0a9355cf2a4dbbaa81a4ea1b06f, type: 2}
 --- !u!1001 &1103563224
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -30859,7 +30811,6 @@ MonoBehaviour:
   cityIsFinished: 0
   iTileAimX: 0
   iTileAimZ: 0
-  gameState: {fileID: 11400000, guid: 7096259ae1cef27498c0791887b759c8, type: 2}
   ai: {fileID: 2598782832212889485, guid: c9686d6fa98efc2468f526b4b37003b2, type: 3}
   visualizationBoard: {fileID: 904249735}
   placedTiles: {fileID: 650077294}
@@ -34129,11 +34080,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30232011132780d4eb8cb8256d4a18a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  basePositionTransform: {fileID: 0}
-  randomIndexArray: 
   tileArray: []
   firstTile: {fileID: 7772352709677269000, guid: 87149045a2f36004a8ad321cba62ceb3, type: 3}
-  tiles: {fileID: 11400000, guid: fb9ca0a9355cf2a4dbbaa81a4ea1b06f, type: 2}
 --- !u!4 &1375830308
 Transform:
   m_ObjectHideFlags: 0
@@ -35147,7 +35095,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentTileEulersOnManip: {x: 0, y: 0, z: 0}
   drawTileEffect: {fileID: 0}
-  tiles: {fileID: 11400000, guid: fb9ca0a9355cf2a4dbbaa81a4ea1b06f, type: 2}
   drawTile: {fileID: 0}
   tileSpawnPosition: {fileID: 0}
   fTileAimX: 0
@@ -35536,7 +35483,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentTileEulersOnManip: {x: 0, y: 0, z: 0}
   drawTileEffect: {fileID: 0}
-  tiles: {fileID: 11400000, guid: fb9ca0a9355cf2a4dbbaa81a4ea1b06f, type: 2}
   drawTile: {fileID: 0}
   tileSpawnPosition: {fileID: 0}
   fTileAimX: 0
@@ -35736,7 +35682,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1462370126}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 10, y: 0, z: 0}
+  m_LocalPosition: {x: 2, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2061966572}
@@ -36761,11 +36707,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30232011132780d4eb8cb8256d4a18a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  basePositionTransform: {fileID: 0}
-  randomIndexArray: 
   tileArray: []
   firstTile: {fileID: 7772352709677269000, guid: 87149045a2f36004a8ad321cba62ceb3, type: 3}
-  tiles: {fileID: 11400000, guid: fb9ca0a9355cf2a4dbbaa81a4ea1b06f, type: 2}
 --- !u!4 &1493447990
 Transform:
   m_ObjectHideFlags: 0
@@ -37920,11 +37863,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30232011132780d4eb8cb8256d4a18a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  basePositionTransform: {fileID: 0}
-  randomIndexArray: 
   tileArray: []
   firstTile: {fileID: 7772352709677269000, guid: 87149045a2f36004a8ad321cba62ceb3, type: 3}
-  tiles: {fileID: 11400000, guid: fb9ca0a9355cf2a4dbbaa81a4ea1b06f, type: 2}
 --- !u!4 &1529847337
 Transform:
   m_ObjectHideFlags: 0
@@ -39190,8 +39130,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameController: {fileID: 438610757}
   MeeplesInCity: []
-  meeples: {fileID: 11400000, guid: 69dccb832fe837d4b85c0018d3bd7127, type: 2}
-  players: {fileID: 11400000, guid: 9b5ed8d82361dd54a92938b26a7467b6, type: 2}
   prefab: {fileID: 4676006369845777705, guid: 5b8940dd6691dcc4db0ac1f49fe0e531, type: 3}
   meepleGeography: 0
 --- !u!1001 &1602159291
@@ -44055,8 +43993,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameController: {fileID: 1254855957}
   MeeplesInCity: []
-  meeples: {fileID: 11400000, guid: 69dccb832fe837d4b85c0018d3bd7127, type: 2}
-  players: {fileID: 11400000, guid: 9b5ed8d82361dd54a92938b26a7467b6, type: 2}
   prefab: {fileID: 4676006369845777705, guid: 5b8940dd6691dcc4db0ac1f49fe0e531, type: 3}
   meepleGeography: 0
 --- !u!4 &1817786658
@@ -45439,7 +45375,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   BasePosition: {x: 0, y: 0, z: 0}
-  tiles: {fileID: 11400000, guid: fb9ca0a9355cf2a4dbbaa81a4ea1b06f, type: 2}
 --- !u!4 &1884180368 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8478230469267009604, guid: 8c627f28a525abd4ca60c33c9277c66c, type: 3}
@@ -45485,7 +45420,6 @@ MonoBehaviour:
   cityIsFinished: 0
   iTileAimX: 0
   iTileAimZ: 0
-  gameState: {fileID: 11400000, guid: 7096259ae1cef27498c0791887b759c8, type: 2}
   ai: {fileID: 2598782832212889485, guid: c9686d6fa98efc2468f526b4b37003b2, type: 3}
   visualizationBoard: {fileID: 239405346}
   placedTiles: {fileID: 610047953}
@@ -45914,7 +45848,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentTileEulersOnManip: {x: 0, y: 0, z: 0}
   drawTileEffect: {fileID: 0}
-  tiles: {fileID: 11400000, guid: fb9ca0a9355cf2a4dbbaa81a4ea1b06f, type: 2}
   drawTile: {fileID: 0}
   tileSpawnPosition: {fileID: 0}
   fTileAimX: 0
@@ -46683,7 +46616,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentTileEulersOnManip: {x: 0, y: 0, z: 0}
   drawTileEffect: {fileID: 0}
-  tiles: {fileID: 11400000, guid: fb9ca0a9355cf2a4dbbaa81a4ea1b06f, type: 2}
   drawTile: {fileID: 0}
   tileSpawnPosition: {fileID: 0}
   fTileAimX: 0
@@ -46904,7 +46836,6 @@ MonoBehaviour:
   cityIsFinished: 0
   iTileAimX: 0
   iTileAimZ: 0
-  gameState: {fileID: 11400000, guid: 7096259ae1cef27498c0791887b759c8, type: 2}
   ai: {fileID: 2598782832212889485, guid: c9686d6fa98efc2468f526b4b37003b2, type: 3}
   visualizationBoard: {fileID: 1657487018}
   placedTiles: {fileID: 676416100}
@@ -48451,7 +48382,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1982008392}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -10}
+  m_LocalPosition: {x: 0, y: 0, z: -2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 430467334}
@@ -50407,7 +50338,6 @@ MonoBehaviour:
   cityIsFinished: 0
   iTileAimX: 0
   iTileAimZ: 0
-  gameState: {fileID: 11400000, guid: 7096259ae1cef27498c0791887b759c8, type: 2}
   ai: {fileID: 2598782832212889485, guid: c9686d6fa98efc2468f526b4b37003b2, type: 3}
   visualizationBoard: {fileID: 1113816450}
   placedTiles: {fileID: 1102692756}
@@ -52024,8 +51954,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameController: {fileID: 380910466}
   MeeplesInCity: []
-  meeples: {fileID: 11400000, guid: 69dccb832fe837d4b85c0018d3bd7127, type: 2}
-  players: {fileID: 11400000, guid: 9b5ed8d82361dd54a92938b26a7467b6, type: 2}
   prefab: {fileID: 4676006369845777705, guid: 5b8940dd6691dcc4db0ac1f49fe0e531, type: 3}
   meepleGeography: 0
 --- !u!1001 &2128411524

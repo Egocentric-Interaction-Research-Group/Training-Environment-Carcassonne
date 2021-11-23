@@ -298,8 +298,8 @@ public class GameController : MonoBehaviour
         {
             stack.Pop();
             if (!TileCanBePlaced(state.tiles.Current))
-            {            
-                Destroy(tileController.currentTile);
+            {
+                tileController.currentTile = null;
                 PickupTile();
             }
             else

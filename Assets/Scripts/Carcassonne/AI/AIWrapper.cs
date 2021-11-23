@@ -81,7 +81,7 @@ namespace Assets.Scripts.Carcassonne.AI
 
         public void Reset()
         {
-            controller.startGame = true;
+            controller.state.phase = Phase.GameOver;
         }
 
     }

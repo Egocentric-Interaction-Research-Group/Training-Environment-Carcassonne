@@ -14,12 +14,22 @@ public class TileController : MonoBehaviour
     public GameObject currentTile
     {
         get
-        {
-            if (tiles.Current is null)
+        {   if(tiles.Current == null)
+            {
                 return null;
+            }        
             return tiles.Current.gameObject;
         }
-        set => tiles.Current = value.GetComponent<Tile>();
+        set
+        {   if(value == null)
+            {
+                tiles.Current = null;
+            }
+            else
+            {
+                tiles.Current = value.GetComponent<Tile>();
+            }         
+        }
     }
 
     public GameObject drawTile;

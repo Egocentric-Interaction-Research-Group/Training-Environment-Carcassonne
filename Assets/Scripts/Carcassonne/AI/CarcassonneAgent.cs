@@ -228,10 +228,12 @@ public class CarcassonneAgent : Agent
     {
         //This occurs every X steps (Max Steps). It only serves to reset tile position if AI is stuck, and for AI to process current learning
         ResetAttributes();
-        wrapper.Reset();
+        if(wrapper.state.phase != Phase.GameOver)
+        {
+            wrapper.Reset();
+        }
         //Debug.Log("New episode");
     }
-
 
     /// <summary>
     /// Collect all non-Raycast observations
