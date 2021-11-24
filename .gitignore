@@ -35,13 +35,11 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+
+# Logs
 *.log
-*.log
-*.log
-*.log
-*.log
-*.log
-*.log
-*.log
-*.log
-*.log
+Logs/
+
+# ML-Agents
+Assets/ML-Agents/Timers
+Assets/ML-Agents/Timers.meta
