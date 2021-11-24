@@ -12,8 +12,8 @@ Shader "Carcassonne/Visualization"
 {
     Properties
     {
-        _DisplayColumns     ("Visible Columns", int)       = 1
-        _DisplayRows        ("Visible Rows", int)          = 1
+        _DisplayColumns     ("Visible Columns", int)       = 31
+        _DisplayRows        ("Visible Rows", int)          = 31
     }
     SubShader
     {

@@ -100,5 +100,10 @@ namespace Assets.Scripts.Carcassonne.AI
         {
             return gs.Tiles.PlayedId;
         }
+
+        public Tile[,] GetTiles()
+        {
+            return gs.Tiles.Played;
+        }
     }
 }

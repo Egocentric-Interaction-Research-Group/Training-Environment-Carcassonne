@@ -1,3 +1,4 @@
+using Carcassonne;
 using Carcassonne.State;
 
 namespace Assets.Scripts.Carcassonne.AI
@@ -31,6 +32,17 @@ namespace Assets.Scripts.Carcassonne.AI
         public int GetMaxMeeples();
 
         public int GetMaxTileId();
+
         public int GetMaxBoardSize();
+
+        /// <summary>
+        /// Gets a 2d array of tile ids as floats. Elements of value 0 contain no tile.
+        /// </summary>
+        public float[,] GetPlacedTiles();
+
+        /// <summary>
+        /// Gets a 2d array of tiles. Contains null elements where there are no tiles.
+        /// </summary>
+        public Tile[,] GetTiles();
     }
 }

@@ -1,6 +1,5 @@
 using Carcassonne;
 using Carcassonne.State;
-using Carcassonne;
 using UnityEngine;
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
@@ -15,6 +14,12 @@ using static Carcassonne.Point;
 
 public class CarcassonneAgent : Agent
 {
+    public enum ObservationApproach
+    {
+        [InspectorName("Tile Ids")] TileIds,
+        Packed
+    }
+
     //Static observations for normalization
     private float meeplesMax;
     private float boardMaxSize;
@@ -25,6 +30,10 @@ public class CarcassonneAgent : Agent
     //private Phase phase;
     //private int id;
     private Direction meepleDirection = Direction.SELF;
+
+    // Observation approach
+    public ObservationApproach observationApproach = ObservationApproach.TileIds;
+    private Action<VectorSensor> AddTileObservations;
 
     //AI Specific
     public AIWrapper wrapper;
@@ -69,6 +78,20 @@ public class CarcassonneAgent : Agent
         boardMaxSize = wrapper.GetMaxBoardSize();
         meeplesMax = wrapper.GetMaxMeeples();
         tileIdMax = wrapper.GetMaxTileId();
+
+        // Setup delegate for tile observation approach.
+        switch (observationApproach)
+        {
+            case ObservationApproach.TileIds:
+                AddTileObservations = AddTileIdObservations;
+                break;
+
+            case ObservationApproach.Packed:
+                AddTileObservations = AddPackedTileObservations;
+                break;
+
+            // Note: There should only ever be one tile observations function in use, hence '=', and not '+='.
+        }
     }
 
 
@@ -255,13 +278,26 @@ public class CarcassonneAgent : Agent
         }
     }
 
+    private void AddTileIdObservations(VectorSensor sensor)
+    {
+        //The most reasonable approach seems to have a matrix of floats, each float representing one tile. The matrix should be the size
+        //of the entire board, padded with 0 wherever a tile has not been placed. Read the entire board or just the placed tiles.
+        float[,] playedTiles = wrapper.GetPlacedTiles();
+        foreach (float f in playedTiles)
+        {
+            sensor.AddObservation(f);
+        }
+    }
+
     private void AddPackedTileObservations(VectorSensor sensor)
     {
-        for (int row = 0; row < tiles.Played.GetLength(0); row++)
+        Tile[,] tiles = wrapper.GetTiles();
+
+        for (int row = 0; row < tiles.GetLength(0); row++)
         {
-            for (int col = 0; col < tiles.Played.GetLength(1); col++)
+            for (int col = 0; col < tiles.GetLength(1); col++)
             {
-                Tile tile = tiles.Played[col, row];
+                Tile tile = tiles[col, row];
                 int packedData = 0x0;
                 
                 if (tile == null)
@@ -348,24 +384,9 @@ public class CarcassonneAgent : Agent
         sensor.AddOneHotObservation((int)Direction.CENTER, MAX_DIRECTIONS);
         sensor.AddOneHotObservation((int)Direction.SELF, MAX_DIRECTIONS);
 
-
-
-
-        //Code below handles the input of the entire board, which is really ineffective in its current implemenetation.
-
-        //The most reasonable approach seems to have a matrix of floats, each float representing one tile. The matrix should be the size
-        //of the entire board, padded with 0 wherever a tile has not been placed. Read the entire board or just the placed tiles.
-        float[,] playedTiles = wrapper.GetPlacedTiles();
-        foreach (float f in playedTiles)
-        {
-            sensor.AddObservation(f);
-        }
-
-        // Add tile and meeple observation the "packed" way.
-        // The data is contained in a 32-bit int (only uses 26 bits) per tile.
-        // If there is no tile, it defaults to -1 (0xFFFFFFFF).
-        AddPackedTileObservations(sensor);
-
+        // Call the tile observation method that was assigned at initialization,
+        // using the editor-exposed 'observationApproach' field.
+        AddTileObservations?.Invoke(sensor);
     }
 
     /// <summary>

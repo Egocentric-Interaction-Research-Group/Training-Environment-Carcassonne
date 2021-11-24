@@ -96,6 +96,7 @@ MonoBehaviour:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
   MaxStep: 200
+  observationApproach: 0
   x: 85
   z: 85
   y: 1
