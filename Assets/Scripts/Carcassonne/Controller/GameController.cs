@@ -80,7 +80,11 @@ public class GameController : MonoBehaviour
             }
             gameState.Players.All.Add(player);
         }
+
+        // Initialize the shader visualization in order to set the max array
+        // size for upcoming shader data.
         shader = visualizationBoard.GetComponent<CarcassonneVisualization>();
+        shader.Init();
     }
 
     private void FixedUpdate()
