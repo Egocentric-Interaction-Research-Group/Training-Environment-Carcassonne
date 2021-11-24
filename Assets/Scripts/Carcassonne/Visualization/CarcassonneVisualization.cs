@@ -22,16 +22,12 @@ namespace Carcassonne
 
         private Material m_mat;
 
-        void Awake()
-        {
-            Init();
-
-            // For testing purposes.
-            //UpdateWithTestData();
-        }
-
         /// <summary>
         /// Initializes the board with empty tile and meeple data.
+        /// If initial data with the max size is not sent initially, the size of the
+        /// first call to <see cref="UpdateMaterial(Tile[,], Vector2Int, IReadOnlyList{Meeple})"/> 
+        /// will be set as the max size,
+        /// and will not grow any larger.
         /// </summary>
         public void Init()
         {

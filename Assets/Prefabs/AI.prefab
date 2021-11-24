@@ -49,7 +49,7 @@ MonoBehaviour:
   id: 0
   score: 0
   meeples: []
-  meepleState: {fileID: 0}
+  meepleState: {fileID: 11400000, guid: 69dccb832fe837d4b85c0018d3bd7127, type: 2}
 --- !u!114 &4305211684211156123
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -63,7 +63,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 28908
+    VectorObservationSize: 28959
     NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 0
@@ -96,16 +96,14 @@ MonoBehaviour:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
   MaxStep: 200
-  meeplesLeft: 0
-  phase: 0
-  id: 0
-  tiles: {fileID: 11400000, guid: fb9ca0a9355cf2a4dbbaa81a4ea1b06f, type: 2}
   x: 85
   z: 85
   y: 1
   rot: 0
-  meepleX: 0
-  meepleZ: 0
+  realX: 0
+  realY: 0
+  realZ: 0
+  realRot: 0
 --- !u!114 &7394643959341201063
 MonoBehaviour:
   m_ObjectHideFlags: 0

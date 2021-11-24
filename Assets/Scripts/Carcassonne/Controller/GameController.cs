@@ -69,7 +69,8 @@ public class GameController : MonoBehaviour
     {
         for (int i = 0; i < 1; i++)
         {
-            Player player = Instantiate(ai).GetComponent<Player>();
+            Instantiate(ai);
+            Player player = ai.GetComponent<Player>();
             player.id = 0;
             player.meepleState = gameState.Meeples;
             player.Setup();
@@ -79,7 +80,11 @@ public class GameController : MonoBehaviour
             }
             gameState.Players.All.Add(player);
         }
+
+        // Initialize the shader visualization in order to set the max array
+        // size for upcoming shader data.
         shader = visualizationBoard.GetComponent<CarcassonneVisualization>();
+        shader.Init();
     }
 
     private void FixedUpdate()
