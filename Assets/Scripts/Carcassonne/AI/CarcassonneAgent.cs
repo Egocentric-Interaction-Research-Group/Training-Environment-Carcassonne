@@ -122,22 +122,18 @@ public class CarcassonneAgent : Agent
         if (actionBuffers.DiscreteActions[0] == 0f)
         {
             z += 1; //Up
-            Debug.Log("Increased z");
         }
         else if (actionBuffers.DiscreteActions[0] == 1f)
         {
             z -= 1; //Down
-            Debug.Log("Decreased z");
         }
         else if (actionBuffers.DiscreteActions[0] == 2f)
         {
             x -= 1; //Left
-            Debug.Log("Decreased x");
         }
         else if (actionBuffers.DiscreteActions[0] == 3f)
         {
             x += 1; //Right
-            Debug.Log("Inreased x");
         }
         else if (actionBuffers.DiscreteActions[0] == 4f)
         {
@@ -150,7 +146,6 @@ public class CarcassonneAgent : Agent
                 //Punishment for rotating more than needed, i.e. returning back to default rotation state.
                 //AddReward(-0.01f); 
             }
-            Debug.Log("Increased rotation");
         }
         else if (actionBuffers.DiscreteActions[0] == 5f) //Place tile
         {
@@ -166,7 +161,6 @@ public class CarcassonneAgent : Agent
             if (Phase == Phase.TileDown) //If the placement was successful, the phase changes to TileDown.
             {
                 AddReward(0.1f);
-                Debug.Log("Place tile at " + x + "," + z);
             }         
         }
 
@@ -177,7 +171,6 @@ public class CarcassonneAgent : Agent
             //Outside table area, reset values and add significant punishment.
             ResetAttributes();
             AddReward(-0.1f);
-            Debug.Log("AI went outside of boundary");
         }
     }
 

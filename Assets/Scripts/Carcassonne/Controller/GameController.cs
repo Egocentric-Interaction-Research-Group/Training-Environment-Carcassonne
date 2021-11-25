@@ -290,12 +290,7 @@ public class GameController : MonoBehaviour
         placedTiles.PlaceTile(x, z, tile); 
         calculatePoints(false, false);
         shader.VisualizeBoard(state.tiles.Played, state.meeples.All);
-        tileCounter++;
-        if(tileCounter != 1)
-        {
-            Debug.Log("AI Placed tile with id " + tile.GetComponent<Tile>().id + "on " + x + "," + z);
-            Debug.Log(" Number of tiles placed: " + tileCounter + " At academy step " + Academy.Instance.StepCount + " of episode " + Academy.Instance.EpisodeCount);
-        }      
+        tileCounter++;     
     }
 
     public void PlaceMeeple(GameObject meeple)
