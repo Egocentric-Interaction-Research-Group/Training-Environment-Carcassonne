@@ -49,7 +49,6 @@ MonoBehaviour:
   id: 0
   score: 0
   meeples: []
-  meepleState: {fileID: 11400000, guid: 69dccb832fe837d4b85c0018d3bd7127, type: 2}
 --- !u!114 &4305211684211156123
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -95,15 +94,11 @@ MonoBehaviour:
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
+  MaxStep: 200
   observationApproach: 0
-  MaxStep: 1000
   x: 85
   z: 85
   rot: 0
-  realX: 0
-  realY: 0
-  realZ: 0
-  realRot: 0
 --- !u!114 &7394643959341201063
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -117,4 +112,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ai: {fileID: 1543791810850989880}
-  reward: 0

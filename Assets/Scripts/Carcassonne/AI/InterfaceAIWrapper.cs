@@ -1,5 +1,4 @@
 using Carcassonne;
-using Carcassonne.State;
 
 
 public interface InterfaceAIWrapper
@@ -14,8 +13,6 @@ public interface InterfaceAIWrapper
     public Phase GetGamePhase();
 
     public int GetMeeplesLeft();
-
-    public int GetBoardSize();
 
     public void EndTurn();
 

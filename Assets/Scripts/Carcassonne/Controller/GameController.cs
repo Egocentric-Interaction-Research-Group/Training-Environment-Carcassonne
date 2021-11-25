@@ -2,6 +2,7 @@ using Carcassonne;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.MLAgents;
+using Assets.Scripts.Carcassonne.AI;
 
 public class GameController : MonoBehaviour
 {
@@ -46,9 +47,12 @@ public class GameController : MonoBehaviour
         for (int i = 0; i < 1; i++)
         {
             GameObject Agent = Instantiate(ai);
-            Agent.GetComponent<CarcassonneAgent>().wrapper.state = state;
-            Agent.GetComponent<CarcassonneAgent>().wrapper.controller = this;
+            AIWrapper aIWrapper = Agent.GetComponent<CarcassonneAgent>().wrapper;
+            aIWrapper.state = state;
+            aIWrapper.controller = this;
+            aIWrapper.totalTiles = 85;
             Player player = Agent.GetComponent<Player>();
+            Agent.GetComponent<CarcassonneAgent>().wrapper.player = player;
             player.id = i;
             player.meepleState = state.meeples;
             player.Setup();           
@@ -90,9 +94,10 @@ public class GameController : MonoBehaviour
         RotateTile();
         PlaceTile(tileController.currentTile, 85, 85, true);
         //Initialize AI player data dependent on tile array.
-        foreach (Player p in gameState.Players.All)
+        foreach (Player p in state.players.All)
         {
-            player.GetComponent<CarcassonneAgent>().SetUpAI();
+            p.GetComponent<CarcassonneAgent>().wrapper.totalTiles = state.tiles.Remaining.Count + 1;
+
         }
         state.phase = Phase.NewTurn;
     }
@@ -289,7 +294,7 @@ public class GameController : MonoBehaviour
         if(tileCounter != 1)
         {
             Debug.Log("AI Placed tile with id " + tile.GetComponent<Tile>().id + "on " + x + "," + z);
-            Debug.Log(" Number of tiles placed: " + tileCounter + " At academy step " + Academy.Instance.StepCount + " of episode " Academy.Instance.EpisodeCount);
+            Debug.Log(" Number of tiles placed: " + tileCounter + " At academy step " + Academy.Instance.StepCount + " of episode " + Academy.Instance.EpisodeCount);
         }      
     }
 

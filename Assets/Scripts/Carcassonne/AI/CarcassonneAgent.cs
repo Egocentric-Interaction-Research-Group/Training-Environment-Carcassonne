@@ -1,5 +1,4 @@
 using Carcassonne;
-using Carcassonne.State;
 using UnityEngine;
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
@@ -24,7 +23,6 @@ public class CarcassonneAgent : Agent
     //Static observations for normalization
     private float meeplesMax;
     private float boardMaxSize;
-    private float tileIdMax;
 
     //Dynamic observations from real game (use getter properties if they exist, don't call these directly)
     //private int meeplesLeft;
@@ -42,9 +40,7 @@ public class CarcassonneAgent : Agent
     //AI Specific
     public AIWrapper wrapper;
     private const int maxBranchSize = 6;
-
-    //Monitoring
-    public float realX, realY, realZ, realRot;
+    public int x = 85, z = 85, rot = 0;
 
     public Phase Phase
     {
@@ -59,14 +55,6 @@ public class CarcassonneAgent : Agent
         get
         {
             return wrapper.GetMeeplesLeft();
-        }
-    }
-
-    public int BoardGridSize
-    {
-        get
-        {
-            return wrapper.GetBoardSize();
         }
     }
 
@@ -85,18 +73,6 @@ public class CarcassonneAgent : Agent
     {
         base.Initialize();
         wrapper = new AIWrapper();
-    }
-
-    /// <summary>
-    /// Sets up the initial values of the AI. Must be done after board is set up and ready, as it otherwise results in null pointers.
-    /// </summary>
-    public void SetUpAI()
-    {
-        boardMaxSize = wrapper.GetMaxBoardSize();
-        meeplesMax = wrapper.GetMaxMeeples();
-        tileIdMax = wrapper.GetMaxTileId();
-        totalTiles = wrapper.GetTotalTiles();
-
         // Setup delegate for tile observation approach.
         switch (observationApproach)
         {
@@ -108,7 +84,7 @@ public class CarcassonneAgent : Agent
                 AddTileObservations = AddPackedTileObservations;
                 break;
 
-            // Note: There should only ever be one tile observations function in use, hence '=', and not '+='.
+                // Note: There should only ever be one tile observations function in use, hence '=', and not '+='.
         }
     }
 
@@ -146,18 +122,22 @@ public class CarcassonneAgent : Agent
         if (actionBuffers.DiscreteActions[0] == 0f)
         {
             z += 1; //Up
+            Debug.Log("Increased z");
         }
         else if (actionBuffers.DiscreteActions[0] == 1f)
         {
             z -= 1; //Down
+            Debug.Log("Decreased z");
         }
         else if (actionBuffers.DiscreteActions[0] == 2f)
         {
             x -= 1; //Left
+            Debug.Log("Decreased x");
         }
         else if (actionBuffers.DiscreteActions[0] == 3f)
         {
             x += 1; //Right
+            Debug.Log("Inreased x");
         }
         else if (actionBuffers.DiscreteActions[0] == 4f)
         {
@@ -170,6 +150,7 @@ public class CarcassonneAgent : Agent
                 //Punishment for rotating more than needed, i.e. returning back to default rotation state.
                 //AddReward(-0.01f); 
             }
+            Debug.Log("Increased rotation");
         }
         else if (actionBuffers.DiscreteActions[0] == 5f) //Place tile
         {
@@ -185,7 +166,8 @@ public class CarcassonneAgent : Agent
             if (Phase == Phase.TileDown) //If the placement was successful, the phase changes to TileDown.
             {
                 AddReward(0.1f);
-            }
+                Debug.Log("Place tile at " + x + "," + z);
+            }         
         }
 
         //After choice checks to determine if AI is Out of Bounds (allowedStepsFromCenter sets the steps the AI can move in a straight line in any direction from the center).
@@ -194,7 +176,8 @@ public class CarcassonneAgent : Agent
         {
             //Outside table area, reset values and add significant punishment.
             ResetAttributes();
-            AddReward(-0.1f);                                
+            AddReward(-0.1f);
+            Debug.Log("AI went outside of boundary");
         }
     }
 
@@ -363,12 +346,12 @@ public class CarcassonneAgent : Agent
     public override void CollectObservations(VectorSensor sensor)
     {
         //sensor.AddObservation(MeeplesLeft / meeplesMax); Dos not work as meeples don't seem to be implemented at all at the moment
-        sensor.AddObservation(Id / tileIdMax);
+        sensor.AddObservation(CurrentTileId / wrapper.GetMaxTileId());
         sensor.AddObservation(rot / 3f);
-        sensor.AddObservation(x / boardMaxSize);
-        sensor.AddObservation(z / boardMaxSize);
+        sensor.AddObservation(x / wrapper.GetMaxBoardSize());
+        sensor.AddObservation(z / wrapper.GetMaxBoardSize());
         sensor.AddObservation((int)meepleDirection);
-        sensor.AddObservation(wrapper.GetNumberOfPlacedTiles() / totalTiles);
+        sensor.AddObservation(wrapper.GetNumberOfPlacedTiles() / wrapper.GetTotalTiles());
 
         //One-Hot observations of enums (can be done with less code, but this is more readable)
         int MAX_PHASES = Enum.GetValues(typeof(Phase)).Length;

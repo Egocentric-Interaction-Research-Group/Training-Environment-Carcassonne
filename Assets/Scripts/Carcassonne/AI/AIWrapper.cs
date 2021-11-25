@@ -8,12 +8,7 @@ namespace Assets.Scripts.Carcassonne.AI
         public GameController controller;
         public GameState state;
         public Player player;
-        private int totalTiles;
-
-        public AIWrapper()
-        {
-            totalTiles = gs.Tiles.Remaining.Count + 1;
-        }
+        public int totalTiles;
 
         public bool IsAITurn()
         {
@@ -97,17 +92,17 @@ namespace Assets.Scripts.Carcassonne.AI
 
         public float[,] GetPlacedTiles()
         {
-            return gs.Tiles.PlayedId;
+            return state.tiles.PlayedId;
         }
 
         public Tile[,] GetTiles()
         {
-            return gs.Tiles.Played;
+            return state.tiles.Played;
         }
         
         public int GetNumberOfPlacedTiles()
         {
-            return totalTiles - gs.Tiles.Remaining.Count;
+            return totalTiles - state.tiles.Remaining.Count;
         }
 
         public int GetTotalTiles() {
