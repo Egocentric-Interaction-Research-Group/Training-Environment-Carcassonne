@@ -69,8 +69,8 @@ public class GameController : MonoBehaviour
     {
         for (int i = 0; i < 1; i++)
         {
-            Instantiate(ai);
-            Player player = ai.GetComponent<Player>();
+            GameObject agent = Instantiate(ai);
+            Player player = agent.GetComponent<Player>();
             player.id = 0;
             player.meepleState = gameState.Meeples;
             player.Setup();
@@ -112,7 +112,12 @@ public class GameController : MonoBehaviour
         pcRotate = true;
         RotateTile();
         PlaceTile(tileController.currentTile, 85, 85, true);
-       
+        //Initialize AI player data dependent on tile array.
+        foreach (Player p in gameState.Players.All)
+        {
+            p.GetComponent<CarcassonneAgent>().SetUpAI();
+        }
+
         gameState.phase = Phase.NewTurn;
     }
 

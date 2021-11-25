@@ -30,6 +30,7 @@ public class CarcassonneAgent : Agent
     //private Phase phase;
     //private int id;
     private Direction meepleDirection = Direction.SELF;
+    private float totalTiles;
 
     // Observation approach
     public ObservationApproach observationApproach = ObservationApproach.TileIds;
@@ -38,7 +39,7 @@ public class CarcassonneAgent : Agent
     //AI Specific
     public AIWrapper wrapper;
     private const int maxBranchSize = 6;
-    public int x = 85, z = 85, y = 1, rot = 0;
+    public int x = 85, z = 85, rot = 0;
 
     //Monitoring
     public float realX, realY, realZ, realRot;
@@ -75,9 +76,17 @@ public class CarcassonneAgent : Agent
         base.Initialize();
         wrapper = new AIWrapper();
         wrapper.player = gameObject.GetComponent<Player>();
+    }
+
+    /// <summary>
+    /// Sets up the initial values of the AI. Must be done after board is set up and ready, as it otherwise results in null pointers.
+    /// </summary>
+    public void SetUpAI()
+    {
         boardMaxSize = wrapper.GetMaxBoardSize();
         meeplesMax = wrapper.GetMaxMeeples();
         tileIdMax = wrapper.GetMaxTileId();
+        totalTiles = wrapper.GetTotalTiles();
 
         // Setup delegate for tile observation approach.
         switch (observationApproach)
@@ -167,34 +176,24 @@ public class CarcassonneAgent : Agent
             if (Phase == Phase.TileDown) //If the placement was successful, the phase changes to TileDown.
             {
                 AddReward(0.1f);
-
-                //Line below is only used for debugging. Ignore it.
-                //Debug.LogError("Tile placed: " + wrapper.GetCurrentTile().transform.localPosition.x + ", Y: " + wrapper.GetCurrentTile().transform.localPosition.y + ", Z: " + wrapper.GetCurrentTile().transform.localPosition.z + ", Rotation: " + wrapper.GetCurrentTile().transform.rotation.eulerAngles.y);
             }
         }
 
 
-        //After choice checks.
-        if (x < 0 || x >= boardMaxSize || z < 0 || z >= boardMaxSize)
+        //After choice checks to determine if AI is Out of Bounds (allowedStepsFromCenter sets the steps the AI can move in a straight line in any direction from the center).
+        int allowedStepsFromCenter = wrapper.GetNumberOfPlacedTiles();
+        if (x < 85 - allowedStepsFromCenter || x >  85 + allowedStepsFromCenter || z < 85 - allowedStepsFromCenter || z > 85 + allowedStepsFromCenter)
         {
             //Outside table area, reset values and add significant punishment.
             ResetAttributes();
             AddReward(-0.1f);
         }
-
-        //The rows below are only used to monitor the ai (shown on the AI gameobject in the scene while it plays). Ignore them.
-
-        /*realX = wrapper.GetCurrentTile().transform.localPosition.x;
-        realY = wrapper.GetCurrentTile().transform.localPosition.y;
-        realZ = wrapper.GetCurrentTile().transform.localPosition.z;
-        realRot = wrapper.GetCurrentTile().transform.rotation.eulerAngles.y;*/
     }
 
     /// <summary>
     /// Places the meeple on one of the 5 places available on the tile (Uses the tile to find the positions).
     /// </summary>
     /// <param name="actionBuffers"></param>
-    //TODO: Fixa bättre lösning för meeple location. Enum? Lagt till meepleDirection högst upp.
     private void MeepleDrawnAction(ActionBuffers actionBuffers)
     {
         AddReward(-0.01f); //Each call gets a negative reward to avoid getting stuck just moving the meeple around in this stage.
@@ -230,7 +229,7 @@ public class CarcassonneAgent : Agent
         }
         else if (actionBuffers.DiscreteActions[0] == 5f)
         {
-            if (meepleDirection != Direction.SELF) //Checks so that a choice has been made since meeple was drawn.
+            if (meepleDirection != Direction.SELF) //Checks so that a placement choice has been made since meeple was drawn.
             {
                 float meepleX = 0;
                 float meepleZ = 0;
@@ -353,6 +352,7 @@ public class CarcassonneAgent : Agent
     {
         //This occurs every X steps (Max Steps). It only serves to reset tile position if AI is stuck, and for AI to process current learning
         ResetAttributes();
+        wrapper.Reset();
     }
 
 
@@ -368,6 +368,7 @@ public class CarcassonneAgent : Agent
         sensor.AddObservation(x / boardMaxSize);
         sensor.AddObservation(z / boardMaxSize);
         sensor.AddObservation((int)meepleDirection);
+        sensor.AddObservation(wrapper.GetNumberOfPlacedTiles() / totalTiles);
 
         //One-Hot observations of enums (can be done with less code, but this is more readable)
         int MAX_PHASES = Enum.GetValues(typeof(Phase)).Length;
@@ -426,8 +427,7 @@ public class CarcassonneAgent : Agent
     {
         x = 85;
         z = 85;
-        y = 1;
         rot = 0;
-        meepleDirection = Direction.CENTER;
+        meepleDirection = Direction.SELF;
     }
 }

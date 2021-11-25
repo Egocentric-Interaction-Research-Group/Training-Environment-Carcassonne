@@ -9,11 +9,13 @@ namespace Assets.Scripts.Carcassonne.AI
         public GameController gc;
         public GameState gs; //Contains TileState, MeepleState, FeatureState, PlayerState and a GameLog.
         public Player player;
+        private int totalTiles;
 
         public AIWrapper()
         {
             gc = GameObject.Find("GameController").GetComponent<GameController>();
             gs = gc.gameState;
+            totalTiles = gs.Tiles.Remaining.Count + 1;
         }
 
         public bool IsAITurn()
@@ -23,7 +25,7 @@ namespace Assets.Scripts.Carcassonne.AI
 
         public int GetMaxBoardSize()
         {
-            return 170; // gs.Tiles.PlayedId.GetLength(0); is the real solution, but this is only instantiated on NewGame method, not at game start as players are.
+            return gs.Tiles.PlayedId.GetLength(0);
         }
 
         public void PickUpTile()
@@ -83,7 +85,7 @@ namespace Assets.Scripts.Carcassonne.AI
 
         public void Reset()
         {
-            gc.startGame = true;
+            gc.gameState.phase = Phase.GameOver;
         }
 
         public int GetMaxMeeples()
@@ -104,6 +106,15 @@ namespace Assets.Scripts.Carcassonne.AI
         public Tile[,] GetTiles()
         {
             return gs.Tiles.Played;
+        }
+        
+        public int GetNumberOfPlacedTiles()
+        {
+            return totalTiles - gs.Tiles.Remaining.Count;
+        }
+
+        public int GetTotalTiles() {
+            return totalTiles;
         }
     }
 }
