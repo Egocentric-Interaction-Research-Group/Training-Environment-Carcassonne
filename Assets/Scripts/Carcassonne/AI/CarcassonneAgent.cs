@@ -20,51 +20,17 @@ public class CarcassonneAgent : Agent
         Packed
     }
 
-    //Static observations for normalization
-    private float meeplesMax;
-    private float boardMaxSize;
-
-    //Dynamic observations from real game (use getter properties if they exist, don't call these directly)
-    //private int meeplesLeft;
-    //private Phase phase;
-    //private int id;
+    //Enum Observations
     private Direction meepleDirection = Direction.SELF;
-    private float totalTiles;
 
     // Observation approach
     public ObservationApproach observationApproach = ObservationApproach.TileIds;
     private Action<VectorSensor> AddTileObservations;
 
-    //Observations from real game (use getter properties, don't call these directly)
-
     //AI Specific
     public AIWrapper wrapper;
     private const int maxBranchSize = 6;
     public int x = 85, z = 85, rot = 0;
-
-    public Phase Phase
-    {
-        get
-        {
-            return wrapper.GetGamePhase();
-        }
-    }
-
-    public int MeeplesLeft
-    {
-        get
-        {
-            return wrapper.GetMeeplesLeft();
-        }
-    }
-
-    public int CurrentTileId
-    {
-        get
-        {
-            return wrapper.GetCurrentTileId();
-        }
-    }
 
     /// <summary>
     /// Initial setup which gets the scripts needed to AI calls and observations, called only once when the agent is enabled.
@@ -88,14 +54,13 @@ public class CarcassonneAgent : Agent
         }
     }
 
-
     /// <summary>
     /// Perform actions based on a vector of numbers. Which actions are made depend on the current game phase.
     /// </summary>
     /// <param name="actionBuffers">The struct of actions to take</param>
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
-        switch (Phase)
+        switch (wrapper.GetGamePhase())
         {
             case Phase.TileDrawn:
                 TileDrawnAction(actionBuffers);
@@ -158,9 +123,9 @@ public class CarcassonneAgent : Agent
             //Values are loaded into GameController that are used in the ConfirmPlacementRPC call.
             wrapper.PlaceTile(x, z);
 
-            if (Phase == Phase.TileDown) //If the placement was successful, the phase changes to TileDown.
+            if (wrapper.GetGamePhase() == Phase.TileDown) //If the placement was successful, the phase changes to TileDown.
             {
-                AddReward(0.1f);
+                AddReward(0.5f);
             }         
         }
 
@@ -170,7 +135,7 @@ public class CarcassonneAgent : Agent
         {
             //Outside table area, reset values and add significant punishment.
             ResetAttributes();
-            AddReward(-0.1f);
+            AddReward(-0.05f);
         }
     }
 
@@ -245,12 +210,11 @@ public class CarcassonneAgent : Agent
                 wrapper.PlaceMeeple(meepleX, meepleZ);  //Either confirms and places the meeple if possible, or returns meeple and goes back to phase TileDown.
             }
 
-
-            if (Phase == Phase.MeepleDown) //If meeple is placed.
+            if (wrapper.GetGamePhase() == Phase.MeepleDown) //If meeple is placed.
             {
                 AddReward(0.1f); //Rewards successfully placing a meeple
             }
-            else if (Phase == Phase.TileDown) //If meeple gets returned.
+            else if (wrapper.GetGamePhase() == Phase.TileDown) //If meeple gets returned.
             {
                 AddReward(-0.1f); //Punishes returning a meeple & going back a phase (note: no punishment for never drawing a meeple).
             }
@@ -339,7 +303,7 @@ public class CarcassonneAgent : Agent
     public override void CollectObservations(VectorSensor sensor)
     {
         //sensor.AddObservation(MeeplesLeft / meeplesMax); Dos not work as meeples don't seem to be implemented at all at the moment
-        sensor.AddObservation(CurrentTileId / wrapper.GetMaxTileId());
+        sensor.AddObservation(wrapper.GetCurrentTileId() / wrapper.GetMaxTileId());
         sensor.AddObservation(rot / 3f);
         sensor.AddObservation(x / wrapper.GetMaxBoardSize());
         sensor.AddObservation(z / wrapper.GetMaxBoardSize());
@@ -350,16 +314,9 @@ public class CarcassonneAgent : Agent
         int MAX_PHASES = Enum.GetValues(typeof(Phase)).Length;
         int MAX_DIRECTIONS = Enum.GetValues(typeof(Direction)).Length;
 
-        sensor.AddOneHotObservation((int)Phase.TileDrawn, MAX_PHASES);
-        sensor.AddOneHotObservation((int)Phase.TileDown, MAX_PHASES);
-        sensor.AddOneHotObservation((int)Phase.MeepleDrawn, MAX_PHASES);
+        sensor.AddOneHotObservation((int)wrapper.GetGamePhase(), MAX_PHASES);
+        sensor.AddOneHotObservation((int)meepleDirection, MAX_DIRECTIONS);
 
-        sensor.AddOneHotObservation((int)Direction.NORTH, MAX_DIRECTIONS);
-        sensor.AddOneHotObservation((int)Direction.EAST, MAX_DIRECTIONS);
-        sensor.AddOneHotObservation((int)Direction.SOUTH, MAX_DIRECTIONS);
-        sensor.AddOneHotObservation((int)Direction.WEST, MAX_DIRECTIONS);
-        sensor.AddOneHotObservation((int)Direction.CENTER, MAX_DIRECTIONS);
-        sensor.AddOneHotObservation((int)Direction.SELF, MAX_DIRECTIONS);
 
         // Call the tile observation method that was assigned at initialization,
         // using the editor-exposed 'observationApproach' field.
@@ -373,7 +330,7 @@ public class CarcassonneAgent : Agent
     public override void WriteDiscreteActionMask(IDiscreteActionMask actionMask)
     {
         int allowedActions = 0;
-        switch (Phase)
+        switch (wrapper.GetGamePhase())
         {
             case Phase.TileDrawn:
                 //AI can choose to step one tile place in either of the 4 directions (-X, X, -Z, Z), rotate 90 degrees, or confirm place.
