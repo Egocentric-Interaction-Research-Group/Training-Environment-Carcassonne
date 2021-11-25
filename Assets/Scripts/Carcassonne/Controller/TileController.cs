@@ -1,38 +1,45 @@
-using Carcassonne.State;
+using Carcassonne;
 using JetBrains.Annotations;
 
 using UnityEngine;
 
-namespace Carcassonne
+public class TileController : MonoBehaviour
 {
-    public class TileController : MonoBehaviour
+    private GameController gameController;
+    public Vector3 currentTileEulersOnManip;
+    public ParticleSystem drawTileEffect;
+    public TileState tiles;
+
+    [CanBeNull]
+    public GameObject currentTile
     {
-        private GameController gameController;
-        public Vector3 currentTileEulersOnManip;
-        public ParticleSystem drawTileEffect;
-        public TileState tiles;
-        
-        [CanBeNull]
-        public GameObject currentTile
-        {
-            get
+        get
+        {   if(tiles.Current == null)
             {
-                if (tiles.Current is null)
-                    return null;
-                return tiles.Current.gameObject;
+                return null;
+            }        
+            return tiles.Current.gameObject;
+        }
+        set
+        {   if(value == null)
+            {
+                tiles.Current = null;
             }
-            set => tiles.Current = value.GetComponent<Tile>();
+            else
+            {
+                tiles.Current = value.GetComponent<Tile>();
+            }         
         }
-
-        public GameObject drawTile;
-        public GameObject tileSpawnPosition;
-        public float fTileAimX;
-        public float fTileAimZ;
-
-        public TileController(GameController gameController)
-        {
-            this.gameController = gameController;
-        }
-
     }
+
+    public GameObject drawTile;
+    public GameObject tileSpawnPosition;
+    public float fTileAimX;
+    public float fTileAimZ;
+
+    public TileController(GameController gameController)
+    {
+        this.gameController = gameController;
+    }
+
 }

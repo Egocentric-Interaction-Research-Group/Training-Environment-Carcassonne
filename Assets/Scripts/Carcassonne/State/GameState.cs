@@ -1,25 +1,34 @@
 using System;
-using UnityEngine;
 
-namespace Carcassonne.State
+public class GameState
 {
-    [CreateAssetMenu(fileName = "GameState", menuName = "ScriptableObjects/GameState")]
-    public class GameState : ScriptableObject
+    public GameRules rules;
+    public Phase phase;
+    public TileState tiles;
+    public MeepleState meeples;
+    public PlayerState players;
+
+    public GameState()
     {
-        public GameRules Rules;
+        rules = new GameRules();
+        tiles = new TileState();
+        meeples = new MeepleState();
+        players = new PlayerState();
+    }
 
-        /// <summary>
-        /// Describes what is happening currently in the game.
-        /// </summary>
-        public Phase phase;
+    public void ResetStates()
+    {
+        //TileState
+        tiles.Current = null;
+        tiles.Remaining.Clear();
+        Array.Clear(tiles.Played, 0, tiles.Played.Length);
+        Array.Clear(tiles.PlayedId, 0, tiles.Played.Length);
 
-        public TileState Tiles;
-        public MeepleState Meeples;
-        public PlayerState Players;
+        //MeepleState
+        meeples.Current = null;
+        meeples.All.Clear();
 
-        public GameState()
-        {
-            Rules = new GameRules();
-        }
+        //PlayerState
+        players.All.Clear();
     }
 }

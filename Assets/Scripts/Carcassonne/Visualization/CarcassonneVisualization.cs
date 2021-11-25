@@ -44,7 +44,7 @@ namespace Carcassonne
 
         /// <summary>
         /// Use this method to send tile and meeple data to the shader.
-        /// Tiles and Meeples will be culled accordingly.
+        /// tiles and meeples will be culled accordingly.
         /// 
         /// If you're already sending a subsection of all tile data, consider
         /// using UpdateMaterial instead. However, you will have to know the
@@ -62,7 +62,7 @@ namespace Carcassonne
             Tile[,] playedTiles = Get2DSubSection(allTiles, size, offset);
 
             // Update the material instance to display the only the bounds of played tiles,
-            // and provide all meeples (free or not). Meeples are automatically placed according
+            // and provide all meeples (free or not). meeples are automatically placed according
             // to the given offset.
             UpdateMaterial(playedTiles, offset, allMeeples);
         }
@@ -219,7 +219,7 @@ namespace Carcassonne
                         continue;
                     }
 
-                    // Only set values for existing Tiles.
+                    // Only set values for existing tiles.
                     if (updateTiles.GetValue(col, row) is Tile t)
                     {
                         // Combine all 5 tile geographies into a single float.

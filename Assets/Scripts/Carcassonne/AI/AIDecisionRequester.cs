@@ -1,5 +1,4 @@
 using UnityEngine;
-using Carcassonne.State;
 
 /// <summary>
 /// The AIDecisionRequester sets up the allowed number of actions for the AI and and requests a decision when needed.
@@ -7,9 +6,6 @@ using Carcassonne.State;
 public class AIDecisionRequester : MonoBehaviour
 {
     public CarcassonneAgent ai;
-    public float reward = 0; //Used for displaying the reward in the Unity editor.
-    private Phase startPhase;
-
 
     /// <summary>
     /// Acts on its own or repeatedly requests actions from the actual AI depending the game phase and state.
@@ -30,15 +26,11 @@ public class AIDecisionRequester : MonoBehaviour
                 ai.wrapper.EndTurn();
                 break;
             case Phase.GameOver: //ToDo: Add reinforcement based on score
-                Debug.Log("Game Over");
                 ai.EndEpisode();
                 break;
             default: //Calls for one AI action repeatedly with each FixedUpdate until the phase changes.
                 ai.RequestDecision();
                 break;
         }
-
-        //ToDo: Add this info to some form of GUI-display instead to visualize many separate agents values concurrently.
-        reward = ai.GetCumulativeReward();
     }
 }

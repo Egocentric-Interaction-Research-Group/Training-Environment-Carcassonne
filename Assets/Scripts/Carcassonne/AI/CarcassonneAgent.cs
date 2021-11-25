@@ -8,6 +8,7 @@ using System;
 using Assets.Scripts.Carcassonne.AI;
 using static Carcassonne.Point;
 
+
 /// <summary>
 /// The AI for the player. An AI user contains both a regular PlayerScript and this AI script to observe and take actions.
 /// </summary>
@@ -36,10 +37,11 @@ public class CarcassonneAgent : Agent
     public ObservationApproach observationApproach = ObservationApproach.TileIds;
     private Action<VectorSensor> AddTileObservations;
 
+    //Observations from real game (use getter properties, don't call these directly)
+
     //AI Specific
     public AIWrapper wrapper;
     private const int maxBranchSize = 6;
-    public int x = 85, z = 85, rot = 0;
 
     //Monitoring
     public float realX, realY, realZ, realRot;
@@ -60,7 +62,15 @@ public class CarcassonneAgent : Agent
         }
     }
 
-    public int Id
+    public int BoardGridSize
+    {
+        get
+        {
+            return wrapper.GetBoardSize();
+        }
+    }
+
+    public int CurrentTileId
     {
         get
         {
@@ -75,7 +85,6 @@ public class CarcassonneAgent : Agent
     {
         base.Initialize();
         wrapper = new AIWrapper();
-        wrapper.player = gameObject.GetComponent<Player>();
     }
 
     /// <summary>
@@ -179,14 +188,13 @@ public class CarcassonneAgent : Agent
             }
         }
 
-
         //After choice checks to determine if AI is Out of Bounds (allowedStepsFromCenter sets the steps the AI can move in a straight line in any direction from the center).
         int allowedStepsFromCenter = wrapper.GetNumberOfPlacedTiles();
         if (x < 85 - allowedStepsFromCenter || x >  85 + allowedStepsFromCenter || z < 85 - allowedStepsFromCenter || z > 85 + allowedStepsFromCenter)
         {
             //Outside table area, reset values and add significant punishment.
             ResetAttributes();
-            AddReward(-0.1f);
+            AddReward(-0.1f);                                
         }
     }
 
@@ -334,16 +342,6 @@ public class CarcassonneAgent : Agent
 
     }
 
-    /// <summary>
-    /// Read inputs from the keyboard and convert them to a list of actions.
-    /// This is called only when the player wants to control the agent and has set
-    /// Behavior Type to "Heuristic Only" in the Behavior Parameters inspector.
-    /// </summary>
-    public override void Heuristic(in ActionBuffers actionsOut)
-    {
-        //Not implemented.
-    }
-
 
     /// <summary>
     /// When a new episode begins, reset the agent and area
@@ -352,9 +350,11 @@ public class CarcassonneAgent : Agent
     {
         //This occurs every X steps (Max Steps). It only serves to reset tile position if AI is stuck, and for AI to process current learning
         ResetAttributes();
-        wrapper.Reset();
+        if(wrapper.state.phase != Phase.GameOver)
+        {
+            wrapper.Reset();
+        }
     }
-
 
     /// <summary>
     /// Collect all observations, normalized.
