@@ -280,7 +280,6 @@ public class CarcassonneAgent : Agent
         sensor.AddObservation(rot / 3f);
         sensor.AddObservation(x / wrapper.GetMaxBoardSize());
         sensor.AddObservation(z / wrapper.GetMaxBoardSize());
-        sensor.AddObservation((int)meepleDirection);
         sensor.AddObservation(wrapper.GetNumberOfPlacedTiles() / wrapper.GetTotalTiles());
 
         //One-Hot observations of enums (can be done with less code, but this is more readable)
