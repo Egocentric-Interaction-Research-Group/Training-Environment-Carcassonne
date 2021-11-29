@@ -1,5 +1,6 @@
 using Carcassonne;
 using UnityEngine;
+using static Carcassonne.Point;
 
 namespace Assets.Scripts.Carcassonne.AI
 {
@@ -63,9 +64,39 @@ namespace Assets.Scripts.Carcassonne.AI
             controller.ConfirmPlacement();
         }
 
-        public void PlaceMeeple(float x, float z)
+        public void PlaceMeeple(Direction meepleDirection)
         {
-            
+            //if-statement below is how this is done in real code, there are probably easier solutions in this project.
+            /*
+            float meepleX = 0;
+            float meepleZ = 0;
+            if (meepleDirection == Direction.NORTH || meepleDirection == Direction.SOUTH || meepleDirection == Direction.CENTER)
+            {
+                meepleX = 0.000f;
+            }
+            else if (meepleDirection == Direction.EAST)
+            {
+                meepleX = 0.011f;
+            }
+            else if (meepleDirection == Direction.WEST)
+            {
+                meepleX = -0.011f;
+            }
+
+            if (meepleDirection == Direction.WEST || meepleDirection == Direction.EAST || meepleDirection == Direction.CENTER)
+            {
+                meepleZ = 0.000f;
+            }
+            else if (meepleDirection == Direction.NORTH)
+            {
+                meepleZ = 0.011f;
+            }
+            else if (meepleDirection == Direction.SOUTH)
+            {
+                meepleZ = -0.011f;
+            }*/
+
+            //Needs some form of placement of meeple based on direction and/or coordinates (like the code above)
             controller.ConfirmPlacement();
 
         }

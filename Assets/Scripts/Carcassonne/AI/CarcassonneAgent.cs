@@ -180,34 +180,7 @@ public class CarcassonneAgent : Agent
         {
             if (meepleDirection != Direction.SELF) //Checks so that a placement choice has been made since meeple was drawn.
             {
-                float meepleX = 0;
-                float meepleZ = 0;
-                if (meepleDirection == Direction.NORTH || meepleDirection == Direction.SOUTH || meepleDirection == Direction.CENTER)
-                {
-                    meepleX = 0.000f;
-                }
-                else if (meepleDirection == Direction.EAST)
-                {
-                    meepleX = 0.011f;
-                }
-                else if (meepleDirection == Direction.WEST)
-                {
-                    meepleX = -0.011f;
-                }
-
-                if (meepleDirection == Direction.WEST || meepleDirection == Direction.EAST || meepleDirection == Direction.CENTER)
-                {
-                    meepleZ = 0.000f;
-                }
-                else if (meepleDirection == Direction.NORTH)
-                {
-                    meepleZ = 0.011f;
-                }
-                else if (meepleDirection == Direction.SOUTH)
-                {
-                    meepleZ = -0.011f;
-                }
-                wrapper.PlaceMeeple(meepleX, meepleZ);  //Either confirms and places the meeple if possible, or returns meeple and goes back to phase TileDown.
+                wrapper.PlaceMeeple(meepleDirection);  //Either confirms and places the meeple if possible, or returns meeple and goes back to phase TileDown.
             }
 
             if (wrapper.GetGamePhase() == Phase.MeepleDown) //If meeple is placed.

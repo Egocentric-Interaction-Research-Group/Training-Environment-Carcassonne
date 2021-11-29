@@ -1,5 +1,5 @@
 using Carcassonne;
-
+using static Carcassonne.Point;
 
 public interface InterfaceAIWrapper
 {
@@ -22,7 +22,7 @@ public interface InterfaceAIWrapper
 
     public void PlaceTile(int x, int z);
 
-    public void PlaceMeeple(float x, float z);
+    public void PlaceMeeple(Direction meepleDirection);
 
     public void FreeCurrentMeeple();
 
