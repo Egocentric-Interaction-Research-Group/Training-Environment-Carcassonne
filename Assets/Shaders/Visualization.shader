@@ -12,8 +12,10 @@ Shader "Carcassonne/Visualization"
 {
     Properties
     {
-        _DisplayColumns     ("Visible Columns", int)       = 31
-        _DisplayRows        ("Visible Rows", int)          = 31
+        _DisplayColumns ("Visible Columns", int) = 31
+        _DisplayRows    ("Visible Rows", int)    = 31
+        _ColumnOffset   ("Column Offset", int)   = 0
+        _RowOffset      ("Row Offset", int)      = 0
     }
     SubShader
     {
@@ -57,16 +59,18 @@ Shader "Carcassonne/Visualization"
             static const float4 colCityRoad = float4(0.80, 0.45, 0.10, 1.00);
 
             static const float4 colPlayer1 = float4(0.00, 0.00, 1.00, 1.00);
-            static const float4 colPlayer2 = float4(0.01, 0.60, 0.01, 1.00);
+            static const float4 colPlayer2 = float4(0.01, 0.75, 0.01, 1.00);
             static const float4 colPlayer3 = float4(1.00, 0.85, 0.02, 1.00);
             static const float4 colPlayer4 = float4(0.68, 0.00, 0.01, 1.00);
-            static const float4 colPlayer5 = float4(0.03, 0.03, 0.03, 1.00);
+            static const float4 colPlayer5 = float4(0.10, 0.10, 0.10, 1.00);
             static const float4 colPlayer6 = float4(0.00, 0.15, 0.00, 1.00);
             static const float4 colPlayer7 = float4(1.00, 0.25, 0.00, 1.00);
             static const float4 colPlayer8 = float4(0.30, 0.00, 0.01, 1.00);
 
             int _DisplayColumns;                // How many columns of tiles to display.
             int _DisplayRows;                   // How many rows of tiles to display.
+            int _ColumnOffset;                  // The starting column to display of the entire tile array.
+            int _RowOffset;                     // The starting row to display of the entire tile array.
             float _TileGeography[totalTiles];   // Contains all geographies encoded in one float per tile.
             float _MeeplePlacement[totalTiles]; // Indicates, on each tile, whether a meeple is placed, and which player it belongs to.
 
@@ -79,10 +83,10 @@ Shader "Carcassonne/Visualization"
             // Get color for meeple representation.
             float4 colorByMeeple(uint playerId, float fracX, float fracY)
             {
-                if (fracX >= 0.42 && fracX <= 0.58 &&
-                    fracY >= 0.42 && fracY <= 0.58)
+                if (fracX >= 0.25 && fracX <= 0.75 &&
+                    fracY >= 0.25 && fracY <= 0.75)
                 {
-                    if (step(0.45, fracX) * step(0.45, fracY) < 0.1)
+                    if (step(0.35, fracX) * step(0.35, fracY) < 0.1)
                         return 0.0;
 
                     if      (playerId == 0) return -1;
@@ -134,7 +138,7 @@ Shader "Carcassonne/Visualization"
                 uint playerId = 0;                  // Player id of the meeple placed (0 if not placed).
                 
                 // Top column sub-tiles
-                if (fracY >= 0.666 && fracY < 1.0) 
+                if (fracY >= 0.000 && fracY < 0.333) 
                 {
                     if (fracX >= 0.333 && fracX < 0.666) // North
                     {
@@ -162,7 +166,7 @@ Shader "Carcassonne/Visualization"
                     }
                 }
                 // Bottom column sub-tiles
-                else if (fracY >= 0.000 && fracY < 0.333) 
+                else if (fracY >= 0.666 && fracY < 1.000) 
                 {
                     if (fracX >= 0.333 && fracX < 0.666) // South
                     {
@@ -174,7 +178,9 @@ Shader "Carcassonne/Visualization"
                 // Draw meeple if present.
                 if (playerId > 0)
                 {
-                    color = colorByMeeple(playerId, fracX, fracY);
+                    fracX = fracX % (1.0 / 3.0);
+                    fracY = fracY % (1.0 / 3.0);
+                    color = colorByMeeple(playerId, fracX * 3.0, fracY * 3.0);
                     if (color.a >= 0.0f) // Indicates that a color WAS selected.
                         return color;
                 }
@@ -198,13 +204,14 @@ Shader "Carcassonne/Visualization"
                 gridDims.x *= 1.0 / gridRes;
                 gridDims.y *= 1.0 / gridRes;
 
-                float2 gridUV = i.uv * gridDims;
+                float2 gridUV = float2(i.uv.x, 1.0 - i.uv.y);
+                gridUV *= gridDims;
                 float gridFill = grid(gridUV + 0.05 / gridRes, gridRes);
 
                 float iX = gridUV.x * gridRes;
-                float iY = (gridDims.y - gridUV.y) * gridRes;
+                float iY = gridUV.y * gridRes;
 
-                int idx = int(iX) + int(iY) * _DisplayColumns;// * gridSubDimensions.x;
+                int idx = int(iX + _ColumnOffset) + int(iY + _RowOffset) * totalDimensions.x;
                 float geo = _TileGeography[idx];
 
                 if (geo < 0.0) // If has invalid geography

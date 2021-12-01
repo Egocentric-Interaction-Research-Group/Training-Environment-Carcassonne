@@ -48,7 +48,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 0
   score: 0
-  meeples: []
 --- !u!114 &4305211684211156123
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -62,7 +61,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 918
+    VectorObservationSize: 917
     NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 0

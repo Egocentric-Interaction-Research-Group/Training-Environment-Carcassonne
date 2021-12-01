@@ -1,6 +1,7 @@
 //------------------------------------------------------------------------------------------------//
-// Author:  Kasper Skott
-// Created: 2021-10-22
+// Author:   Kasper Skott
+// Created:  2021-10-22
+// Modified: 2021-12-01
 //------------------------------------------------------------------------------------------------//
 
 using System;
@@ -13,12 +14,45 @@ using Direction = Carcassonne.Point.Direction;
 namespace Carcassonne
 {
     /// <summary>
+    /// A method parameter struct that enforces a certain array size and handles erroneous input sizes to 
+    /// <see cref="CarcassonneVisualization.UpdateMaterial(NewTile[,], Vector2Int, IReadOnlyList{Meeple})"/>
+    /// </summary>
+    public readonly struct VisualizationInputTiles
+    {
+        public readonly NewTile[,] tiles;
+        
+        public VisualizationInputTiles(NewTile[,] input)
+        {
+            const int dims = CarcassonneVisualization.MAX_BOARD_DIMENSION;
+            int inWidth    = input.GetLength(0);
+            int inHeight   = input.GetLength(1);
+            tiles          = new NewTile[dims, dims];
+            
+            // Fill out internal array with input array, and pad with null if needed.
+            bool noRow;
+            for (int row = 0; row < dims; row++)
+            {
+                // Check whether the row exists in the input array.
+                noRow = row >= inHeight;
+
+                for (int col = 0; col < dims; col++)
+                {
+                    if (noRow || col >= inWidth) // Pad with null if out of bounds of the input array.
+                        tiles[col, row] = null;
+                    else
+                        tiles[col, row] = input[col, row];
+                }
+            }
+        }
+    }
+
+    /// <summary>
     /// This script is to be used in combination with the shader "CarcassoneVisualization".
     /// </summary>
     [RequireComponent(typeof(Renderer))]
     public class CarcassonneVisualization : MonoBehaviour
     {
-        private const int MAX_BOARD_DIMENSION = 31; // The maximum nbr of tiles in each axis. This is limited by the shader.
+        internal const int MAX_BOARD_DIMENSION = 31; // The maximum nbr of tiles in each axis. This is limited by the shader.
 
         private Material m_mat;
 
@@ -44,7 +78,6 @@ namespace Carcassonne
 
         /// <summary>
         /// Use this method to send tile and meeple data to the shader.
-        /// tiles and meeples will be culled accordingly.
         /// 
         /// If you're already sending a subsection of all tile data, consider
         /// using UpdateMaterial instead. However, you will have to know the
@@ -54,17 +87,19 @@ namespace Carcassonne
         /// <param name="allMeeples">All meeples in the game, even if they're not placed.</param>
         public void VisualizeBoard(NewTile[,] allTiles, IReadOnlyList<Meeple> allMeeples)
         {
-            // Get boundaries of the played tiles so as to only bother with existing tiles.
+            // Get boundaries of the played tiles so as to only bother with placed tiles.
             (Vector2Int size, Vector2Int offset) = GetPlayedTileBounds(allTiles);
 
-            // Slice allTiles using the boundaries, resulting in an array, trimmed of all
-            // excessive null Tile instances.
-            NewTile[,] playedTiles = Get2DSubSection(allTiles, size, offset);
+            // Create a wrapper for the tiles, which checks and handles erroneous array sizes.
+            VisualizationInputTiles inputTiles = new VisualizationInputTiles(allTiles);
 
-            // Update the material instance to display the only the bounds of played tiles,
+            // Update the material instance to display only the bounds of played tiles,
             // and provide all meeples (free or not). meeples are automatically placed according
             // to the given offset.
-            UpdateMaterial(playedTiles, offset, allMeeples);
+            //
+            // Note: the inputTiles parameter still expects the entire grid of tiles, but they
+            // are culled off by the size and offset parameters.
+            UpdateMaterial(inputTiles, size, offset, allMeeples);
         }
 
         /// <summary>
@@ -130,39 +165,36 @@ namespace Carcassonne
         /// <summary>
         /// Updates the material to display the given section of tiles.
         /// </summary>
-        /// <param name="updateTiles">The tiles to be shown.</param>
-        /// <param name="updateOffset">The tile-space offset of the currently shown tiles 
+        /// <param name="inputTiles">A wrapped 2d array of the entire grid of tiles.</param>
+        /// <param name="displaySize">The 2-dimensional nbr of tiles to be displayed.
+        ///     Specifies how much of inputTiles to display.</param>
+        /// <param name="displayOffset">The tile-space offset of the tiles to be displayed
         ///     into the entire tile array.</param>
         /// <param name="allMeeples">A list of all meeples.</param>
         public void UpdateMaterial(
-            NewTile[,] updateTiles,
-            Vector2Int updateOffset,
+            VisualizationInputTiles inputTiles,
+            Vector2Int displaySize,
+            Vector2Int displayOffset,
             IReadOnlyList<Meeple> allMeeples)
         {
+            NewTile[,] allTiles = inputTiles.tiles;
             Vector2Int updateDim = new Vector2Int(
-                updateTiles.GetLength(0), updateTiles.GetLength(1));
-
-            // Clamp the dimensions of the tile data to be sent to the shader.
-            if (updateDim.x > MAX_BOARD_DIMENSION ||
-                updateDim.y > MAX_BOARD_DIMENSION)
-            {
-                updateTiles = Get2DSubSection(updateTiles, 
-                    new Vector2Int(MAX_BOARD_DIMENSION, MAX_BOARD_DIMENSION), 
-                    new Vector2Int(0, 0));
-
-                updateDim.x = updateTiles.GetLength(0);
-                updateDim.y = updateTiles.GetLength(1);
-            }
+                allTiles.GetLength(0), allTiles.GetLength(1));
 
             // Make sure to always display 1:1 column-row ratio.
-            Vector2Int displayDim = updateDim;
-            if (displayDim.x < displayDim.y)
-                displayDim.x = displayDim.y;
+            if (displaySize.x < displaySize.y)
+                displaySize.x = displaySize.y;
             else
-                displayDim.y = displayDim.x;
+                displaySize.y = displaySize.x;
 
-            m_mat.SetInt("_DisplayColumns", displayDim.x);
-            m_mat.SetInt("_DisplayRows", displayDim.y);
+            // Send the display size to the shader. This determines how many tiles of the inputted
+            // tiles are shown on the visualization board.
+            m_mat.SetInt("_DisplayColumns", displaySize.x);
+            m_mat.SetInt("_DisplayRows", displaySize.y);
+
+            // Send the offsets to the shader.
+            m_mat.SetInt("_ColumnOffset", displayOffset.x);
+            m_mat.SetInt("_RowOffset", displayOffset.y);
 
             // Create a dictionary with key (col, row) and value array (playerId+1 for each direction).
             // This maps a certain location with the player that occupies it.
@@ -171,17 +203,22 @@ namespace Carcassonne
             {
                 if (m.free)
                     continue;
-                (int, int) loc = (m.x - updateOffset.x, m.z - updateOffset.y);
+
+                // Convert meeple x and z into coordinates local to the displayOffset.
+                // Example: meeple.x = 2; displayOffset.x = 2; meepleLocalX = 0.
+                int meepleLocalX = m.x - displayOffset.x;
+                int meepleLocalY = m.z - displayOffset.y;
+
+                (int, int) absoluteLocation = (m.x, m.z); // Location on the entire grid of tiles.
 
                 // Cull meeples that are outside the dimensions shown.
-                if (loc.Item1 < 0 || loc.Item1 >= displayDim.x ||
-                    loc.Item2 < 0 || loc.Item2 >= displayDim.y)
+                if (meepleLocalX < 0 || meepleLocalX >= displaySize.x ||
+                    meepleLocalY < 0 || meepleLocalY >= displaySize.y)
                     continue;
 
-                Debug.Log("Meeple found at " + loc.Item1 + "," + loc.Item2);
 
                 int[] playersAtDirections;
-                if (!playerMeeples.TryGetValue(loc, out playersAtDirections))
+                if (!playerMeeples.TryGetValue(absoluteLocation, out playersAtDirections))
                 {
                     playersAtDirections = new int[5];
                     for (int i = 0; i < 5; i++)
@@ -194,8 +231,11 @@ namespace Carcassonne
                 else if (m.direction == Direction.WEST)   playersAtDirections[3] = m.playerId + 1;
                 else if (m.direction == Direction.SOUTH)  playersAtDirections[4] = m.playerId + 1;
 
-                playerMeeples[loc] = playersAtDirections;
+                playerMeeples[absoluteLocation] = playersAtDirections;
             }
+
+            //Debug.Log($"{displaySize.x}x{displaySize.y} with offset {displayOffset.x}, {displayOffset.y}");
+            //Debug.Log("Meeples: " + string.Join(", ", new List<(int, int)>(playerMeeples.Keys)));
 
             // Prepare two arrays to send to the shader. One array contains the geographies of each,
             // while the other contains the player id associated with each direction of each tile
@@ -204,15 +244,15 @@ namespace Carcassonne
             // (one float for geograpies, one float for meeples).
             // Note: Needs to send *float* arrays to the shader because shaders seem to use floats
             //   internally anyway, and there is no interface for sending int arrays.
-            float[] tiles = new float[displayDim.x * displayDim.y];
-            float[] meeples = new float[displayDim.x * displayDim.y];
-            for (int row = 0; row < displayDim.y; row++)
+            float[] tiles   = new float[MAX_BOARD_DIMENSION * MAX_BOARD_DIMENSION];
+            float[] meeples = new float[MAX_BOARD_DIMENSION * MAX_BOARD_DIMENSION];
+            for (int row = 0; row < MAX_BOARD_DIMENSION; row++)
             {
-                for (int col = 0; col < displayDim.x; col++)
+                for (int col = 0; col < MAX_BOARD_DIMENSION; col++)
                 {
-                    int idx = col + row * displayDim.x;
+                    int idx = col + row * MAX_BOARD_DIMENSION;
 
-                    // Discard if the tile isn't in updateTile.
+                    // Handle if the inputted size is exceeded. This should not happen, btw.
                     if (col >= updateDim.x || row >= updateDim.y)
                     {
                         tiles[idx] = -1.0f;
@@ -221,27 +261,30 @@ namespace Carcassonne
                     }
 
                     // Only set values for existing tiles.
-                    if (updateTiles.GetValue(col, row) is NewTile t)
+                    if (allTiles.GetValue(col, row) is NewTile t)
                     {
                         // Combine all 5 tile geographies into a single float.
                         float tileGeography = (float)t.Center;
-                        tileGeography += (float)t.East  * 10;
-                        tileGeography += (float)t.North * 100;
-                        tileGeography += (float)t.West  * 1000;
-                        tileGeography += (float)t.South * 10000;
+                        tileGeography      += (float)t.East  * 10;
+                        tileGeography      += (float)t.North * 100;
+                        tileGeography      += (float)t.West  * 1000;
+                        tileGeography      += (float)t.South * 10000;
 
                         int[] playersIds;
-                        if (!playerMeeples.TryGetValue((col ,row), out playersIds))
+                        float tileMeeple;
+                        if (!playerMeeples.TryGetValue((col, row), out playersIds))
                         {
-                            playersIds = new int[] { 0, 0, 0, 0, 0};
+                            tileMeeple = 0; // Default to no meeple in any direction.
                         }
-
-                        // Combine all meeple placement on this tile into a single float.
-                        float tileMeeple = playersIds[0];
-                        tileMeeple += playersIds[1] * 10;
-                        tileMeeple += playersIds[2] * 100;
-                        tileMeeple += playersIds[3] * 1000;
-                        tileMeeple += playersIds[4] * 10000;
+                        else
+                        {
+                            // Combine all meeple placement on this tile into a single float.
+                            tileMeeple  = playersIds[0];
+                            tileMeeple += playersIds[1] * 10;
+                            tileMeeple += playersIds[2] * 100;
+                            tileMeeple += playersIds[3] * 1000;
+                            tileMeeple += playersIds[4] * 10000;
+                        }
 
                         // Store in the arrays that will be sent to the shader.
                         tiles[idx]   = tileGeography;
@@ -255,11 +298,8 @@ namespace Carcassonne
                 }
             }
 
-            if (tiles.Length > 0)
-            {
-                m_mat.SetFloatArray("_TileGeography", tiles);
-                m_mat.SetFloatArray("_MeeplePlacement", meeples);
-            }
+            m_mat.SetFloatArray("_TileGeography", tiles);
+            m_mat.SetFloatArray("_MeeplePlacement", meeples);
         }
 
         //---- FOR TESTING -----------------------------------------------------------------------//
@@ -283,20 +323,19 @@ namespace Carcassonne
                 return tile;
             };
 
-            int showColumns = 5;
-            int showRows = 5;
+            int showColumns = 31;
+            int showRows = 31;
 
             // Create and fill every tile with grass by default.
             NewTile[,] tiles = new NewTile[showColumns, showRows];
             for (int row = 0; row < showRows; row++)
                 for (int col = 0; col < showColumns; col++)
-                    tiles[col, row] = CreateTile(NewTile.Geography.Grass);
+                    tiles[col, row] = CreateTile(Geography.Grass);
 
             tiles[1, 0] = null;
             tiles[2, 0] = null;
             tiles[3, 0] = null;
             tiles[4, 0] = null;
-            tiles[4, 1] = null;
             tiles[4, 3] = null;
             tiles[4, 4] = null;
             tiles[0, 4] = null;
@@ -348,18 +387,42 @@ namespace Carcassonne
             tiles[4, 2].South = Geography.City;
             tiles[4, 2].East = Geography.City;
 
+            tiles[15, 15].Center = Geography.City;
+            tiles[15, 15].South = Geography.City;
+            tiles[15, 15].East = Geography.City;
+
             List<Meeple> meeples = new List<Meeple>(); // Should actually use something like MeepleState.All.
             meeples.Add(new Meeple());
-            meeples[0].assignAttributes(3, 1, Direction.CENTER, Geography.Grass);
+            meeples[0].assignAttributes(0, 1, Direction.CENTER, Geography.Grass);
             meeples[0].free = false;
             meeples[0].playerId = 0;
 
             meeples.Add(new Meeple());
-            meeples[1].assignAttributes(3, 2, Direction.CENTER, Geography.City);
+            meeples[1].assignAttributes(1, 1, Direction.EAST, Geography.City);
             meeples[1].free = false;
             meeples[1].playerId = 1;
 
-            UpdateMaterial(tiles, new Vector2Int(0, 0), meeples);
+            meeples.Add(new Meeple());
+            meeples[2].assignAttributes(2, 1, Direction.NORTH, Geography.City);
+            meeples[2].free = false;
+            meeples[2].playerId = 2;
+
+            meeples.Add(new Meeple());
+            meeples[3].assignAttributes(3, 1, Direction.WEST, Geography.City);
+            meeples[3].free = false;
+            meeples[3].playerId = 3;
+
+            meeples.Add(new Meeple());
+            meeples[4].assignAttributes(4, 1, Direction.SOUTH, Geography.City);
+            meeples[4].free = false;
+            meeples[4].playerId = 4;
+
+            VisualizationInputTiles inputTiles = new VisualizationInputTiles(tiles);
+
+            UpdateMaterial(inputTiles, 
+                new Vector2Int(5, 5), 
+                new Vector2Int(0, 0), 
+                meeples);
         }
     }
 }

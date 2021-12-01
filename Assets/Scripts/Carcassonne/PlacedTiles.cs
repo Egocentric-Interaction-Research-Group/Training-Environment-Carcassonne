@@ -234,37 +234,34 @@ public class PlacedTiles : MonoBehaviour
     //Kontrollerar att tilen får placeras på angivna koordinater
     public bool TilePlacementIsValid(NewTile tile, int x, int z)
     {
+        if (x < 0 || x >= tiles.Played.GetLength(0) || z < 0 || z >= tiles.Played.GetLength(1) || tiles.Played[x, z] != null)
+            return false;
+     
+        var isNotAlone = false;
+        if (x > 0 && tiles.Played[x - 1, z] != null)
+        {
+            isNotAlone = true;
+            if (tile.West != tiles.Played[x - 1, z].East) return false;
+        }
 
-            if (x < 0 || x >= tiles.Played.GetLength(0) || z < 0 || z >= tiles.Played.GetLength(1) || tiles.Played[x, z] != null)
-            {
-                return false;
-            }
-            var isNotAlone = false;
+        if (x + 1 < tiles.Played.GetLength(0) && tiles.Played[x + 1, z] != null)
+        {
+            isNotAlone = true;
+            if (tile.East != tiles.Played[x + 1, z].West) return false;
+        }
 
-            if (x > 0 && tiles.Played[x - 1, z] != null)
-            {
-                isNotAlone = true;
-                if (tile.West != tiles.Played[x - 1, z].East) return false;
-            }
+        if (z > 0 && tiles.Played[x, z - 1] != null)
+        {
+            isNotAlone = true;
+            if (tile.North != tiles.Played[x, z - 1].South) return false;
+        }
 
-            if (x + 1 < tiles.Played.GetLength(0) && tiles.Played[x + 1, z] != null)
-            {
-                isNotAlone = true;
-                if (tile.East != tiles.Played[x + 1, z].West) return false;
-            }
+        if (z + 1 < tiles.Played.GetLength(1) && tiles.Played[x, z + 1] != null)
+        {
+            isNotAlone = true;
+            if (tile.South != tiles.Played[x, z + 1].North) return false;
+        }
 
-            if (z > 0 && tiles.Played[x, z - 1] != null)
-            {
-                isNotAlone = true;
-                if (tile.South != tiles.Played[x, z - 1].North) return false;
-            }
-
-            if (z + 1 < tiles.Played.GetLength(1) && tiles.Played[x, z + 1] != null)
-            {
-                isNotAlone = true;
-                if (tile.North != tiles.Played[x, z + 1].South) return false;
-            }
-
-            return isNotAlone;
+        return isNotAlone;
     }
 }

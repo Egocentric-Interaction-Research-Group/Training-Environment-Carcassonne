@@ -304,6 +304,7 @@ public class GameController : MonoBehaviour
             {
                 PlaceTile(state.tiles.Current, iTileAimX, iTileAimZ, false);
                 state.phase = Phase.TileDown;
+                shader.VisualizeBoard(state.tiles.Played, state.meeples.All);
             }
         }
         else if (state.phase == Phase.MeepleDrawn)
@@ -329,9 +330,11 @@ public class GameController : MonoBehaviour
                 {
                     meepleController.FreeMeeple(state.meeples.Current);
                 }
+
+                shader.VisualizeBoard(state.tiles.Played, state.meeples.All);
             }
-        }        
-        shader.VisualizeBoard(state.tiles.Played, state.meeples.All);
+        }
+
     }
 
     public void EndTurn()
