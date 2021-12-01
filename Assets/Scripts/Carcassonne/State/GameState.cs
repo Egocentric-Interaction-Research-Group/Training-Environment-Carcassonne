@@ -27,8 +27,5 @@ public class GameState
         //MeepleState
         meeples.Current = null;
         meeples.All.Clear();
-
-        //PlayerState
-        players.All.Clear();
     }
 }

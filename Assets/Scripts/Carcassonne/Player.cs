@@ -13,12 +13,14 @@ public class Player : MonoBehaviour
 
     public void Setup()
     {
-        MeepleController meepleController = GameObject.Find("MeepleController").GetComponent<MeepleController>();
+        meeples.Clear();
         for (int i = 0; i < 7; i++)
         {
-            Meeple meeple = meepleController.GetNewInstance();
+            Meeple meeple = new Meeple();
             meeple.playerId = id;
+            meeple.free = true;
             meepleState.All.Add(meeple);
+            meeples.Add(meeple);
         }
     }
 

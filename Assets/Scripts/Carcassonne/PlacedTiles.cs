@@ -6,18 +6,13 @@ using UnityEngine;
 /// </summary>
 public class PlacedTiles : MonoBehaviour
 {
-    public Vector3 BasePosition;
 
     public TileState tiles;
 
-    private void Start()
+    public void PlaceTile(int x, int z, NewTile tile)
     {
-    }
-
-    public void PlaceTile(int x, int z, GameObject tile)
-    {
-        tiles.Played[x, z] = tile.GetComponent<Tile>();
-        tiles.PlayedId[x, z] = tile.GetComponent<Tile>().id;
+        tiles.Played[x, z] = tile;
+        tiles.PlayedId[x, z] = tile.id;
     }
 
     public void removeTile(int x, int z)
@@ -27,9 +22,9 @@ public class PlacedTiles : MonoBehaviour
     }
 
     //FIXME This should be changable to a Tile return type
-    public Tile getPlacedTile(int x, int z)
+    public NewTile getPlacedTile(int x, int z)
     {
-        Tile t = tiles.Played[x, z];
+        NewTile t = tiles.Played[x, z];
         if (t is null)
         {
             return null;
@@ -61,7 +56,7 @@ public class PlacedTiles : MonoBehaviour
         return false;
     }
 
-    public bool MatchGeographyOrNull(int x, int y, Point.Direction dir, Tile.Geography geography)
+    public bool MatchGeographyOrNull(int x, int y, Point.Direction dir, NewTile.Geography geography)
     {
         if (tiles.Played[x, y] == null)
             return true;
@@ -72,14 +67,14 @@ public class PlacedTiles : MonoBehaviour
 
     public bool CityTileHasCityCenter(int x, int y)
     {
-        return tiles.Played[x, y].getCenter() == Tile.Geography.City ||
-               tiles.Played[x, y].getCenter() == Tile.Geography.CityRoad;
+        return tiles.Played[x, y].getCenter() == NewTile.Geography.City ||
+               tiles.Played[x, y].getCenter() == NewTile.Geography.CityRoad;
     }
 
     public bool CityTileHasGrassOrStreamCenter(int x, int y)
     {
-        return tiles.Played[x, y].getCenter() == Tile.Geography.Grass ||
-               tiles.Played[x, y].getCenter() == Tile.Geography.Stream;
+        return tiles.Played[x, y].getCenter() == NewTile.Geography.Grass ||
+               tiles.Played[x, y].getCenter() == NewTile.Geography.Stream;
     }
 
     //Hämtar grannarna till en specifik tile
@@ -111,9 +106,9 @@ public class PlacedTiles : MonoBehaviour
         return Neighbors;
     }
 
-    public Tile.Geography[] getWeights(int x, int y)
+    public NewTile.Geography[] getWeights(int x, int y)
     {
-        var weights = new Tile.Geography[4];
+        var weights = new NewTile.Geography[4];
         var itt = 0;
         if (tiles.Played[x + 1, y] != null)
         {
@@ -137,9 +132,9 @@ public class PlacedTiles : MonoBehaviour
         return weights;
     }
 
-    public Tile.Geography[] getCenters(int x, int y)
+    public NewTile.Geography[] getCenters(int x, int y)
     {
-        var centers = new Tile.Geography[4];
+        var centers = new NewTile.Geography[4];
         var itt = 0;
         if (tiles.Played[x + 1, y] != null)
         {
@@ -205,71 +200,69 @@ public class PlacedTiles : MonoBehaviour
         return 0;
     }
 
-    public bool CheckNeighborsIfTileCanBePlaced(GameObject tile, int x, int y)
+    public bool CheckNeighborsIfTileCanBePlaced(NewTile tile, int x, int y)
     {
-        var script = tile.GetComponent<Tile>();
         var isNotAlone2 = false;
 
         if (tiles.Played[x - 1, y] != null)
         {
             isNotAlone2 = true;
-            if (script.West == tiles.Played[x - 1, y].East) return false;
+            if (tile.West == tiles.Played[x - 1, y].East) return false;
         }
 
         if (tiles.Played[x + 1, y] != null)
         {
             isNotAlone2 = true;
-            if (script.East == tiles.Played[x + 1, y].West) return false;
+            if (tile.East == tiles.Played[x + 1, y].West) return false;
         }
 
         if (tiles.Played[x, y - 1] != null)
         {
             isNotAlone2 = true;
-            if (script.South == tiles.Played[x, y - 1].North) return false;
+            if (tile.South == tiles.Played[x, y - 1].North) return false;
         }
 
         if (tiles.Played[x, y + 1] != null)
         {
             isNotAlone2 = true;
-            if (script.North == tiles.Played[x, y + 1].South) return false;
+            if (tile.North == tiles.Played[x, y + 1].South) return false;
         }
 
         return isNotAlone2;
     }
 
     //Kontrollerar att tilen får placeras på angivna koordinater
-    public bool TilePlacementIsValid(GameObject tile, int x, int z)
+    public bool TilePlacementIsValid(NewTile tile, int x, int z)
     {
 
-            if (x < 0 || x > tiles.Played.GetLength(0) || z < 0 || z > tiles.Played.GetLength(1) || tiles.Played[x, z] != null)
+            if (x < 0 || x >= tiles.Played.GetLength(0) || z < 0 || z >= tiles.Played.GetLength(1) || tiles.Played[x, z] != null)
             {
                 return false;
             }
-            var script = tile.GetComponent<Tile>();
             var isNotAlone = false;
 
             if (x > 0 && tiles.Played[x - 1, z] != null)
             {
                 isNotAlone = true;
-                if (script.West != tiles.Played[x - 1, z].East) return false;
+                if (tile.West != tiles.Played[x - 1, z].East) return false;
             }
 
             if (x + 1 < tiles.Played.GetLength(0) && tiles.Played[x + 1, z] != null)
             {
                 isNotAlone = true;
-                if (script.East != tiles.Played[x + 1, z].West) return false;
+                if (tile.East != tiles.Played[x + 1, z].West) return false;
             }
 
             if (z > 0 && tiles.Played[x, z - 1] != null)
             {
                 isNotAlone = true;
-                if (script.South != tiles.Played[x, z - 1].North) return false;
+                if (tile.South != tiles.Played[x, z - 1].North) return false;
             }
 
             if (z + 1 < tiles.Played.GetLength(1) && tiles.Played[x, z + 1] != null)
             {
                 isNotAlone = true;
-                if (script.North != tiles.Played[x, z + 1].South) return false;
+                if (tile.North != tiles.Played[x, z + 1].South) return false;
             }
 
             return isNotAlone;

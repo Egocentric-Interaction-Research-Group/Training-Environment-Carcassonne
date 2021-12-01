@@ -1,5 +1,4 @@
 using Carcassonne;
-using UnityEngine;
 using static Carcassonne.Point;
 
 namespace Assets.Scripts.Carcassonne.AI
@@ -53,7 +52,6 @@ namespace Assets.Scripts.Carcassonne.AI
 
         public void RotateTile()
         {
-            controller.pcRotate = true;
             controller.RotateTile();
         }
 
@@ -61,49 +59,21 @@ namespace Assets.Scripts.Carcassonne.AI
         {
             controller.iTileAimX = x;
             controller.iTileAimZ = z;
+            controller.meepleController.iMeepleAimX = x;
+            controller.meepleController.iMeepleAimZ = z;
             controller.ConfirmPlacement();
         }
 
         public void PlaceMeeple(Direction meepleDirection)
         {
-            //if-statement below is how this is done in real code, there are probably easier solutions in this project.
-            /*
-            float meepleX = 0;
-            float meepleZ = 0;
-            if (meepleDirection == Direction.NORTH || meepleDirection == Direction.SOUTH || meepleDirection == Direction.CENTER)
-            {
-                meepleX = 0.000f;
-            }
-            else if (meepleDirection == Direction.EAST)
-            {
-                meepleX = 0.011f;
-            }
-            else if (meepleDirection == Direction.WEST)
-            {
-                meepleX = -0.011f;
-            }
-
-            if (meepleDirection == Direction.WEST || meepleDirection == Direction.EAST || meepleDirection == Direction.CENTER)
-            {
-                meepleZ = 0.000f;
-            }
-            else if (meepleDirection == Direction.NORTH)
-            {
-                meepleZ = 0.011f;
-            }
-            else if (meepleDirection == Direction.SOUTH)
-            {
-                meepleZ = -0.011f;
-            }*/
-
-            //Needs some form of placement of meeple based on direction and/or coordinates (like the code above)
+            controller.meepleController.meepleGeography = state.tiles.Current.getGeographyAt(meepleDirection);
             controller.ConfirmPlacement();
 
         }
 
         public void FreeCurrentMeeple()
         {
-            controller.meepleController.FreeMeeple(state.meeples.Current, controller);
+            controller.meepleController.FreeMeeple(state.meeples.Current);
         }
 
         public void Reset()
@@ -126,7 +96,7 @@ namespace Assets.Scripts.Carcassonne.AI
             return state.tiles.PlayedId;
         }
 
-        public Tile[,] GetTiles()
+        public NewTile[,] GetTiles()
         {
             return state.tiles.Played;
         }
