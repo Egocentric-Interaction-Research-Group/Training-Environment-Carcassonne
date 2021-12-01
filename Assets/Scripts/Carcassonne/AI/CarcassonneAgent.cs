@@ -30,7 +30,7 @@ public class CarcassonneAgent : Agent
     //AI Specific
     public AIWrapper wrapper;
     private const int maxBranchSize = 6;
-    public int x = 85, z = 85, rot = 0;
+    public int x = 15, z = 15, rot = 0;
 
     /// <summary>
     /// Initial setup which gets the scripts needed to AI calls and observations, called only once when the agent is enabled.
@@ -131,7 +131,7 @@ public class CarcassonneAgent : Agent
 
         //After choice checks to determine if AI is Out of Bounds (allowedStepsFromCenter sets the steps the AI can move in a straight line in any direction from the center).
         int allowedStepsFromCenter = wrapper.GetNumberOfPlacedTiles();
-        if (x < 85 - allowedStepsFromCenter || x >  85 + allowedStepsFromCenter || z < 85 - allowedStepsFromCenter || z > 85 + allowedStepsFromCenter)
+        if (x < 15 - allowedStepsFromCenter || x >  15 + allowedStepsFromCenter || z < 15 - allowedStepsFromCenter || z > 15 + allowedStepsFromCenter)
         {
             //Outside table area, reset values and add significant punishment.
             ResetAttributes();
@@ -149,32 +149,22 @@ public class CarcassonneAgent : Agent
         if (actionBuffers.DiscreteActions[0] == 0f)
         {
             meepleDirection = Direction.NORTH;
-            //meepleX = 0.000f;
-            //meepleZ = 0.011f;
         }
         else if (actionBuffers.DiscreteActions[0] == 1f)
         {
             meepleDirection = Direction.SOUTH;
-            //meepleX = 0.000f;
-            //meepleZ = -0.011f;
         }
         else if (actionBuffers.DiscreteActions[0] == 2f)
         {
             meepleDirection = Direction.WEST;
-            //meepleX = -0.011f;
-            //meepleZ = 0.000f;
         }
         else if (actionBuffers.DiscreteActions[0] == 3f)
         {
             meepleDirection = Direction.EAST;
-            //meepleX = 0.011f;
-            //meepleZ = 0.000f;
         }
         else if (actionBuffers.DiscreteActions[0] == 4f)
         {
             meepleDirection = Direction.CENTER;
-            //meepleX = 0.000f;
-            //meepleZ = 0.000f;
         }
         else if (actionBuffers.DiscreteActions[0] == 5f)
         {
@@ -211,13 +201,13 @@ public class CarcassonneAgent : Agent
 
     private void AddPackedTileObservations(VectorSensor sensor)
     {
-        Tile[,] tiles = wrapper.GetTiles();
+        NewTile[,] tiles = wrapper.GetTiles();
 
         for (int row = 0; row < tiles.GetLength(0); row++)
         {
             for (int col = 0; col < tiles.GetLength(1); col++)
             {
-                Tile tile = tiles[col, row];
+                NewTile tile = tiles[col, row];
                 int packedData = 0x0;
                 
                 if (tile == null)
@@ -330,8 +320,8 @@ public class CarcassonneAgent : Agent
     /// </summary>
     internal void ResetAttributes()
     {
-        x = 85;
-        z = 85;
+        x = 15;
+        z = 15;
         rot = 0;
         meepleDirection = Direction.SELF;
     }

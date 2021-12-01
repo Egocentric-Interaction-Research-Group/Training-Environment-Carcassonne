@@ -62,7 +62,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 28918
+    VectorObservationSize: 918
     NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 0
@@ -94,10 +94,10 @@ MonoBehaviour:
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
-  MaxStep: 200
+  MaxStep: 0
   observationApproach: 0
-  x: 85
-  z: 85
+  x: 15
+  z: 15
   rot: 0
 --- !u!114 &7394643959341201063
 MonoBehaviour:

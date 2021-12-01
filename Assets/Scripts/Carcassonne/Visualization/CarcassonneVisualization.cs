@@ -7,7 +7,7 @@ using System;
 using UnityEngine;
 using System.Collections.Generic;
 
-using Geography = Carcassonne.Tile.Geography;
+using Geography = NewTile.Geography;
 using Direction = Carcassonne.Point.Direction;
 
 namespace Carcassonne
@@ -52,14 +52,14 @@ namespace Carcassonne
         /// </summary>
         /// <param name="allTiles">The entire board of tiles. May very well include null elements.</param>
         /// <param name="allMeeples">All meeples in the game, even if they're not placed.</param>
-        public void VisualizeBoard(Tile[,] allTiles, IReadOnlyList<Meeple> allMeeples)
+        public void VisualizeBoard(NewTile[,] allTiles, IReadOnlyList<Meeple> allMeeples)
         {
             // Get boundaries of the played tiles so as to only bother with existing tiles.
             (Vector2Int size, Vector2Int offset) = GetPlayedTileBounds(allTiles);
 
             // Slice allTiles using the boundaries, resulting in an array, trimmed of all
             // excessive null Tile instances.
-            Tile[,] playedTiles = Get2DSubSection(allTiles, size, offset);
+            NewTile[,] playedTiles = Get2DSubSection(allTiles, size, offset);
 
             // Update the material instance to display the only the bounds of played tiles,
             // and provide all meeples (free or not). meeples are automatically placed according
@@ -75,7 +75,7 @@ namespace Carcassonne
         /// </summary>
         /// <param name="allTiles">A 2d array of null and/or valid Tile instances.</param>
         /// <returns>size (width, height), and offset (x, y).</returns>
-        public static (Vector2Int, Vector2Int) GetPlayedTileBounds(Tile[,] allTiles)
+        public static (Vector2Int, Vector2Int) GetPlayedTileBounds(NewTile[,] allTiles)
         {
             Vector2Int dims = new Vector2Int(allTiles.GetLength(0), allTiles.GetLength(1));
 
@@ -135,7 +135,7 @@ namespace Carcassonne
         ///     into the entire tile array.</param>
         /// <param name="allMeeples">A list of all meeples.</param>
         public void UpdateMaterial(
-            Tile[,] updateTiles,
+            NewTile[,] updateTiles,
             Vector2Int updateOffset,
             IReadOnlyList<Meeple> allMeeples)
         {
@@ -171,13 +171,14 @@ namespace Carcassonne
             {
                 if (m.free)
                     continue;
-
                 (int, int) loc = (m.x - updateOffset.x, m.z - updateOffset.y);
 
                 // Cull meeples that are outside the dimensions shown.
                 if (loc.Item1 < 0 || loc.Item1 >= displayDim.x ||
                     loc.Item2 < 0 || loc.Item2 >= displayDim.y)
                     continue;
+
+                Debug.Log("Meeple found at " + loc.Item1 + "," + loc.Item2);
 
                 int[] playersAtDirections;
                 if (!playerMeeples.TryGetValue(loc, out playersAtDirections))
@@ -220,7 +221,7 @@ namespace Carcassonne
                     }
 
                     // Only set values for existing tiles.
-                    if (updateTiles.GetValue(col, row) is Tile t)
+                    if (updateTiles.GetValue(col, row) is NewTile t)
                     {
                         // Combine all 5 tile geographies into a single float.
                         float tileGeography = (float)t.Center;
@@ -270,10 +271,10 @@ namespace Carcassonne
         private void UpdateWithTestData()
         {
             // Fills a new Tile with the given Geography.
-            Func<Geography, Tile>
+            Func<Geography, NewTile>
             CreateTile = (geo) =>
             {
-                Tile tile = new Tile();
+                NewTile tile = new NewTile();
                 tile.East = geo;
                 tile.North = geo;
                 tile.West = geo;
@@ -286,10 +287,10 @@ namespace Carcassonne
             int showRows = 5;
 
             // Create and fill every tile with grass by default.
-            Tile[,] tiles = new Tile[showColumns, showRows];
+            NewTile[,] tiles = new NewTile[showColumns, showRows];
             for (int row = 0; row < showRows; row++)
                 for (int col = 0; col < showColumns; col++)
-                    tiles[col, row] = CreateTile(Geography.Grass);
+                    tiles[col, row] = CreateTile(NewTile.Geography.Grass);
 
             tiles[1, 0] = null;
             tiles[2, 0] = null;

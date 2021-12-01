@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Carcassonne;
+﻿using Carcassonne;
 using UnityEngine;
 using Random = System.Random;
 
@@ -13,7 +11,7 @@ public class Stack : MonoBehaviour
     /// <summary>
     ///     The array of tiles
     /// </summary>
-    public List<GameObject> tileArray;
+    public Object[] tileArray;
 
     public GameObject firstTile;
 
@@ -22,7 +20,7 @@ public class Stack : MonoBehaviour
     /// <summary>
     /// </summary>
     /// <returns></returns>
-    public GameObject Pop()
+    public NewTile Pop()
     {
         var rand = new Random();
         var idx = rand.Next(tiles.Remaining.Count);
@@ -30,7 +28,7 @@ public class Stack : MonoBehaviour
         tiles.Current = tiles.Remaining[idx];
         tiles.Remaining.Remove(tiles.Current);
 
-        return tiles.Current.gameObject;
+        return tiles.Current;
     }
 
     public bool isEmpty()
@@ -51,14 +49,16 @@ public class Stack : MonoBehaviour
     /// </summary>
     public void PopulateTileArray()
     {
-        //randomIndex = new int[84];
-        tileArray = new List<GameObject>(GameObject.FindGameObjectsWithTag("Tile"));
-        // Filter out tiles not in set. TODO: This should reference the game rules and pick relevant sets.
-        tileArray = tileArray.Where(t => t.GetComponent<Tile>().tileSet == Tile.TileSet.Base && t != firstTile).ToList();
-
-        foreach (var t in tileArray)
+        tileArray = Resources.LoadAll("Tiles", typeof(GameObject));
+        foreach (Object obj in tileArray)
         {
-            tiles.Remaining.Add(t.GetComponent<Tile>());
+            GameObject tile = (GameObject)obj;
+            if(tile.GetComponent<Tile>().tileSet == Tile.TileSet.Base && tile != firstTile)
+            {
+                NewTile nTile = new NewTile();
+                nTile.AssignAttributes(tile.GetComponent<Tile>().id);
+                tiles.Remaining.Add(nTile);
+            }       
         }
     }
 

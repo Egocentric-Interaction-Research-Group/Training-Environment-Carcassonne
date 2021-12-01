@@ -1,95 +1,69 @@
 ﻿using System.Collections.Generic;
 using Carcassonne;
 using UnityEngine;
+using static Carcassonne.Tile;
 
 public class MeepleController : MonoBehaviour
 {
 
-    [SerializeField]
-    internal GameController gameController;
+    public GameController gameController;
+    public Point point;
     [HideInInspector] public List<Meeple> MeeplesInCity;
-    internal float fMeepleAimX; //TODO Make Private
-    internal float fMeepleAimZ; //TODO Make Private
-
-    private int meepleCount = 0;
 
     public MeepleState meeples;
     public PlayerState players;
 
-    public MeepleController(GameController gameController)
-    {
-        this.gameController = gameController;
-    }
 
-    // Instantiation Stuff
-    public GameObject prefab;
 
-    /// <summary>
-    /// Instantiate a new Meeple with the chosen prefab and parent object in the hierarchy.
-    /// </summary>
-    /// <returns>GameObject : An instance of MeepleScript.prefab.</returns>
-    public Meeple GetNewInstance()
-    {
-        meepleCount++;
-        GameObject newMeeple = Instantiate(prefab, new Vector3(), Quaternion.identity);
-        newMeeple.gameObject.name = $"Meeple {meepleCount}";
-        newMeeple.SetActive(false);
-
-        return newMeeple.GetComponent<Meeple>();
-    }
 
 
 
     internal int iMeepleAimX;
     internal int iMeepleAimZ;
-    public Tile.Geography meepleGeography;
+    public NewTile.Geography meepleGeography;
 
-    public Meeple FindMeeple(int x, int y, Tile.Geography geography)
+    public Meeple FindMeeple(int x, int y, NewTile.Geography geography)
     {
         Meeple res = null;
 
-        foreach (var m in meeples.All)
-        {
-            var tmp = m;
-
-            if (tmp.geography == geography && tmp.x == x && tmp.z == y) return tmp;
+        foreach (Meeple m in meeples.All)
+        {;
+            if (m.geography == geography && m.x == x && m.z == y) return m;
         }
 
         return res;
     }
 
-    public Meeple FindMeeple(int x, int y, Tile.Geography geography, Point.Direction direction)
+    public Meeple FindMeeple(int x, int y, NewTile.Geography geography, Point.Direction direction)
     {
         Meeple res = null;
 
         foreach (var m in meeples.All)
         {
-            var tmp = m;
-
-            if (tmp.geography == geography && tmp.x == x && tmp.z == y && tmp.direction == direction) return tmp;
+            if (m.geography == geography && m.x == x && m.z == y && m.direction == direction) return m;
         }
 
         return res;
     }
 
-    public void PlaceMeeple(GameObject meeple, int xs, int zs, Point.Direction direction,
-        Tile.Geography meepleGeography, GameController gameController)
+    public void PlaceMeeple(Meeple meeple, int xs, int zs, Point.Direction direction,
+        NewTile.Geography meepleGeography)
     {
-        var currentTile = gameController.tileController.currentTile.GetComponent<Tile>();
-        var currentCenter = currentTile.getCenter();
+        NewTile currentTile = gameController.state.tiles.Current;
+        NewTile.Geography currentCenter = currentTile.getCenter();
         bool res;
-        if (currentCenter == Tile.Geography.Village || currentCenter == Tile.Geography.Grass ||
-            currentCenter == Tile.Geography.Cloister && direction != Point.Direction.CENTER)
-            res = GetComponent<Point>()
+        if (currentCenter == NewTile.Geography.Village || currentCenter == NewTile.Geography.Grass ||
+            currentCenter == NewTile.Geography.Cloister && direction != Point.Direction.CENTER)
+            res = point
                 .testIfMeepleCantBePlacedDirection(currentTile.vIndex, meepleGeography, direction);
-        else if (currentCenter == Tile.Geography.Cloister && direction == Point.Direction.CENTER)
+        else if (currentCenter == NewTile.Geography.Cloister && direction == Point.Direction.CENTER)
             res = false;
         else
-            res = GetComponent<Point>().testIfMeepleCantBePlaced(currentTile.vIndex, meepleGeography);
+            res = point.testIfMeepleCantBePlaced(currentTile.vIndex, meepleGeography);
 
-        if (meepleGeography == Tile.Geography.City)
+        if (meepleGeography == NewTile.Geography.City)
         {
-            if (currentCenter == Tile.Geography.City)
+            if (currentCenter == NewTile.Geography.City)
                 res = gameController.CityIsFinished(xs, zs) || res;
             else
                 res = gameController.CityIsFinishedDirection(xs, zs, direction) || res;
@@ -99,19 +73,21 @@ public class MeepleController : MonoBehaviour
         {
 
             currentTile.occupy(direction);
-            if (meepleGeography == Tile.Geography.CityRoad) meepleGeography = Tile.Geography.City;
+            if (meepleGeography == NewTile.Geography.CityRoad) meepleGeography = NewTile.Geography.City;
 
-            meeple.GetComponent<Meeple>().assignAttributes(xs, zs, direction, meepleGeography);
-
-
+            meeple.assignAttributes(xs, zs, direction, meepleGeography);
             gameController.state.phase = Phase.MeepleDown;
+        }
+        else
+        {
+            FreeMeeple(meeple);
         }
     }
 
 
-    public void FreeMeeple(Meeple meeple, GameController gameController)
+    public void FreeMeeple(Meeple meeple)
     {
-        meeple.GetComponent<Meeple>().free = true;
+        meeple.free = true;
         gameController.state.phase = Phase.TileDown;
     }
 
@@ -121,10 +97,9 @@ public class MeepleController : MonoBehaviour
         {
             foreach (Meeple meeple in gameController.currentPlayer.meeples) //TODO Inefficient. Just want the first free meeple.
             {
-                GameObject meepleGameObject = meeple.gameObject;
                 if (meeple.free)
                 {
-                    meeples.Current = meepleGameObject.GetComponent<Meeple>();
+                    meeples.Current = meeple;
                     gameController.state.phase = Phase.MeepleDrawn;
                     break;
                 }

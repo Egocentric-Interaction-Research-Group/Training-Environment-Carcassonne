@@ -1,11 +1,9 @@
-﻿
+using Carcassonne;
 using UnityEngine;
 
-namespace Carcassonne
-{
-    public class Tile : MonoBehaviour
+    public class NewTile
     {
-    
+
         /// <summary>
         ///     Describes the different set of game tiles (used in different versions of gameplay).
         /// </summary>
@@ -14,7 +12,7 @@ namespace Carcassonne
             Base,
             River
         }
-    
+
         /// <summary>
         ///     Geography decides what is contained within each direction. If there is a road going out to the right and the
         ///     rotation is 0 then east will become "road"
@@ -47,8 +45,6 @@ namespace Carcassonne
         ///     The vIndex of the tile. Is applied when placed on the board
         /// </summary>
         public int vIndex;
-
-        public GameObject northCollider, southCollider, westCollider, eastCollider;
 
         public bool northOcupied, southOcupied, eastOcupied, westOcupied, centerOcupied; //TODO Fix Spelling
 
@@ -142,11 +138,6 @@ namespace Carcassonne
             return Center;
         }
 
-        // public geography[] getGeography()
-        // {
-        //     var geographies = new geography[4] {North, South, East, West};
-        //     return geographies;
-        // }
 
         /// <summary>
         ///     Depending on the ID of the tile it recieves different attributes.
@@ -198,25 +189,8 @@ namespace Carcassonne
             East = Right;
             South = Down;
             West = Left;
-            AssignTexture(id);
         }
 
-        /// <summary>
-        ///     This method assigns the texture correlating to the ID. If the tile has an ID = 1, then its material texture will be
-        ///     replaced by the texture stored in the slot for ID 1.
-        /// </summary>
-        /// <param name="id">The tile ID</param>
-        private void AssignTexture(int id)
-        {
-            var m_Renderer = GetComponentInChildren<Renderer>();
-            m_Renderer.material.EnableKeyword("_MainTex");
-            GetComponentInChildren<Renderer>().material.SetTexture("_MainTex", textures[id - 1]);
-        }
-
-        // public void resetRotation()
-        // {
-        //     rotation = 0;
-        // }
 
         /// <summary>
         ///     The method used to rotate the tile. In essence it just cycles the rotation between 1 and 3 (and returns to 0 when
@@ -226,8 +200,6 @@ namespace Carcassonne
         {
             rotation++;
             if (rotation > 3) rotation = 0;
-            //this.transform.Rotate(0.0f, 90.0f, 0.0f, Space.Self);
-
             var res = North;
             North = West;
             West = South;
@@ -236,4 +208,3 @@ namespace Carcassonne
         }
 
     }
-}
