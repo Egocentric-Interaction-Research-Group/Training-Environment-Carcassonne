@@ -307,17 +307,23 @@ public class GameController : MonoBehaviour
                 shader.VisualizeBoard(state.tiles.Played, state.meeples.All);
             }
         }
-        else if (state.phase == Phase.MeepleDrawn)
+        shader.VisualizeBoard(state.tiles.Played, state.meeples.All);
+    }
+
+    public void ConfirmMeeplePlacement(Point.Direction meepleDirection)
+    {
+        if(state.phase == Phase.MeepleDrawn)
         {
-            if (state.meeples.Current != null)
+            if(state.meeples.Current != null)
             {
                 if (meepleController.meepleGeography == NewTile.Geography.City ||
-                    meepleController.meepleGeography == NewTile.Geography.Cloister ||
-                    meepleController.meepleGeography == NewTile.Geography.Road)
+                   meepleController.meepleGeography == NewTile.Geography.Cloister ||
+                   meepleController.meepleGeography == NewTile.Geography.Road)
                 {
                     meepleController.PlaceMeeple(state.meeples.Current,
                         meepleController.iMeepleAimX, meepleController.iMeepleAimZ,
-                        direction, meepleController.meepleGeography);
+                        meepleDirection, meepleController.meepleGeography);
+
                     foreach (Meeple m in state.meeples.All)
                     {
                         if (!m.free)
@@ -330,11 +336,8 @@ public class GameController : MonoBehaviour
                 {
                     meepleController.FreeMeeple(state.meeples.Current);
                 }
-
-                shader.VisualizeBoard(state.tiles.Played, state.meeples.All);
             }
         }
-
     }
 
     public void EndTurn()

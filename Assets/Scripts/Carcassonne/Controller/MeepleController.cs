@@ -13,14 +13,10 @@ public class MeepleController : MonoBehaviour
     public MeepleState meeples;
     public PlayerState players;
 
-
-
-
-
-
     internal int iMeepleAimX;
     internal int iMeepleAimZ;
     public NewTile.Geography meepleGeography;
+    public Point.Direction meepleDirection;
 
     public Meeple FindMeeple(int x, int y, NewTile.Geography geography)
     {
@@ -46,17 +42,17 @@ public class MeepleController : MonoBehaviour
         return res;
     }
 
-    public void PlaceMeeple(Meeple meeple, int xs, int zs, Point.Direction direction,
+    public void PlaceMeeple(Meeple meeple, int xs, int zs, Point.Direction meepleDirection,
         NewTile.Geography meepleGeography)
     {
         NewTile currentTile = gameController.state.tiles.Current;
         NewTile.Geography currentCenter = currentTile.getCenter();
         bool res;
         if (currentCenter == NewTile.Geography.Village || currentCenter == NewTile.Geography.Grass ||
-            currentCenter == NewTile.Geography.Cloister && direction != Point.Direction.CENTER)
+            currentCenter == NewTile.Geography.Cloister && meepleDirection != Point.Direction.CENTER)
             res = point
-                .testIfMeepleCantBePlacedDirection(currentTile.vIndex, meepleGeography, direction);
-        else if (currentCenter == NewTile.Geography.Cloister && direction == Point.Direction.CENTER)
+                .testIfMeepleCantBePlacedDirection(currentTile.vIndex, meepleGeography, meepleDirection);
+        else if (currentCenter == NewTile.Geography.Cloister && meepleDirection == Point.Direction.CENTER)
             res = false;
         else
             res = point.testIfMeepleCantBePlaced(currentTile.vIndex, meepleGeography);
@@ -66,22 +62,19 @@ public class MeepleController : MonoBehaviour
             if (currentCenter == NewTile.Geography.City)
                 res = gameController.CityIsFinished(xs, zs) || res;
             else
-                res = gameController.CityIsFinishedDirection(xs, zs, direction) || res;
+                res = gameController.CityIsFinishedDirection(xs, zs, meepleDirection) || res;
         }
 
-        if (!currentTile.IsOccupied(direction) && !res)
+        if (!currentTile.IsOccupied(meepleDirection) && !res)
         {
-
-            currentTile.occupy(direction);
+            currentTile.occupy(meepleDirection);
             if (meepleGeography == NewTile.Geography.CityRoad) meepleGeography = NewTile.Geography.City;
 
-            meeple.assignAttributes(xs, zs, direction, meepleGeography);
+            meeple.assignAttributes(xs, zs, meepleDirection, meepleGeography);
+            meeple.free = false;
             gameController.state.phase = Phase.MeepleDown;
         }
-        else
-        {
-            FreeMeeple(meeple);
-        }
+        
     }
 
 

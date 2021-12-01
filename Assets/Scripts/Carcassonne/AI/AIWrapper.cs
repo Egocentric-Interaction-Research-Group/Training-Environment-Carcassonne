@@ -1,4 +1,5 @@
 using Carcassonne;
+using UnityEngine;
 using static Carcassonne.Point;
 
 namespace Assets.Scripts.Carcassonne.AI
@@ -67,7 +68,8 @@ namespace Assets.Scripts.Carcassonne.AI
         public void PlaceMeeple(Direction meepleDirection)
         {
             controller.meepleController.meepleGeography = state.tiles.Current.getGeographyAt(meepleDirection);
-            controller.ConfirmPlacement();
+            controller.meepleController.meepleDirection = meepleDirection;
+            controller.ConfirmMeeplePlacement(meepleDirection);
 
         }
 
