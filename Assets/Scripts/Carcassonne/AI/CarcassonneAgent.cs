@@ -16,7 +16,11 @@ public class CarcassonneAgent : Agent
 {
     public enum ObservationApproach
     {
-        [InspectorName("Tile Ids")] TileIds,
+        [Tooltip("Observation size: 917")]
+        [InspectorName("Tile Ids")] 
+        TileIds,
+        
+        [Tooltip("Observation size: 1817")]
         Packed
     }
 
@@ -208,12 +212,14 @@ public class CarcassonneAgent : Agent
             for (int col = 0; col < tiles.GetLength(1); col++)
             {
                 NewTile tile = tiles[col, row];
-                int packedData = 0x0;
+                int tileData = 0x0;
+                int meepleData = 0x0;
                 
                 if (tile == null)
                 {
-                    packedData = unchecked((int)0xFFFFFFFF); // No data = -1.
-                    sensor.AddObservation(packedData);
+                    tileData = unchecked((int)0xFFFFFFFF); // No data = -1.
+                    sensor.AddObservation(tileData);
+                    sensor.AddObservation(meepleData);
                     continue;
                 }
 
@@ -222,24 +228,29 @@ public class CarcassonneAgent : Agent
                 int meeplePlayerId  = -1;   // TODO: implement when there is a way to access the meeple from a tile.
                 int meepleDirection = 0;   // TODO: see above.
 
-                packedData |= ((int)tile.Center & bitMask4);
-                packedData |= (((int)tile.East  & bitMask4) << 4);
-                packedData |= (((int)tile.North & bitMask4) << 8);
-                packedData |= (((int)tile.West  & bitMask4) << 12);
-                packedData |= (((int)tile.South & bitMask4) << 16);
+                tileData |= ((int)tile.Center & bitMask4);
+                tileData |= (((int)tile.East  & bitMask4) << 4);
+                tileData |= (((int)tile.North & bitMask4) << 8);
+                tileData |= (((int)tile.West  & bitMask4) << 12);
+                tileData |= (((int)tile.South & bitMask4) << 16);
 
                 if (meeplePlayerId >= 0) // If there IS a meeple placed on this tile.
                 {
-                    packedData |= ((int)meeplePlayerId        & bitMask3)  << 20; // Insert 3-bit player id for meeple. Should be between 0-7.
-                    packedData |= (((int)meepleDirection + 1) & bitMask3)  << 23; // Insert 3-bit value for meeple direction.
+                    meepleData |= (meeplePlayerId        & bitMask3) << 20; // Insert 3-bit player id for meeple. Should be between 0-7.
+                    meepleData |= ((meepleDirection + 1) & bitMask3) << 23; // Insert 3-bit value for meeple direction.
                 }
-
-                // If there is no meeple placed on a tile, bits 23-25 should be 0b000.
 
                 // In total, 26 of 32 bits are used to store geography data and meeple placement,
                 // and the id of its owner.
 
-                sensor.AddObservation(packedData);
+                // Normalize by maximum, which is 20 bits set (1,048,575).
+                float normalizedTileData = tileData / (float)(0xFFFFF);
+
+                // Normalize by maximum, which is 6 bits set (63).
+                float normalizedMeepleData = meepleData / (float)(0x3F);
+
+                sensor.AddObservation(normalizedTileData);
+                sensor.AddObservation(normalizedMeepleData);
             }
         }
 
