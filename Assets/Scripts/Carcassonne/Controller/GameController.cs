@@ -82,9 +82,6 @@ public class GameController : MonoBehaviour
     {
         VertexItterator = 0;
         stack.PopulateTileArray();
-        BaseTileCreation();
-        RotateTile();
-        PlaceTile(state.tiles.Current, 15, 15, true);
         //Initialize AI player data dependent on tile array.
         foreach (Player p in state.players.All)
         {
@@ -92,6 +89,9 @@ public class GameController : MonoBehaviour
             p.GetComponent<CarcassonneAgent>().wrapper.totalTiles = state.tiles.Remaining.Count + 1;
 
         }
+        BaseTileCreation();
+        RotateTile();
+        PlaceTile(state.tiles.Current, 15, 15, true);
         state.phase = Phase.NewTurn;
     }
 
