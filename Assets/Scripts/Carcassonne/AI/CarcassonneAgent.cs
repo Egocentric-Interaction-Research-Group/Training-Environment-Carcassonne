@@ -194,12 +194,17 @@ public class CarcassonneAgent : Agent
 
     private void AddTileIdObservations(VectorSensor sensor)
     {
-        //The most reasonable approach seems to have a matrix of floats, each float representing one tile. The matrix should be the size
-        //of the entire board, padded with 0 wherever a tile has not been placed. Read the entire board or just the placed tiles.
-        float[,] playedTiles = wrapper.GetPlacedTiles();
-        foreach (float f in playedTiles)
+        NewTile[,] playedTiles = wrapper.GetTiles();
+        foreach (NewTile t in playedTiles)
         {
-            sensor.AddObservation(f);
+            if (t == null)
+            {
+                sensor.AddObservation(0.0f);
+                continue;
+            }
+
+            float obs = t.id + t.rotation * 100; // Note that tile ids must not exceed 99.
+            sensor.AddObservation(obs);  
         }
     }
 
