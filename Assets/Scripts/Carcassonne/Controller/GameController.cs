@@ -9,15 +9,13 @@ public class GameController : MonoBehaviour
 
     private bool[,] visited;
 
-    public int iTileAimX, iTileAimZ;
+    public int iTileAimX, iTileAimZ, minX, minZ, maxX, maxZ;
 
     private int NewTileRotation, tempX, tempY, VertexItterator;
 
     public GameState state = new GameState();
 
     private CarcassonneVisualization shader;
-
-    private Point.Direction direction;
 
     public GameObject AI, visualizationBoard;
 
@@ -32,6 +30,7 @@ public class GameController : MonoBehaviour
     public MeepleController meepleController;
 
     private int firstTurnCounter;
+
 
     private void Start()
     {
@@ -91,6 +90,10 @@ public class GameController : MonoBehaviour
         }
         BaseTileCreation();
         RotateTile();
+        minX = 15;
+        minZ  = 15;
+        maxX = 15;
+        maxZ = 15;
         PlaceTile(state.tiles.Current, 15, 15, true);
         state.phase = Phase.NewTurn;
     }
@@ -268,6 +271,7 @@ public class GameController : MonoBehaviour
     {
         tempX = x;
         tempY = z;
+        UpdateAIBoundary(x,z);
         tile.vIndex = VertexItterator;
         point.placeVertex(VertexItterator, placedTiles.GetNeighbors(tempX, tempY),
             placedTiles.getWeights(tempX, tempY), state.tiles.Current.getCenter(),
@@ -477,5 +481,25 @@ public class GameController : MonoBehaviour
     {
         calculatePoints(true, true);
         state.phase = Phase.GameOver;
+    }
+
+    public void UpdateAIBoundary(int x, int z)
+    {
+        if(x < minX)
+        {
+            minX = x;
+        }
+        if(z < minZ)
+        {
+            minZ = z;
+        }
+        if(x > maxX)
+        {
+            maxX = x;
+        }
+        if(z > maxZ)
+        {
+            maxZ = z;
+        }
     }
 }

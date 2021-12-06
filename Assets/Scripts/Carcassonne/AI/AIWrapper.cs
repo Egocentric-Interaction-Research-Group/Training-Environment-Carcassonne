@@ -111,5 +111,25 @@ namespace Assets.Scripts.Carcassonne.AI
         public int GetTotalTiles() {
             return totalTiles;
         }
+
+        public int GetMinX()
+        {
+            return controller.minX;
+        }
+
+        public int GetMaxX()
+        {
+            return controller.maxX;
+        }
+
+        public int GetMinZ()
+        {
+            return controller.minZ;
+        }
+
+        public int GetMaxZ()
+        {
+            return controller.maxZ;
+        }
     }
 }

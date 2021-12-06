@@ -133,9 +133,8 @@ public class CarcassonneAgent : Agent
             }         
         }
 
-        //After choice checks to determine if AI is Out of Bounds (allowedStepsFromCenter sets the steps the AI can move in a straight line in any direction from the center).
-        int allowedStepsFromCenter = wrapper.GetNumberOfPlacedTiles();
-        if (x < 15 - allowedStepsFromCenter || x >  15 + allowedStepsFromCenter || z < 15 - allowedStepsFromCenter || z > 15 + allowedStepsFromCenter)
+        //After choice checks to determine if AI is Out of Bounds. Bounds a defined by the minimum and maximum coordinates in each axis for tiles placed
+        if (x < wrapper.GetMinX() - 1 || x > wrapper.GetMaxX() + 1 || z < wrapper.GetMinZ() - 1 || z > wrapper.GetMaxZ() + 1)
         {
             //Outside table area, reset values and add significant punishment.
             ResetAttributes();

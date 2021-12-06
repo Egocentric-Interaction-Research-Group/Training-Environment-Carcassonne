@@ -28,6 +28,7 @@ public class Stack : MonoBehaviour
         tiles.Current = tiles.Remaining[idx];
         tiles.Remaining.Remove(tiles.Current);
 
+
         return tiles.Current;
     }
 

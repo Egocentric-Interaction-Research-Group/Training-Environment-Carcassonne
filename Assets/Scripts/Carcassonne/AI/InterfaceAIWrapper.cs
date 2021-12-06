@@ -40,6 +40,14 @@ public interface InterfaceAIWrapper
     /// <summary>
     /// Gets a 2d array of tiles. Contains null elements where there are no tiles.
     /// </summary>
-    public NewTile[,] GetTiles();    
+    public NewTile[,] GetTiles();
+
+    public int GetMaxX();
+
+    public int GetMaxZ();
+
+    public int GetMinX();
+
+    public int GetMinZ();
 }
 
