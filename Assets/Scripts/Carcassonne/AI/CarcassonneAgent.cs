@@ -1,35 +1,21 @@
-using Carcassonne;
 using UnityEngine;
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Sensors;
 using System;
-using Assets.Scripts.Carcassonne.AI;
 using static Carcassonne.Point;
-
 
 /// <summary>
 /// The AI for the player. An AI user contains both a regular PlayerScript and this AI script to observe and take actions.
 /// </summary>
-
 public class CarcassonneAgent : Agent
 {
-    public enum ObservationApproach
-    {
-        [Tooltip("Observation size: 917")]
-        [InspectorName("Tile Ids")] 
-        TileIds,
-        
-        [Tooltip("Observation size: 1817")]
-        Packed
-    }
-
     //Enum Observations
     private Direction meepleDirection = Direction.SELF;
 
     // Observation approach
     public ObservationApproach observationApproach = ObservationApproach.TileIds;
-    private Action<VectorSensor> AddTileObservations;
+    private Action<AIWrapper, VectorSensor> AddTileObservations;
 
     //AI Specific
     public AIWrapper wrapper;
@@ -43,15 +29,20 @@ public class CarcassonneAgent : Agent
     {
         base.Initialize();
         wrapper = new AIWrapper();
+
         // Setup delegate for tile observation approach.
         switch (observationApproach)
         {
             case ObservationApproach.TileIds:
-                AddTileObservations = AddTileIdObservations;
+                AddTileObservations = BoardObservation.AddTileIdObservations;
                 break;
 
             case ObservationApproach.Packed:
-                AddTileObservations = AddPackedTileObservations;
+                AddTileObservations = BoardObservation.AddPackedTileObservations;
+                break;
+
+            case ObservationApproach.PackedIDs:
+                AddTileObservations = BoardObservation.AddPackedTileIdObservations;
                 break;
 
                 // Note: There should only ever be one tile observations function in use, hence '=', and not '+='.
@@ -130,7 +121,7 @@ public class CarcassonneAgent : Agent
             if (wrapper.GetGamePhase() == Phase.TileDown) //If the placement was successful, the phase changes to TileDown.
             {
                 AddReward(0.5f);
-            }         
+            }
         }
 
         //After choice checks to determine if AI is Out of Bounds. Bounds a defined by the minimum and maximum coordinates in each axis for tiles placed
@@ -191,76 +182,6 @@ public class CarcassonneAgent : Agent
         }
     }
 
-    private void AddTileIdObservations(VectorSensor sensor)
-    {
-        NewTile[,] playedTiles = wrapper.GetTiles();
-        foreach (NewTile t in playedTiles)
-        {
-            if (t == null)
-            {
-                sensor.AddObservation(0.0f);
-                continue;
-            }
-
-            float obs = t.id + t.rotation * 100; // Note that tile ids must not exceed 99.
-            sensor.AddObservation(obs);  
-        }
-    }
-
-    private void AddPackedTileObservations(VectorSensor sensor)
-    {
-        NewTile[,] tiles = wrapper.GetTiles();
-
-        for (int row = 0; row < tiles.GetLength(0); row++)
-        {
-            for (int col = 0; col < tiles.GetLength(1); col++)
-            {
-                NewTile tile = tiles[col, row];
-                int tileData = 0x0;
-                int meepleData = 0x0;
-                
-                if (tile == null)
-                {
-                    tileData = unchecked((int)0xFFFFFFFF); // No data = -1.
-                    sensor.AddObservation(tileData);
-                    sensor.AddObservation(meepleData);
-                    continue;
-                }
-
-                const int bitMask4  = 0xF; // 4-bit mask.
-                const int bitMask3  = 0x7; // 3-bit mask.
-                int meeplePlayerId  = -1;   // TODO: implement when there is a way to access the meeple from a tile.
-                int meepleDirection = 0;   // TODO: see above.
-
-                tileData |= ((int)tile.Center & bitMask4);
-                tileData |= (((int)tile.East  & bitMask4) << 4);
-                tileData |= (((int)tile.North & bitMask4) << 8);
-                tileData |= (((int)tile.West  & bitMask4) << 12);
-                tileData |= (((int)tile.South & bitMask4) << 16);
-
-                if (meeplePlayerId >= 0) // If there IS a meeple placed on this tile.
-                {
-                    meepleData |= (meeplePlayerId        & bitMask3) << 20; // Insert 3-bit player id for meeple. Should be between 0-7.
-                    meepleData |= ((meepleDirection + 1) & bitMask3) << 23; // Insert 3-bit value for meeple direction.
-                }
-
-                // In total, 26 of 32 bits are used to store geography data and meeple placement,
-                // and the id of its owner.
-
-                // Normalize by maximum, which is 20 bits set (1,048,575).
-                float normalizedTileData = tileData / (float)(0xFFFFF);
-
-                // Normalize by maximum, which is 6 bits set (63).
-                float normalizedMeepleData = meepleData / (float)(0x3F);
-
-                sensor.AddObservation(normalizedTileData);
-                sensor.AddObservation(normalizedMeepleData);
-            }
-        }
-
-    }
-
-
     /// <summary>
     /// When a new episode begins, reset the agent and area
     /// </summary>
@@ -268,7 +189,7 @@ public class CarcassonneAgent : Agent
     {
         //This occurs every X steps (Max Steps). It only serves to reset tile position if AI is stuck, and for AI to process current learning
         ResetAttributes();
-        if(wrapper.state.phase != Phase.GameOver)
+        if (wrapper.state.phase != Phase.GameOver)
         {
             wrapper.Reset();
         }
@@ -280,12 +201,12 @@ public class CarcassonneAgent : Agent
     /// <param name="sensor">The vector sensor to add observations to</param>
     public override void CollectObservations(VectorSensor sensor)
     {
-        //sensor.AddObservation(MeeplesLeft / meeplesMax); Dos not work as meeples don't seem to be implemented at all at the moment
         sensor.AddObservation(wrapper.GetCurrentTileId() / wrapper.GetMaxTileId());
         sensor.AddObservation(rot / 3f);
         sensor.AddObservation(x / wrapper.GetMaxBoardSize());
         sensor.AddObservation(z / wrapper.GetMaxBoardSize());
         sensor.AddObservation(wrapper.GetNumberOfPlacedTiles() / wrapper.GetTotalTiles());
+        //sensor.AddObservation(MeeplesLeft / meeplesMax); // Might be useful.
 
         //One-Hot observations of enums (can be done with less code, but this is more readable)
         int MAX_PHASES = Enum.GetValues(typeof(Phase)).Length;
@@ -294,10 +215,10 @@ public class CarcassonneAgent : Agent
         sensor.AddOneHotObservation((int)wrapper.GetGamePhase(), MAX_PHASES);
         sensor.AddOneHotObservation((int)meepleDirection, MAX_DIRECTIONS);
 
-
         // Call the tile observation method that was assigned at initialization,
         // using the editor-exposed 'observationApproach' field.
-        AddTileObservations?.Invoke(sensor);
+        // This will observe the entire Carcassonne game board.
+        AddTileObservations?.Invoke(wrapper, sensor);
     }
 
     /// <summary>

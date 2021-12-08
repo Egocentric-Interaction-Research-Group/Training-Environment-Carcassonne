@@ -1,7 +1,6 @@
 using Carcassonne;
 using System.Collections.Generic;
 using UnityEngine;
-using Assets.Scripts.Carcassonne.AI;
 
 public class GameController : MonoBehaviour
 {
