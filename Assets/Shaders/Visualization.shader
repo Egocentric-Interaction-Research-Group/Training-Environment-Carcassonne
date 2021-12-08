@@ -138,7 +138,7 @@ Shader "Carcassonne/Visualization"
                 uint playerId = 0;                  // Player id of the meeple placed (0 if not placed).
                 
                 // Top column sub-tiles
-                if (fracY >= 0.000 && fracY < 0.333) 
+                if (fracY >= 0.666 && fracY < 1.000) 
                 {
                     if (fracX >= 0.333 && fracX < 0.666) // North
                     {
@@ -166,7 +166,7 @@ Shader "Carcassonne/Visualization"
                     }
                 }
                 // Bottom column sub-tiles
-                else if (fracY >= 0.666 && fracY < 1.000) 
+                else if (fracY >= 0.000 && fracY < 0.333) 
                 {
                     if (fracX >= 0.333 && fracX < 0.666) // South
                     {
@@ -204,7 +204,7 @@ Shader "Carcassonne/Visualization"
                 gridDims.x *= 1.0 / gridRes;
                 gridDims.y *= 1.0 / gridRes;
 
-                float2 gridUV = float2(i.uv.x, 1.0 - i.uv.y);
+                float2 gridUV = i.uv;
                 gridUV *= gridDims;
                 float gridFill = grid(gridUV + 0.05 / gridRes, gridRes);
 

@@ -253,13 +253,13 @@ public class PlacedTiles : MonoBehaviour
         if (z > 0 && tiles.Played[x, z - 1] != null)
         {
             isNotAlone = true;
-            if (tile.North != tiles.Played[x, z - 1].South) return false;
+            if (tile.South != tiles.Played[x, z - 1].North) return false;
         }
 
         if (z + 1 < tiles.Played.GetLength(1) && tiles.Played[x, z + 1] != null)
         {
             isNotAlone = true;
-            if (tile.South != tiles.Played[x, z + 1].North) return false;
+            if (tile.North != tiles.Played[x, z + 1].South) return false;
         }
 
         return isNotAlone;
