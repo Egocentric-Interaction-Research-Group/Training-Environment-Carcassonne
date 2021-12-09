@@ -1,6 +1,7 @@
 //------------------------------------------------------------------------------------------------//
 // Author:   Kasper Skott
 // Created:  2021-12-06
+// Modified: 2021-12-09
 //------------------------------------------------------------------------------------------------//
 
 using System.Collections.Generic;
@@ -47,11 +48,15 @@ public static class BoardObservation
     /// <returns>A new dictionary of meeples that may be accessed using tile coordinates.</returns>
     public static Dictionary<Vector2Int, int> BuildMeepleMap(AIWrapper wrapper)
     {
+        const int bitMask3 = 0x7; // 3-bit mask.
+
         List<Meeple> allMeeps = wrapper.state.meeples.All;
         Dictionary<Vector2Int, int> mappedMeeps = new Dictionary<Vector2Int, int>(allMeeps.Count);
         foreach (Meeple meep in allMeeps)
         {
-            const int bitMask3 = 0x7; // 3-bit mask.
+            if (meep.free)
+                continue;
+
             int meepleData = 0x0;
             meepleData |= meep.playerId & bitMask3;              // Insert 3-bit player id for meeple. Must be between 0-7.
             meepleData |= ((int)meep.direction & bitMask3) << 3; // Insert 3-bit value for meeple direction.
