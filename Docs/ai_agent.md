@@ -101,3 +101,17 @@ In the inspector of the *AI* prefab object in unity, it is possible to set the a
 Each time this method is called, which is once per requested action, the max number of allowed actions is reset to its default value in the inspector. Therefore, at the end of this method, the allowed number for this specific phase is set through a loop. These allowed decisions will directly map to the actions the agent can take.
 
 ### Actions
+The actions are what actually happens based on the decision that the agent takes. This occurs in the *OnActionRecieved*-method in the agent class, *CarcassonneAgent*. In this method, the chosen decisions are divided up by phase in the same way as the decisions are, that is by *TileDrawn*, *TileDown*, and *MeepleDown* phases as follows:
+
+//Insert code here
+
+The actions for both tile placement and meeple placement have their separate methods. However, this code snippet gives an easy introduction to how it works, in the case of the *TileDown* phase. Here, the agent can either choose 0 or 1 in the first (and only) branch for decisions. The result will be to either draw a meeple (0) or end the turn (1). In the other phases, there are of course 6 different action, and therefore 6 different clauses in the if-statement. Note that an untrained agent has no preference to either of these actions in either scenario. It learns to map a good action for a certain situation over time through the rewards, which we will cover in the next section.
+
+### Rewards
+Rewards are what makes the agent improve (or not) over time through training, and reach the desired behaviour. Rewards are a float value, generally normalized to be a total of between -1 and 1 for each decision the agent makes. In most cases, it is wise to only give rewards (positive or negative) for desired or undesired results, rather than specific actions. In this way, the agent is not limited to play a certain way, but rather to achieve a certain goal by any means. 
+
+Very small negative rewards can be added to often repeated tasks in order to make the agent achieve its goal faster, in this case it could limit replacing the meeple several times before confirming, rather than just placing it once and confirming that position. The rewards are however mainly recieved when the score of the agent increases in the game. Tweaking the rewards during training will result in variations in the agent behaviour.
+
+Rewards in the code can (but does not have to) be found at:
+* The start of decision methods - Small negative rewards are used to limit the amount of time the agent spends making a decision.
+* The end of decision methods - At the end of some of the decision methods, the scoring occurs. This would also result in a reward for the agent. It is also possible to give rewards for sub-tasks, such as placing a tile or a meeple correctly. However, as this alone is not the desired behaviour, emphasis should be on long term score rewards.
