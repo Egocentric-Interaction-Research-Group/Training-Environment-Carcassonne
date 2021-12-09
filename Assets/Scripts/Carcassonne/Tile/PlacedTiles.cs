@@ -2,26 +2,32 @@
 using UnityEngine;
 
 /// <summary>
-/// Class encapsulating information about tiles that have been played on the board.
+/// Script encapsulating information about tiles that have been played on the board.
+/// It also handles the adding of tiles on the board
 /// </summary>
 public class PlacedTiles : MonoBehaviour
 {
 
     public TileState tiles;
 
+    /// <summary>
+    /// Place a tile on x,z in the tile grid
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="z"></param>
+    /// <param name="tile"></param>
     public void PlaceTile(int x, int z, Tile tile)
     {
         tiles.Played[x, z] = tile;
         tiles.PlayedId[x, z] = tile.id;
     }
 
-    public void removeTile(int x, int z)
-    {
-        tiles.Played[x, z] = null;
-        tiles.PlayedId[x, z] = 0; //id 0 means no tile
-    }
-
-    //FIXME This should be changable to a Tile return type
+    /// <summary>
+    /// Returns the tile on x,z in the tile grid
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="z"></param>
+    /// <returns></returns>
     public Tile getPlacedTile(int x, int z)
     {
         Tile t = tiles.Played[x, z];
@@ -33,12 +39,22 @@ public class PlacedTiles : MonoBehaviour
         return t;
     }
 
-
+    /// <summary>
+    /// Returns the length or size of the tile grid. Dimension specifies which axis, 0 = x, 1 = z
+    /// </summary>
+    /// <param name="dimension"></param>
+    /// <returns></returns>
     public int GetLength(int dimension)
     {
         return tiles.Played.GetLength(dimension);
     }
 
+    /// <summary>
+    /// Checks whether a point in the tile grid has neighbouring tiles
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="z"></param>
+    /// <returns></returns>
     public bool HasNeighbor(int x, int z)
     {
         if (x + 1 < tiles.Played.GetLength(0))
@@ -56,6 +72,16 @@ public class PlacedTiles : MonoBehaviour
         return false;
     }
 
+    /// <summary>
+    /// Checks if a tile has a matching geography in a direction.
+    /// Returns true if there is no neighbouring tile (null) or if a neighbouring tile's
+    /// geography match in the corresponding direction
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <param name="dir"></param>
+    /// <param name="geography"></param>
+    /// <returns></returns>
     public bool MatchGeographyOrNull(int x, int y, Point.Direction dir, Tile.Geography geography)
     {
         if (tiles.Played[x, y] == null)
@@ -65,19 +91,36 @@ public class PlacedTiles : MonoBehaviour
         return false;
     }
 
+    /// <summary>
+    /// Checks whether a tile has a city in it's center
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <returns></returns>
     public bool CityTileHasCityCenter(int x, int y)
     {
         return tiles.Played[x, y].getCenter() == Tile.Geography.City ||
                tiles.Played[x, y].getCenter() == Tile.Geography.CityRoad;
     }
 
+    /// <summary>
+    /// Checks whether a tile has grass or a stream(UNUSED) in it's center
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <returns></returns>
     public bool CityTileHasGrassOrStreamCenter(int x, int y)
     {
         return tiles.Played[x, y].getCenter() == Tile.Geography.Grass ||
                tiles.Played[x, y].getCenter() == Tile.Geography.Stream;
     }
 
-    //Hämtar grannarna till en specifik tile
+    /// <summary>
+    /// Retrieves the neighbours of a coordinate on the tile grid
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <returns></returns>
     public int[] GetNeighbors(int x, int y)
     {
         var Neighbors = new int[4];
@@ -106,6 +149,14 @@ public class PlacedTiles : MonoBehaviour
         return Neighbors;
     }
 
+    /// <summary>
+    /// Weight means geography in this case. Code has probably been semi-copied from an online algorithm
+    /// and not been properly updated for this project.
+    /// The method will return the geography of a coordinate on the tile grid 
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <returns></returns>
     public Tile.Geography[] getWeights(int x, int y)
     {
         var weights = new Tile.Geography[4];
@@ -132,6 +183,12 @@ public class PlacedTiles : MonoBehaviour
         return weights;
     }
 
+    /// <summary>
+    /// Returns the geography in the center of coordinate on the tile grid
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <returns></returns>
     public Tile.Geography[] getCenters(int x, int y)
     {
         var centers = new Tile.Geography[4];
@@ -158,6 +215,14 @@ public class PlacedTiles : MonoBehaviour
         return centers;
     }
 
+    /// <summary>
+    /// Get usuable directions of coordinates in the tile grid. If the coordinates contains
+    /// a tile and that tile has a direction for example in the direction 'North' then that direction will be placed in
+    /// array to be returned by the method
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <returns></returns>
     public Point.Direction[] getDirections(int x, int y)
     {
         var directions = new Point.Direction[4];
@@ -184,6 +249,13 @@ public class PlacedTiles : MonoBehaviour
         return directions;
     }
 
+    /// <summary>
+    /// Checks whether a cloister tile is surrounded by other tiles
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="z"></param>
+    /// <param name="endTurn"></param>
+    /// <returns></returns>
     public int CheckSurroundedCloister(int x, int z, bool endTurn)
     {
         var pts = 1;
@@ -200,6 +272,14 @@ public class PlacedTiles : MonoBehaviour
         return 0;
     }
 
+    /// <summary>
+    /// Checks whether neighbouring tile interfers with tile placement, meaning if the current tile matches up
+    /// with neighbouring tiles
+    /// </summary>
+    /// <param name="tile"></param>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <returns></returns>
     public bool CheckNeighborsIfTileCanBePlaced(Tile tile, int x, int y)
     {
         var isNotAlone2 = false;
@@ -231,7 +311,13 @@ public class PlacedTiles : MonoBehaviour
         return isNotAlone2;
     }
 
-    //Kontrollerar att tilen får placeras på angivna koordinater
+    /// <summary>
+    /// Checks if a tile is placed within the confinement of the tile grid
+    /// </summary>
+    /// <param name="tile"></param>
+    /// <param name="x"></param>
+    /// <param name="z"></param>
+    /// <returns></returns>
     public bool TilePlacementIsValid(Tile tile, int x, int z)
     {
         if (x < 0 || x >= tiles.Played.GetLength(0) || z < 0 || z >= tiles.Played.GetLength(1) || tiles.Played[x, z] != null)

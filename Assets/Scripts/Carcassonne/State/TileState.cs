@@ -7,8 +7,8 @@ using JetBrains.Annotations;
 /// </summary>
 public class TileState
 {
-    public List<Tile> Remaining = new List<Tile>(); //Remaining tiles not yet drawn by any player
-    [CanBeNull] public Tile Current; //Current active tile during Phase.TileDrawn
-    public Tile[,] Played = new Tile[30,30]; //Current played tiles on board
-    public float[,] PlayedId = new float[30,30]; //Id of every played tile mapped in its own matrix for AI use
+    public List<Tile> Remaining = new List<Tile>(); //  Remaining tiles not yet drawn by any player
+    [CanBeNull] public Tile Current; // Current active tile during Phase.TileDrawn
+    public Tile[,] Played = new Tile[40,40]; // Current played tiles on board
+    public float[,] PlayedId = new float[40,40]; // Id of every played tile mapped in its own matrix for AI use
 }

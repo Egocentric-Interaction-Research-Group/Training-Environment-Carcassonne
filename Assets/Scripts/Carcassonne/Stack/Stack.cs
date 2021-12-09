@@ -3,13 +3,14 @@ using Random = System.Random;
 
 
 /// <summary>
-///     The Stack of tiles.
+/// This script represent a stack of tiles
 /// </summary>
 public class Stack : MonoBehaviour
 {
     public TileState tiles;
 
     /// <summary>
+    /// A random tile in the stack is selected and returned
     /// </summary>
     /// <returns></returns>
     public Tile Pop()

@@ -4,8 +4,15 @@ using UnityEngine;
 
 namespace Carcassonne
 {
+    /// <summary>
+    /// A script that calculates points based on geography and meeple placement
+    /// </summary>
     public class Point : MonoBehaviour
     {
+        /// <summary>
+        /// Enum used for tile directions
+        /// TODO: Place in a separate class
+        /// </summary>
         public enum Direction
         {
             NORTH,
@@ -20,43 +27,67 @@ namespace Carcassonne
         private int counter;
         private int finalScore;
         private Graph g;
-        private readonly int nbrOfVertices = 74;
+        private readonly int nbrOfVertices = 72;
         private int roadBlocks;
         private int vertexIterator;
         private bool[] visited;
 
+        /// <summary>
+        /// MonoBehavior method that will create a new graph when the Unity Scene loads
+        /// </summary>
         private void Start()
         {
             g = new Graph(nbrOfVertices);
         }
 
+        /// <summary>
+        /// Starts a recursion on a tile to check if a meeple can be placed. Up to 72 different tiles can be checked
+        /// </summary>
+        /// <param name="Vindex"></param>
+        /// <param name="weight"></param>
+        /// <returns></returns>
         public bool testIfMeepleCantBePlaced(int Vindex, Tile.Geography weight)
         {
             roadBlocks = 0;
             broken = false;
             counter = 0;
-            visited = new bool[85];
+            visited = new bool[72];
             dfs(Vindex, weight, false);
             return broken || roadBlocks == 2;
         }
 
+        /// <summary>
+        /// Starts a recursion in a direction from a tile to check if a meeple can be placed. Up to 72 different tiles can be checked
+        /// </summary>
+        /// <param name="Vindex"></param>
+        /// <param name="weight"></param>
+        /// <param name="direction"></param>
+        /// <returns></returns>
         public bool testIfMeepleCantBePlacedDirection(int Vindex, Tile.Geography weight, Direction direction)
         {
             roadBlocks = 0;
             broken = false;
             counter = 0;
-            visited = new bool[85];
+            visited = new bool[72];
             dfsDirection(Vindex, weight, direction, false);
             return broken || roadBlocks == 2;
             ;
         }
 
+        /// <summary>
+        ///     startDFS takes an index and a weight to calculate the number of points the finished set is worth.
+        ///     Mainly used by tiles with a town as a centerpiece.
+        ///     The search starts at the tile and sprawles out through the tile's neighbours
+        /// </summary>
+        /// <param name="Vindex"></param>
+        /// <param name="weight"></param>
+        /// <param name="direction"></param>
         public int startDfs(int Vindex, Tile.Geography weight, bool GameEnd)
         {
             counter = 1;
             roadBlocks = 0;
             finalScore = 0;
-            visited = new bool[74];
+            visited = new bool[72];
             dfs(Vindex, weight, GameEnd);
             if (weight == Tile.Geography.City) return counter;
             return finalScore;
@@ -75,12 +106,19 @@ namespace Carcassonne
             counter = 0;
             roadBlocks = 0;
             finalScore = 0;
-            visited = new bool[74];
+            visited = new bool[72];
             dfsDirection(Vindex, weight, direction, GameEnd);
             if (weight == Tile.Geography.City) return counter;
             return finalScore;
         }
 
+        /// <summary>
+        /// Depth First Search in a direction to count all matching connected geography from tile
+        /// </summary>
+        /// <param name="Vindex"></param>
+        /// <param name="weight"></param>
+        /// <param name="direction"></param>
+        /// <param name="GameEnd"></param>
         private void dfsDirection(int Vindex, Tile.Geography weight, Direction direction, bool GameEnd)
         {
             if (!visited[Vindex])
@@ -142,6 +180,10 @@ namespace Carcassonne
             if (GameEnd) finalScore = counter;
         }
 
+        /// <summary>
+        /// Removes a vertex in the graph where endVertex match Vindex
+        /// </summary>
+        /// <param name="Vindex"></param>
         public void RemoveVertex(int Vindex)
         {
             if (g.getGraph().ElementAt(Vindex) != null) g.getGraph().ElementAt(Vindex).Clear();
@@ -151,6 +193,13 @@ namespace Carcassonne
                     g.getGraph().ElementAt(i).Remove(g.getGraph().ElementAt(i).ElementAt(j));
         }
 
+        /// <summary>
+        /// Depth First Search from a tile to all it's neighbours to count all matching connected geography from tile
+        /// </summary>
+        /// <param name="Vindex"></param>
+        /// <param name="weight"></param>
+        /// <param name="direction"></param>
+        /// <param name="GameEnd"></param>
         private void dfs(int Vindex, Tile.Geography weight, bool GameEnd)
         {
             if (!visited[Vindex])
@@ -206,6 +255,15 @@ namespace Carcassonne
             if (GameEnd) finalScore = counter;
         }
 
+        /// <summary>
+        /// Place a vertex in the graph
+        /// </summary>
+        /// <param name="Vindex"></param>
+        /// <param name="Vindexes"></param>
+        /// <param name="weights"></param>
+        /// <param name="startCenter"></param>
+        /// <param name="endCenters"></param>
+        /// <param name="directions"></param>
         public void placeVertex(int Vindex, int[] Vindexes, Tile.Geography[] weights,
             Tile.Geography startCenter, Tile.Geography[] endCenters, Direction[] directions)
         {
@@ -215,6 +273,9 @@ namespace Carcassonne
                     g.addEdge(Vindex, Vindexes[i], weights[i], startCenter, endCenters[i], directions[i]);
         }
 
+        /// <summary>
+        /// Graph representation of the tile grid
+        /// </summary>
         public class Graph
         {
             private readonly LinkedList<LinkedList<Edge>> graph;

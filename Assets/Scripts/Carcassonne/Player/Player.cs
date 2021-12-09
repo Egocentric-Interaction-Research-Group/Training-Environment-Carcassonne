@@ -2,6 +2,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using Carcassonne;
 
+/// <summary>
+/// A player in the Carcassonne game
+/// </summary>
 public class Player : MonoBehaviour
 {
 
@@ -11,6 +14,10 @@ public class Player : MonoBehaviour
     public List<Meeple> meeples = new List<Meeple>();
     public MeepleState meepleState;
 
+    /// <summary>
+    /// Setup the data neccessary for the player. Clear previous meeples and create a new set of meeples that
+    /// are also added to the meeple state
+    /// </summary>
     public void Setup()
     {
         meeples.Clear();
@@ -24,6 +31,10 @@ public class Player : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Returns how many free to use meeples the player currently has
+    /// </summary>
+    /// <returns></returns>
     public int AmountOfFreeMeeples()
     {
         int count = 0;

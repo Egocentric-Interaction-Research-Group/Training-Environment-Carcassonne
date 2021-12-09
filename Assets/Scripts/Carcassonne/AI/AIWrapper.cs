@@ -58,7 +58,7 @@ public class AIWrapper : InterfaceAIWrapper
         controller.iTileAimZ = z;
         controller.meepleController.iMeepleAimX = x;
         controller.meepleController.iMeepleAimZ = z;
-        controller.ConfirmPlacement();
+        controller.ConfirmTilePlacement();
     }
 
     public void PlaceMeeple(Direction meepleDirection)

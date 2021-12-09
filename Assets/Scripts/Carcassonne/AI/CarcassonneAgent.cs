@@ -20,7 +20,7 @@ public class CarcassonneAgent : Agent
     //AI Specific
     public AIWrapper wrapper;
     private const int maxBranchSize = 6;
-    public int x = 15, z = 15, rot = 0;
+    public int x = 20, z = 20, rot = 0;
 
     /// <summary>
     /// Initial setup which gets the scripts needed to AI calls and observations, called only once when the agent is enabled.
@@ -256,8 +256,8 @@ public class CarcassonneAgent : Agent
     /// </summary>
     internal void ResetAttributes()
     {
-        x = 15;
-        z = 15;
+        x = 20;
+        z = 20;
         rot = 0;
         meepleDirection = Direction.SELF;
     }
