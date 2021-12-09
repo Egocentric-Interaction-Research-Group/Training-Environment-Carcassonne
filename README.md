@@ -7,8 +7,8 @@ one playing field, which could be useful for getting a closer look at exactly ho
 ## Installation
 ### ML-Agents Toolkit
 In order to use the Training Environment the user needs to download the ML-Agents Toolkit. This project has been tested with release 18(https://github.com/Unity-Technologies/ml-agents).
-And it is recommended to follow their documentation in order to get it installed properly. NOTE: it is important that the ml-agents-release_18 folder is downloaded and placed in
-a convenient location as it will be used during training. 
+And it is recommended to follow their documentation in order to get it installed properly. `NOTE:` it is important that the ml-agents-release_18 folder is downloaded and placed in
+a convenient location as it will be used during training, this folder should be kept separate from the training environment. 
 
 ### Anaconda
 Another program we would recommend for using the Training Environment is Anaconda(https://www.anaconda.com/products/individual). We used Anaconda with Python version 3.8.8. It is also possible
@@ -42,4 +42,19 @@ mlagents-learn config/ppo/Carcassonne.yaml --run-id NAMEOFTHERUN
 ```
 7. Open up Unity and press play to begin the training. 
 8. The training will stop after the the agent has carried out the maximum number of steps defined in the .yaml file, if you wish to stop the training for any reason, simply press
-the play button again in Unity. 
+the play button again in Unity.
+
+### Resuming training
+If the AI has been terminated early, the training can be resumed using the following command: 
+```
+mlagents-learn config/ppo/Carcassonne.yaml --run-id NAMEOFTHERUN --resume
+```
+Where NAMEOFTHERUN = the name of the run which is to be resumed. 
+
+If the AI has completed its max steps set in the `Carcassonne.yaml` file. This can be increased by changing the variable `max_steps:`. After this is done, the training
+can be resumed using the same command as if it had terminated early. 
+
+## Results
+The results from the training will be placed in the `ml-agents-release_18` in the following directory `\ml-agents-release_18\results`. After a training session has been completed/terminated a folder with the name of the run for the training session will be created. Within this folder the file of interest is the file ending in `.onnx` which is the "brain" of the AI. This file can then be placed on the AI prefab under `Model` at which point it can run without training, and without the use of a terminal. 
+
+
