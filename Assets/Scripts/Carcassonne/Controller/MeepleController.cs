@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using Carcassonne;
 using UnityEngine;
-using static Carcassonne.Tile;
 
 public class MeepleController : MonoBehaviour
 {
@@ -15,10 +14,10 @@ public class MeepleController : MonoBehaviour
 
     internal int iMeepleAimX;
     internal int iMeepleAimZ;
-    public NewTile.Geography meepleGeography;
+    public Tile.Geography meepleGeography;
     public Point.Direction meepleDirection;
 
-    public Meeple FindMeeple(int x, int y, NewTile.Geography geography)
+    public Meeple FindMeeple(int x, int y, Tile.Geography geography)
     {
         Meeple res = null;
 
@@ -30,7 +29,7 @@ public class MeepleController : MonoBehaviour
         return res;
     }
 
-    public Meeple FindMeeple(int x, int y, NewTile.Geography geography, Point.Direction direction)
+    public Meeple FindMeeple(int x, int y, Tile.Geography geography, Point.Direction direction)
     {
         Meeple res = null;
 
@@ -43,23 +42,23 @@ public class MeepleController : MonoBehaviour
     }
 
     public void PlaceMeeple(Meeple meeple, int xs, int zs, Point.Direction meepleDirection,
-        NewTile.Geography meepleGeography)
+        Tile.Geography meepleGeography)
     {
-        NewTile currentTile = gameController.state.tiles.Current;
-        NewTile.Geography currentCenter = currentTile.getCenter();
+        Tile currentTile = gameController.state.tiles.Current;
+        Tile.Geography currentCenter = currentTile.getCenter();
         bool res;
-        if (currentCenter == NewTile.Geography.Village || currentCenter == NewTile.Geography.Grass ||
-            currentCenter == NewTile.Geography.Cloister && meepleDirection != Point.Direction.CENTER)
+        if (currentCenter == Tile.Geography.Village || currentCenter == Tile.Geography.Grass ||
+            currentCenter == Tile.Geography.Cloister && meepleDirection != Point.Direction.CENTER)
             res = point
                 .testIfMeepleCantBePlacedDirection(currentTile.vIndex, meepleGeography, meepleDirection);
-        else if (currentCenter == NewTile.Geography.Cloister && meepleDirection == Point.Direction.CENTER)
+        else if (currentCenter == Tile.Geography.Cloister && meepleDirection == Point.Direction.CENTER)
             res = false;
         else
             res = point.testIfMeepleCantBePlaced(currentTile.vIndex, meepleGeography);
 
-        if (meepleGeography == NewTile.Geography.City)
+        if (meepleGeography == Tile.Geography.City)
         {
-            if (currentCenter == NewTile.Geography.City)
+            if (currentCenter == Tile.Geography.City)
                 res = gameController.CityIsFinished(xs, zs) || res;
             else
                 res = gameController.CityIsFinishedDirection(xs, zs, meepleDirection) || res;
@@ -68,7 +67,7 @@ public class MeepleController : MonoBehaviour
         if (!currentTile.IsOccupied(meepleDirection) && !res)
         {
             currentTile.occupy(meepleDirection);
-            if (meepleGeography == NewTile.Geography.CityRoad) meepleGeography = NewTile.Geography.City;
+            if (meepleGeography == Tile.Geography.CityRoad) meepleGeography = Tile.Geography.City;
 
             meeple.assignAttributes(xs, zs, meepleDirection, meepleGeography);
             meeple.free = false;

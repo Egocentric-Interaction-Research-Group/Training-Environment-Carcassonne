@@ -81,13 +81,13 @@ public static class BoardObservation
     public static void AddTileIdObservations(AIWrapper wrapper, VectorSensor sensor)
     {
         Dictionary<Vector2Int, int> meepleMap = BuildMeepleMap(wrapper);
-        NewTile[,] tiles = wrapper.GetTiles();
+        Tile[,] tiles = wrapper.GetTiles();
 
         for (int row = 0; row < tiles.GetLength(0); row++)
         {
             for (int col = 0; col < tiles.GetLength(1); col++)
             {
-                NewTile tile = tiles[col, row];
+                Tile tile = tiles[col, row];
                 if (tile == null)
                 {
                     sensor.AddObservation(0.0f);
@@ -127,13 +127,13 @@ public static class BoardObservation
     public static void AddPackedTileIdObservations(AIWrapper wrapper, VectorSensor sensor)
     {
         Dictionary<Vector2Int, int> meepleMap = BuildMeepleMap(wrapper);
-        NewTile[,] tiles = wrapper.GetTiles();
+        Tile[,] tiles = wrapper.GetTiles();
 
         for (int row = 0; row < tiles.GetLength(0); row++)
         {
             for (int col = 0; col < tiles.GetLength(1); col++)
             {
-                NewTile tile = tiles[col, row];
+                Tile tile = tiles[col, row];
                 if (tile == null)
                 {
                     sensor.AddObservation(0.0f);
@@ -179,13 +179,13 @@ public static class BoardObservation
     public static void AddPackedTileObservations(AIWrapper wrapper, VectorSensor sensor)
     {
         Dictionary<Vector2Int, int> meepleMap = BuildMeepleMap(wrapper);
-        NewTile[,] tiles = wrapper.GetTiles();
+        Tile[,] tiles = wrapper.GetTiles();
 
         for (int row = 0; row < tiles.GetLength(0); row++)
         {
             for (int col = 0; col < tiles.GetLength(1); col++)
             {
-                NewTile tile = tiles[col, row];
+                Tile tile = tiles[col, row];
                 int tileData = 0x0;
                 int meepleData = 0x0;
 

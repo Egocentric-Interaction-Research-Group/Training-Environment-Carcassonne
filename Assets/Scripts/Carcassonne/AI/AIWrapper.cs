@@ -94,7 +94,7 @@ public class AIWrapper : InterfaceAIWrapper
         return state.tiles.PlayedId;
     }
 
-    public NewTile[,] GetTiles()
+    public Tile[,] GetTiles()
     {
         return state.tiles.Played;
     }

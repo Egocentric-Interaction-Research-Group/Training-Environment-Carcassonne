@@ -8,25 +8,25 @@ using System;
 using UnityEngine;
 using System.Collections.Generic;
 
-using Geography = NewTile.Geography;
+using Geography = Tile.Geography;
 using Direction = Carcassonne.Point.Direction;
 
 namespace Carcassonne
 {
     /// <summary>
     /// A method parameter struct that enforces a certain array size and handles erroneous input sizes to 
-    /// <see cref="CarcassonneVisualization.UpdateMaterial(NewTile[,], Vector2Int, IReadOnlyList{Meeple})"/>
+    /// <see cref="CarcassonneVisualization.UpdateMaterial(Tile[,], Vector2Int, IReadOnlyList{Meeple})"/>
     /// </summary>
     public readonly struct VisualizationInputTiles
     {
-        public readonly NewTile[,] tiles;
+        public readonly Tile[,] tiles;
         
-        public VisualizationInputTiles(NewTile[,] input)
+        public VisualizationInputTiles(Tile[,] input)
         {
             const int dims = CarcassonneVisualization.MAX_BOARD_DIMENSION;
             int inWidth    = input.GetLength(0);
             int inHeight   = input.GetLength(1);
-            tiles          = new NewTile[dims, dims];
+            tiles          = new Tile[dims, dims];
             
             // Fill out internal array with input array, and pad with null if needed.
             bool noRow;
@@ -85,7 +85,7 @@ namespace Carcassonne
         /// </summary>
         /// <param name="allTiles">The entire board of tiles. May very well include null elements.</param>
         /// <param name="allMeeples">All meeples in the game, even if they're not placed.</param>
-        public void VisualizeBoard(NewTile[,] allTiles, IReadOnlyList<Meeple> allMeeples)
+        public void VisualizeBoard(Tile[,] allTiles, IReadOnlyList<Meeple> allMeeples)
         {
             // Get boundaries of the played tiles so as to only bother with placed tiles.
             (Vector2Int size, Vector2Int offset) = GetPlayedTileBounds(allTiles);
@@ -110,7 +110,7 @@ namespace Carcassonne
         /// </summary>
         /// <param name="allTiles">A 2d array of null and/or valid Tile instances.</param>
         /// <returns>size (width, height), and offset (x, y).</returns>
-        public static (Vector2Int, Vector2Int) GetPlayedTileBounds(NewTile[,] allTiles)
+        public static (Vector2Int, Vector2Int) GetPlayedTileBounds(Tile[,] allTiles)
         {
             Vector2Int dims = new Vector2Int(allTiles.GetLength(0), allTiles.GetLength(1));
 
@@ -177,7 +177,7 @@ namespace Carcassonne
             Vector2Int displayOffset,
             IReadOnlyList<Meeple> allMeeples)
         {
-            NewTile[,] allTiles = inputTiles.tiles;
+            Tile[,] allTiles = inputTiles.tiles;
             Vector2Int updateDim = new Vector2Int(
                 allTiles.GetLength(0), allTiles.GetLength(1));
 
@@ -234,8 +234,6 @@ namespace Carcassonne
                 playerMeeples[absoluteLocation] = playersAtDirections;
             }
 
-            //Debug.Log($"{displaySize.x}x{displaySize.y} with offset {displayOffset.x}, {displayOffset.y}");
-            //Debug.Log("Meeples: " + string.Join(", ", new List<(int, int)>(playerMeeples.Keys)));
 
             // Prepare two arrays to send to the shader. One array contains the geographies of each,
             // while the other contains the player id associated with each direction of each tile
@@ -261,7 +259,7 @@ namespace Carcassonne
                     }
 
                     // Only set values for existing tiles.
-                    if (allTiles.GetValue(col, row) is NewTile t)
+                    if (allTiles.GetValue(col, row) is Tile t)
                     {
                         // Combine all 5 tile geographies into a single float.
                         float tileGeography = (float)t.Center;
@@ -311,10 +309,10 @@ namespace Carcassonne
         private void UpdateWithTestData()
         {
             // Fills a new Tile with the given Geography.
-            Func<Geography, NewTile>
+            Func<Geography, Tile>
             CreateTile = (geo) =>
             {
-                NewTile tile = new NewTile();
+                Tile tile = new Tile();
                 tile.East = geo;
                 tile.North = geo;
                 tile.West = geo;
@@ -327,7 +325,7 @@ namespace Carcassonne
             int showRows = 31;
 
             // Create and fill every tile with grass by default.
-            NewTile[,] tiles = new NewTile[showColumns, showRows];
+            Tile[,] tiles = new Tile[showColumns, showRows];
             for (int row = 0; row < showRows; row++)
                 for (int col = 0; col < showColumns; col++)
                     tiles[col, row] = CreateTile(Geography.Grass);
