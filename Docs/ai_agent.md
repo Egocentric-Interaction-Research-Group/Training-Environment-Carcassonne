@@ -126,7 +126,7 @@ public override void OnActionReceived(ActionBuffers actionBuffers)
                 break;
         }
     }
-    ```
+```
 
 The actions for both tile placement and meeple placement have their separate methods which is called in those phases. However, this code snippet gives an easy introduction to how it works, in the case of the *TileDown* phase. Here, the agent can either choose 0 or 1 in the first (and only) branch for decisions. The result will be to either draw a meeple (0) or end the turn (1). In the other phases, there are of course 6 different action, and therefore 6 different clauses in the if-statement. Each action is mapped with a float with an integer value as in the above (0f). Note that an untrained agent has no preference to either of these actions in either scenario. It learns to map a good action for a certain situation over time through the rewards, which we will cover in the next section, and the observations.
 
