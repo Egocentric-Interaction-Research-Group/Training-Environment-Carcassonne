@@ -5,7 +5,7 @@ This ReadMe file focuses specifically on the AI implementation, i.e. the code an
 This document is useful if you are looking into changing or expanding the functionality of the AI agent, or training new versions of the agent.
 
 ## ML-Agents
-The AI agent is based on ML-agents, which is a built in unity tool for AI. It uses reinforcement learning, meaning it recieves inputs and provides outputs initally at random. Through code segments that reward or punish the agent, by increasing or decreasing its reward attribute, it learns what behaviour is wanted.
+The AI agent is based on ML-agents, which is a built in unity tool for AI. It uses reinforcement learning, meaning it recieves inputs and provides outputs initally at random. Through code segments that reward or punish the agent, by increasing or decreasing its reward attribute, it learns what behaviour is wanted for a given situation. Situations are recognized through the observation of various variables that impact the game state.
 It is possible to continue to train an already trained AI, which can be useful if additional features are added, or if some of the current bugs are fixed.
 
 ## Components
@@ -103,9 +103,32 @@ Each time this method is called, which is once per requested action, the max num
 ### Actions
 The actions are what actually happens based on the decision that the agent takes. This occurs in the *OnActionRecieved*-method in the agent class, *CarcassonneAgent*. In this method, the chosen decisions are divided up by phase in the same way as the decisions are, that is by *TileDrawn*, *TileDown*, and *MeepleDown* phases as follows:
 
-//Insert code here
+```
+public override void OnActionReceived(ActionBuffers actionBuffers)
+    {
+        switch (wrapper.GetGamePhase())
+        {
+            case Phase.TileDrawn:
+                TileDrawnAction(actionBuffers);
+                break;
+            case Phase.TileDown:
+                if (actionBuffers.DiscreteActions[0] == 0f)
+                {
+                    wrapper.DrawMeeple(); //Take meeple
+                }
+                else
+                {
+                    wrapper.EndTurn(); //End turn without taking meeple
+                }
+                break;
+            case Phase.MeepleDrawn:
+                MeepleDrawnAction(actionBuffers);
+                break;
+        }
+    }
+    ```
 
-The actions for both tile placement and meeple placement have their separate methods. However, this code snippet gives an easy introduction to how it works, in the case of the *TileDown* phase. Here, the agent can either choose 0 or 1 in the first (and only) branch for decisions. The result will be to either draw a meeple (0) or end the turn (1). In the other phases, there are of course 6 different action, and therefore 6 different clauses in the if-statement. Note that an untrained agent has no preference to either of these actions in either scenario. It learns to map a good action for a certain situation over time through the rewards, which we will cover in the next section.
+The actions for both tile placement and meeple placement have their separate methods which is called in those phases. However, this code snippet gives an easy introduction to how it works, in the case of the *TileDown* phase. Here, the agent can either choose 0 or 1 in the first (and only) branch for decisions. The result will be to either draw a meeple (0) or end the turn (1). In the other phases, there are of course 6 different action, and therefore 6 different clauses in the if-statement. Each action is mapped with a float with an integer value as in the above (0f). Note that an untrained agent has no preference to either of these actions in either scenario. It learns to map a good action for a certain situation over time through the rewards, which we will cover in the next section, and the observations.
 
 ### Rewards
 Rewards are what makes the agent improve (or not) over time through training, and reach the desired behaviour. Rewards are a float value, generally normalized to be a total of between -1 and 1 for each decision the agent makes. In most cases, it is wise to only give rewards (positive or negative) for desired or undesired results, rather than specific actions. In this way, the agent is not limited to play a certain way, but rather to achieve a certain goal by any means. 
