@@ -73,15 +73,15 @@ The code that sets the allowed number of actions can be found in the method *Wri
         switch (wrapper.GetGamePhase())
         {
             case Phase.TileDrawn:
-                //AI can choose to step one tile place in either of the 4 directions (-X, X, -Z, Z), rotate 90 degrees, or confirm place.
+                //One step in either of the 4 directions (-X, X, -Z, Z), rotate 90 degrees, or confirm place.
                 allowedActions = 6;
                 break;
             case Phase.TileDown:
-                //AI can choose to take or not take a meeple.
+                //Choose to take or not take a meeple.
                 allowedActions = 2;
                 break;
             case Phase.MeepleDrawn:
-                //AI can choose to place a drawn meeple in 5 different places (N, S, W, E, C) or confirm/deny current placement.
+                //Place a drawn meeple in 5 different places (N, S, W, E, C) or confirm/deny current placement.
                 allowedActions = 6;
                 break;
         }
@@ -138,3 +138,17 @@ Very small negative rewards can be added to often repeated tasks in order to mak
 Rewards in the code can (but does not have to) be found at:
 * The start of decision methods - Small negative rewards are used to limit the amount of time the agent spends making a decision.
 * The end of decision methods - At the end of some of the decision methods, the scoring occurs. This would also result in a reward for the agent. It is also possible to give rewards for sub-tasks, such as placing a tile or a meeple correctly. However, as this alone is not the desired behaviour, emphasis should be on long term score rewards.
+
+
+### Example run
+To visualize the agent actions more clearly, here is a simple example of how an agent takes its turn in the cARcassonne game. The core segment for taking actions is the *FixedUpdate*-method in the *AIDecisionRequester*-class, which continously checks which player's turn it is to act and which phase the game is in, and acts accordingly.
+The steps for a standard turn are as follows:
+
+1. Check for turn - In the *AIDecisionRequester*-class, a check is made in the *FixedUpdate*-method to verify that it is the agents turn to play before requesting any actions.
+2. Draw tile - The *AIDecisionRequester*-class automatically draws the tile, as there is no other choice.
+3. Place tile - In this stage, the *AIDecisionRequester*-class repeatedly calls for a decison from the *CarcassonneAgent*-class. Each time, the *CarcassonneAgent* either updates the position of where the tile is to be placed (changing the *x* or *z* values), rotates the tile (changes the *rot* value), or confirms the current position and rotation of the tile and attempts to place it. If the placement is valid, the tile is placed and the game moves on to the next phase.
+4. Meeple decision - In the next phase, another decision is requested by the *AIDecisionRequester* to the *CarcassonneAgent*. In this phase however, the decision also ends the phase, at it is either to draw a meeple, in which case the phase of placing the meeple begins, or not draw a meeple, in which case the round ends without meeple placement.
+5. Meeple placement (optional) - If a meeple is drawn, actions are repeatedly requested again by the *AIDecisionRequester* to the *CarcassonneAgent* to place the meeple in one of the 5 possible positions (North, South, West, East, or Center) of the placed tile, and then confirm the placement. If the placement is valid, the meeple is placed and the turn ends. If not, the meeple is return and the game goes back to the previous stage (step 4).
+6. End turn (optional) - If the turn is not already ended without drawing a meeple, then if one is drawn and placed, the *AIDecisionRequester* ends the turn at this point.
+
+If the agent is playing alone, it will be the next player after ending a turn, and thus will continue to loop these steps until the game ends. If another player is present however, the sequence will return to step 1 and *AIDecisionRequester* will continously check for when it is the agents turn to act again. At that point the steps are repeated.
