@@ -22,10 +22,10 @@ In this section, the general structure of this agent will be outlined. An instru
 
 ### Structure
 The agent itself consists of only one class, in this project called *CarcassonneAgent*, that inherits *Agent* from the ML-Agents package. However, it also utilizes two helper classes. These are rather simplistic both in code and functionality:
-* *AIDecisionRequester* - This class has two main functionalities. 
+* [AIDecisionRequester](../Assets/Scripts/Carcassonne/AI/AIDecisionRequester.cs) - This class has two main functionalities. 
   * It checks wether or not it is the current player's (played by the agent) turn to act. 
   * If it is the agents turn to act, it either acts directly through this class with hard coded actions for certain states that only have one outocome (drawing a tile, ending a turn), or it request a decision from the agent resulting in an action. This works the same for untrained or trained agents, the only difference is the likelyhood of each action based on the observations the agent has made in the game state.
-* *AIWrapper* - This class only serves the purpose of acting as a middle-man between the agent and the environment it acts in. This is done by the agent class itself calling methods in the AIWrapper to execute its actions, rather than directly in the game code. The main reason for this is the many differences in the code structure of the real cARcassonne environment and the training environment.
+* [AIWrapper](../Assets/Scripts/Carcassonne/AI/AIWrapper.cs) - This class only serves the purpose of acting as a middle-man between the agent and the environment it acts in. This is done by the agent class itself calling methods in the AIWrapper to execute its actions, rather than directly in the game code. The main reason for this is the many differences in the code structure of the real cARcassonne environment and the training environment.
 
 These two helper classes are, compared to the agent itself, rather simplistic and straight forward. They outline how the agent can act through the static hard-coded decisions and actions it can take, as well as many of the observations it recieves through the wrapper. If no change in the actual behaviour of the AI is wanted, but it is needed to change how it interacts with the code, making changes in the wrapper class should be sufficient.
 
@@ -37,7 +37,7 @@ The *AIDecisionRequest*-class will always act first. It decides if it is time to
 In ML-Agents, the observations are collected by overriding the *CollectObservations*-method from the inherited *Agent* class. This method recieves a VectorSensor as input, which is used to add observations. The observations are simply numeric value representations of various aspects of the game state that the agent needs to know about to make an informed decision. Some examples is the tile-id and rotation of each tile, including the one to place, and how many meeples the agent has left.
 
 Implementing this in code is rather simple. The complicated work here is rather to figure out all information that is needed, and what is not needed, to make an informed decision. The observed parameters are prefered to be normalized between the values -1 to 1. The code for this in the agent is rather short:
-```
+```c#
     public override void CollectObservations(VectorSensor sensor)
     {
         sensor.AddObservation(MeeplesLeft / meeplesMax);
@@ -66,7 +66,7 @@ Important things to note is that each observation is added separately, and that 
 There are two types to handle decisions in ML-Agents. They can be *continous*, meaning there is a constant stream of decisions rather than single distinct decisions. For example, steering while driving would be continous. In the Carcassonne case however, we use discrete *actions*, which occurs on distinct separate occasions, as this is a board game with one distinct action per phase. Additionally, ML-Agents allows branches for several decisions, and thereby actions, to take place simultaneously. This can also be examplified by driving, where steering and acceleration could both happen at the same time. In this case it is once again more simplistic, as only one action needs to take place for any specific decision. Therefore, only one branch is used, and all possible decisions are mapped to this one branch in the code.
 
 The code that sets the allowed number of actions can be found in the method *WriteDiscreteActionMask* which is overridden from the inherited *Agent* class. This class allows us to set how many choices are available for a single decision in the various game stages. The code is rather simple:
-```
+```c#
     public override void WriteDiscreteActionMask(IDiscreteActionMask actionMask)
     {
         int allowedActions = 0;
@@ -103,7 +103,7 @@ Each time this method is called, which is once per requested action, the max num
 ### Actions
 The actions are what actually happens based on the decision that the agent takes. This occurs in the *OnActionRecieved*-method in the agent class, *CarcassonneAgent*. In this method, the chosen decisions are divided up by phase in the same way as the decisions are, that is by *TileDrawn*, *TileDown*, and *MeepleDown* phases as follows:
 
-```
+```c#
 public override void OnActionReceived(ActionBuffers actionBuffers)
     {
         switch (wrapper.GetGamePhase())
