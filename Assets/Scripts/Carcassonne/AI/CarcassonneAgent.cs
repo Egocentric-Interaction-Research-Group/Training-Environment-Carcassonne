@@ -7,6 +7,7 @@ using static Carcassonne.Point;
 
 /// <summary>
 /// The AI for the player. An AI user contains both a regular PlayerScript and this AI script to observe and take actions.
+/// Version 1.0
 /// </summary>
 public class CarcassonneAgent : Agent
 {
@@ -206,7 +207,7 @@ public class CarcassonneAgent : Agent
         sensor.AddObservation(x / wrapper.GetMaxBoardSize());
         sensor.AddObservation(z / wrapper.GetMaxBoardSize());
         sensor.AddObservation(wrapper.GetNumberOfPlacedTiles() / wrapper.GetTotalTiles());
-        //sensor.AddObservation(MeeplesLeft / meeplesMax); // Might be useful.
+        sensor.AddObservation(wrapper.GetMeeplesLeft() / wrapper.GetMaxMeeples());
 
         //One-Hot observations of enums (can be done with less code, but this is more readable)
         int MAX_PHASES = Enum.GetValues(typeof(Phase)).Length;

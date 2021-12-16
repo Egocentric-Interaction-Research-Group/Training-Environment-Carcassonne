@@ -81,7 +81,7 @@ public static class BoardObservation
     public static void AddTileIdObservations(AIWrapper wrapper, VectorSensor sensor)
     {
         Dictionary<Vector2Int, int> meepleMap = BuildMeepleMap(wrapper);
-        Tile[,] tiles = wrapper.GetTiles();
+        Tile[,] tiles = (Tile[,])wrapper.GetTiles();
 
         for (int row = 0; row < tiles.GetLength(0); row++)
         {
@@ -127,7 +127,7 @@ public static class BoardObservation
     public static void AddPackedTileIdObservations(AIWrapper wrapper, VectorSensor sensor)
     {
         Dictionary<Vector2Int, int> meepleMap = BuildMeepleMap(wrapper);
-        Tile[,] tiles = wrapper.GetTiles();
+        Tile[,] tiles = (Tile[,])wrapper.GetTiles();
 
         for (int row = 0; row < tiles.GetLength(0); row++)
         {
@@ -179,7 +179,7 @@ public static class BoardObservation
     public static void AddPackedTileObservations(AIWrapper wrapper, VectorSensor sensor)
     {
         Dictionary<Vector2Int, int> meepleMap = BuildMeepleMap(wrapper);
-        Tile[,] tiles = wrapper.GetTiles();
+        Tile[,] tiles = (Tile[,])wrapper.GetTiles();
 
         for (int row = 0; row < tiles.GetLength(0); row++)
         {

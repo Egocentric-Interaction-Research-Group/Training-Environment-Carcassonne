@@ -1,6 +1,11 @@
 using static Carcassonne.Point;
 using UnityEngine;
-
+/// <summary>
+///  The AIWrapper acts as a middle-man between the AIPlayer-class and the data it needs and actions it can perform. It separates the AI logic from the code implementation. Its specific purpose is to 
+///  allow the exact same AIPlayer-class to be used in the real environment and the training environment. This means the AIWrapper class will look different in both these project, as the code running
+///  the game differs in the two implementations.
+///  Version 1.0
+/// </summary>
 public class AIWrapper : InterfaceAIWrapper
 {
     public GameController controller;
@@ -89,7 +94,7 @@ public class AIWrapper : InterfaceAIWrapper
 
     public int GetMaxTileId()
     {
-        return 33; //I have no clue how to get this in a more error safe manner at the moment.
+        return 24;
     }
 
     public float[,] GetPlacedTiles()
@@ -97,7 +102,7 @@ public class AIWrapper : InterfaceAIWrapper
         return state.tiles.PlayedId;
     }
 
-    public Tile[,] GetTiles()
+    public object[,] GetTiles()
     {
         return state.tiles.Played;
     }

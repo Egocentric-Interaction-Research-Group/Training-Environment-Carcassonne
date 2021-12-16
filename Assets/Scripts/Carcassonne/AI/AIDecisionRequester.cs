@@ -2,6 +2,7 @@ using UnityEngine;
 
 /// <summary>
 /// The AIDecisionRequester sets up the allowed number of actions for the AI and and requests a decision when needed.
+/// Version 1.0
 /// </summary>
 public class AIDecisionRequester : MonoBehaviour
 {
