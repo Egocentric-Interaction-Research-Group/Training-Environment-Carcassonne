@@ -20,6 +20,7 @@ public class Player : MonoBehaviour
     /// </summary>
     public void Setup()
     {
+        score = 0;
         meeples.Clear();
         for (int i = 0; i < 7; i++)
         {

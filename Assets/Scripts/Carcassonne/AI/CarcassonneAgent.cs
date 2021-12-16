@@ -10,6 +10,8 @@ using static Carcassonne.Point;
 /// </summary>
 public class CarcassonneAgent : Agent
 {
+    private const int MAX_GAME_SCORE = 338; // https://boardgames.stackexchange.com/questions/7375/maximum-attainable-points-for-a-single-player-in-a-two-player-game-of-carcassonn
+
     //Enum Observations
     private Direction meepleDirection = Direction.SELF;
 
@@ -68,6 +70,7 @@ public class CarcassonneAgent : Agent
                 else
                 {
                     wrapper.EndTurn(); //End turn without taking meeple
+                    AddReward(wrapper.GetScoreChange());
                 }
                 break;
             case Phase.MeepleDrawn:
@@ -120,7 +123,7 @@ public class CarcassonneAgent : Agent
 
             if (wrapper.GetGamePhase() == Phase.TileDown) //If the placement was successful, the phase changes to TileDown.
             {
-                AddReward(0.5f);
+                AddReward(0.05f);
             }
         }
 
@@ -170,6 +173,8 @@ public class CarcassonneAgent : Agent
             if (wrapper.GetGamePhase() == Phase.MeepleDown) //If meeple is placed.
             {
                 AddReward(0.1f); //Rewards successfully placing a meeple
+                wrapper.EndTurn();
+                AddReward(wrapper.GetScoreChange());
             }
             else if (wrapper.GetGamePhase() == Phase.TileDown) //If meeple gets returned.
             {
@@ -189,10 +194,7 @@ public class CarcassonneAgent : Agent
     {
         //This occurs every X steps (Max Steps). It only serves to reset tile position if AI is stuck, and for AI to process current learning
         ResetAttributes();
-        if (wrapper.state.phase != Phase.GameOver)
-        {
-            wrapper.Reset();
-        }
+        wrapper.Reset();
     }
 
     /// <summary>
@@ -201,6 +203,7 @@ public class CarcassonneAgent : Agent
     /// <param name="sensor">The vector sensor to add observations to</param>
     public override void CollectObservations(VectorSensor sensor)
     {
+        sensor.AddObservation(wrapper.GetScore() / MAX_GAME_SCORE);
         sensor.AddObservation(wrapper.GetCurrentTileId() / wrapper.GetMaxTileId());
         sensor.AddObservation(rot / 3f);
         sensor.AddObservation(x / wrapper.GetMaxBoardSize());

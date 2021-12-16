@@ -1,4 +1,5 @@
 using static Carcassonne.Point;
+using UnityEngine;
 
 public class AIWrapper : InterfaceAIWrapper
 {
@@ -6,6 +7,7 @@ public class AIWrapper : InterfaceAIWrapper
     public GameState state;
     public Player player;
     public int totalTiles;
+    public float previousScore;
 
     public bool IsAITurn()
     {
@@ -76,7 +78,8 @@ public class AIWrapper : InterfaceAIWrapper
 
     public void Reset()
     {
-        controller.state.phase = Phase.GameOver;
+        previousScore = 0;
+        controller.startGame = true;
     }
 
     public int GetMaxMeeples()
@@ -127,5 +130,21 @@ public class AIWrapper : InterfaceAIWrapper
     public int GetMaxZ()
     {
         return controller.maxZ;
+    }
+
+    public float GetScore()
+    {
+        return (float)player.score;
+    }
+
+    public float GetScoreChange()
+    {
+        if ((float)player.score != previousScore)
+        {
+            Debug.Log("Player " + player.id + " score changed from " + previousScore + "p to " + player.score + "p");
+        }
+        float scoreChange = (float)player.score - previousScore;
+        previousScore = (float)player.score;
+        return scoreChange;
     }
 }

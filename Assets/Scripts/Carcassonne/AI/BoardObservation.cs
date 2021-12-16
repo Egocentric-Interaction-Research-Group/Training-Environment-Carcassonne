@@ -15,16 +15,16 @@ using UnityEngine;
 public enum ObservationApproach
 {
     [InspectorName("Tile IDs")]
-    [Tooltip("Observation size: 3217\nFor each tile, observe the tile ID and rotation as one " +
+    [Tooltip("Observation size: 3218\nFor each tile, observe the tile ID and rotation as one " +
                 "observation, and meeple data as another observation.")]
     TileIds,
 
     [InspectorName("Packed IDs")]
-    [Tooltip("Observation size: 1617\nFor each tile, observe the tile ID, rotation, and " +
+    [Tooltip("Observation size: 1618\nFor each tile, observe the tile ID, rotation, and " +
                 "meeple data as one packed observation.")]
     PackedIDs,
 
-    [Tooltip("Observation size: 3217\nFor each tile, pack all tile geographies explicitly, " +
+    [Tooltip("Observation size: 3218\nFor each tile, pack all tile geographies explicitly, " +
                 "into one observation (instead of using tile IDs), and then meeple data " +
                 "as another observation.")]
     Packed

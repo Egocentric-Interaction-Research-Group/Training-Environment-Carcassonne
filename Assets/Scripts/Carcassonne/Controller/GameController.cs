@@ -80,11 +80,6 @@ public class GameController : MonoBehaviour
             NewGame();
             startGame = false;
         }
-
-        else if (state.phase == Phase.GameOver)
-        {
-            startGame = true;
-        }
     }
 
     /// <summary>
@@ -477,10 +472,12 @@ public class GameController : MonoBehaviour
                         {
                             //CITY NO DIRECTION
                             if (CityIsFinished(meeple.x, meeple.z))
+                            {
                                 finalscore = point
                                     .startDfs(
                                         placedTiles.getPlacedTile(meeple.x, meeple.z)
                                             .vIndex, meeple.geography, GameEnd);
+                            }
                             if (GameEnd)
                             {
                                 finalscore = point
@@ -522,10 +519,12 @@ public class GameController : MonoBehaviour
                     }
 
                     //TODO: Meeples should be free even if they did not reward any point as long as a geography is finished
-                    if (finalscore > 0 && RealCheck)
+                    if (finalscore > 0)
                     {
                         meeple.free = true;
-                        p.score += finalscore;
+
+                        if (RealCheck)
+                            p.score += finalscore;
                     }
                 }
             }
@@ -560,6 +559,10 @@ public class GameController : MonoBehaviour
     private void GameOver()
     {
         calculatePoints(true, true);
+        foreach (Player p in state.players.All)
+        {
+            Debug.Log("Player " + p.id + " achieved " + p.score + " points!");
+        }
         state.phase = Phase.GameOver;
     }
 
