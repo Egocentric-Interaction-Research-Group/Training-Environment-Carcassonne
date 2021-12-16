@@ -95,6 +95,11 @@ The code that sets the allowed number of actions can be found in the method *Wri
 ```
 In the inspector of the *AI* prefab object in unity, it is possible to set the amount of branches and max allowed actions per branch. In our case, we only have one branch (indexed as branch 0) and maximum 6 allowed actions, which is used in the TileDrawn phase and the MeepleDrawn phase, where the agent needs to place the drawn tile or meeple. In the TileDown phase however, there are only two allowed actions. The reasoning for the amount of allowed actions are as follows:
 * TileDrawn - In this phase, rather than picking from the entire board combined with rotations, the newly drawn tile starts on the base tile with rotation 0, and the AI can move it one step at a time. That is, it may move one step up, down, left, or right on the board (4 actions). Additionally, it can rotate the tile 90 degrees at a time (1 action), and it can confirm placing the tile in its current position (1 action). This means that the agent is repeatedly request to make one of the 6 decisions until a valid placement is performed.
+
+#### Placement Boundary
+
+The AI is limited to a boundary when attempting to move/place a tile. This boundary is updated based on the furthest tile in each direction within the game. By doing this, the AI will spend less time on making decision outside of the current board size e.g. the AI should not be trying place a tile on coordinates [35,35] if the furthest tile in x and z are on coordinates [25,25] and on coordinates [-25,-25].
+
 * TileDown - In this phase, there are only two actions since the agent only needs to decide whether to draw a meeple, ending up in MeepleDrawn phase, or ending the turn without drawing a meeple.
 * MeepleDrawn - In this phase, the newly placed tile is the centerpiece of decisionmaking. There are 5 different places on that tile where a meeple could potentially stand (North, South, West, East, and Center), which corresponds to 5 of the possible decisions. The last action is confirming the current placement of the meeple. In the game code, an invalid placement means the meeple is returned to the hand, and thus the game returns to the TileDown phase.
 
