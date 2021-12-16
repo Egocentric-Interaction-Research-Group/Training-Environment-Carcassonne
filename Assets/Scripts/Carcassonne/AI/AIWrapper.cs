@@ -139,10 +139,10 @@ public class AIWrapper : InterfaceAIWrapper
 
     public float GetScoreChange()
     {
-        if ((float)player.score != previousScore)
-        {
-            Debug.Log("Player " + player.id + " score changed from " + previousScore + "p to " + player.score + "p");
-        }
+        // if ((float)player.score != previousScore)
+        // {
+        //     Debug.Log("Player " + player.id + " score changed from " + previousScore + "p to " + player.score + "p");
+        // }
         float scoreChange = (float)player.score - previousScore;
         previousScore = (float)player.score;
         return scoreChange;

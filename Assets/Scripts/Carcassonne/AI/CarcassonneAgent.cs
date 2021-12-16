@@ -81,7 +81,7 @@ public class CarcassonneAgent : Agent
 
     private void TileDrawnAction(ActionBuffers actionBuffers)
     {
-        AddReward(-0.001f); //Each call to this method comes with a very minor penalty to promote performing quick actions.
+        //AddReward(-0.0001f); //Each call to this method comes with a very minor penalty to promote performing quick actions.
         if (actionBuffers.DiscreteActions[0] == 0f)
         {
             z += 1; //Up
@@ -105,9 +105,6 @@ public class CarcassonneAgent : Agent
             if (rot == 4)
             {
                 rot = 0;
-
-                //Punishment for rotating more than needed, i.e. returning back to default rotation state.
-                //AddReward(-0.01f); 
             }
         }
         else if (actionBuffers.DiscreteActions[0] == 5f) //Place tile
@@ -123,7 +120,7 @@ public class CarcassonneAgent : Agent
 
             if (wrapper.GetGamePhase() == Phase.TileDown) //If the placement was successful, the phase changes to TileDown.
             {
-                AddReward(0.05f);
+                AddReward(0.005f);
             }
         }
 
@@ -132,7 +129,7 @@ public class CarcassonneAgent : Agent
         {
             //Outside table area, reset values and add significant punishment.
             ResetAttributes();
-            AddReward(-0.05f);
+            //AddReward(-0.005f);
         }
     }
 
@@ -142,7 +139,7 @@ public class CarcassonneAgent : Agent
     /// <param name="actionBuffers"></param>
     private void MeepleDrawnAction(ActionBuffers actionBuffers)
     {
-        AddReward(-0.01f); //Each call gets a negative reward to avoid getting stuck just moving the meeple around in this stage.
+        //AddReward(-0.001f); //Each call gets a negative reward to avoid getting stuck just moving the meeple around in this stage.
         if (actionBuffers.DiscreteActions[0] == 0f)
         {
             meepleDirection = Direction.NORTH;
@@ -172,13 +169,13 @@ public class CarcassonneAgent : Agent
 
             if (wrapper.GetGamePhase() == Phase.MeepleDown) //If meeple is placed.
             {
-                AddReward(0.1f); //Rewards successfully placing a meeple
+                AddReward(0.01f); //Rewards successfully placing a meeple
                 wrapper.EndTurn();
                 AddReward(wrapper.GetScoreChange());
             }
             else if (wrapper.GetGamePhase() == Phase.TileDown) //If meeple gets returned.
             {
-                AddReward(-0.1f); //Punishes returning a meeple & going back a phase (note: no punishment for never drawing a meeple).
+                //AddReward(-0.01f); //Punishes returning a meeple & going back a phase (note: no punishment for never drawing a meeple).
             }
             else //Workaround for a bug where you can draw an unconfirmable meeple and never be able to change phase.
             {
