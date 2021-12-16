@@ -98,7 +98,9 @@ In the inspector of the *AI* prefab object in unity, it is possible to set the a
 
 #### Placement Boundary
 
-The AI is limited to a boundary when attempting to move/place a tile. This boundary is updated based on the furthest tile in each direction within the game. By doing this, the AI will spend less time on making decision outside of the current board siz. E.g. the AI should not be trying place a tile on coordinates [35,35] if the furthest tile in x and z are on coordinates [25,25] and on coordinates [-25,-25].
+The AI is limited to a boundary when attempting to move/place a tile. This boundary is updated based on the furthest tile in each direction within the game. By doing this, the AI will spend less time on making decision outside of the current board siz. 
+
+(The AI should not be trying place a tile on coordinates [35,35] if the furthest tile in x and z are on coordinates [25,25] and on coordinates [-25,-25])
 
 * TileDown - In this phase, there are only two actions since the agent only needs to decide whether to draw a meeple, ending up in MeepleDrawn phase, or ending the turn without drawing a meeple.
 * MeepleDrawn - In this phase, the newly placed tile is the centerpiece of decisionmaking. There are 5 different places on that tile where a meeple could potentially stand (North, South, West, East, and Center), which corresponds to 5 of the possible decisions. The last action is confirming the current placement of the meeple. In the game code, an invalid placement means the meeple is returned to the hand, and thus the game returns to the TileDown phase.
