@@ -33,15 +33,15 @@ public class CarcassonneAgent : Agent
         // Setup delegate for tile observation approach.
         switch (observationApproach)
         {
-            case ObservationApproach.TileIds:
+            case ObservationApproach.TileIds: // For each tile, observe the tile ID and rotation as one observation, and meeple data as another observation
                 AddTileObservations = BoardObservation.AddTileIdObservations;
                 break;
 
-            case ObservationApproach.Packed:
+            case ObservationApproach.Packed: // For each tile, observe the tile ID, rotation, and meeple data as one packed observation
                 AddTileObservations = BoardObservation.AddPackedTileObservations;
                 break;
 
-            case ObservationApproach.PackedIDs:
+            case ObservationApproach.PackedIDs: // For each tile, pack all tile geographies explicitly, into one observation (instead of using tile IDs), and then meeple data as another observation
                 AddTileObservations = BoardObservation.AddPackedTileIdObservations;
                 break;
 

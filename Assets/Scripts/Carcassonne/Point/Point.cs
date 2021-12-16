@@ -311,6 +311,16 @@ namespace Carcassonne
                 return res;
             }
 
+
+            /// <summary>
+            /// Add a new edge to the graph at the startVertex
+            /// </summary>
+            /// <param name="startVertex"></param>
+            /// <param name="endVertex"></param>
+            /// <param name="weight"></param>
+            /// <param name="startCenter"></param>
+            /// <param name="endCenter"></param>
+            /// <param name="direction"></param>
             public void addEdge(int startVertex, int endVertex, Tile.Geography weight,
                 Tile.Geography startCenter, Tile.Geography endCenter, Direction direction)
             {
@@ -319,6 +329,10 @@ namespace Carcassonne
                 graph.ElementAt(endVertex).AddLast(new Edge(startVertex, weight, startCenter, direction));
             }
 
+            /// <summary>
+            /// String "illustration" of the tile grid
+            /// </summary>
+            /// <returns></returns>
             public override string ToString()
             {
                 var result = "";
@@ -332,6 +346,12 @@ namespace Carcassonne
             }
 
 
+            /// <summary>
+            /// Get all neighboring tiles from a tile geography
+            /// </summary>
+            /// <param name="Vindex"></param>
+            /// <param name="weight"></param>
+            /// <returns></returns>
             public LinkedList<Edge> getNeighbours(int Vindex, Tile.Geography weight)
             {
                 var neighbours = new LinkedList<Edge>();
@@ -346,6 +366,14 @@ namespace Carcassonne
                 return neighbours;
             }
 
+
+            /// <summary>
+            /// Get all neighboring tiles from a tile geography with direction
+            /// </summary>
+            /// <param name="Vindex"></param>
+            /// <param name="weight"></param>
+            /// <param name="direction"></param>
+            /// <returns></returns>
             public LinkedList<Edge> getNeighbours(int Vindex, Tile.Geography weight, Direction direction)
             {
                 var neighbours = new LinkedList<Edge>();
@@ -360,12 +388,20 @@ namespace Carcassonne
                 return neighbours;
             }
 
+
+            /// <summary>
+            /// Return the graph
+            /// </summary>
+            /// <returns></returns>
             public LinkedList<LinkedList<Edge>> getGraph()
             {
                 return graph;
             }
         }
 
+        /// <summary>
+        /// A representation of an edge in the graph
+        /// </summary>
         public class Edge
         {
             public Tile.Geography center;

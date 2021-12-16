@@ -44,9 +44,9 @@ public class GameController : MonoBehaviour
         stack.tiles = state.tiles;
         placedTiles.tiles = state.tiles;
         meepleController.meeples = state.meeples;
-        for (int i = 0; i < 1; i++) //Creates all the players
+        for (int i = 0; i < 1; i++) // Creates all the players
         {
-            GameObject Agent = Instantiate(AI);
+            GameObject Agent = Instantiate(AI); // Initiate AI prefab 
             AIWrapper aIWrapper = Agent.GetComponent<CarcassonneAgent>().wrapper;
             aIWrapper.state = state;
             aIWrapper.controller = this;
@@ -55,8 +55,8 @@ public class GameController : MonoBehaviour
             Agent.GetComponent<CarcassonneAgent>().wrapper.player = player;
             player.id = i;
             player.meepleState = state.meeples;
-            player.Setup();
-            if (i == 0) //First created player will be player that starts in the first round
+            player.Setup(); // Sets variables for the player, such as meeples etc
+            if (i == 0) // First created player will be player that starts in the first round
             {
                 currentPlayer = player;
             }
@@ -70,7 +70,7 @@ public class GameController : MonoBehaviour
     }
 
     /// <summary>
-    /// MonoBehavior method where the game loop is run.   
+    /// MonoBehavior method where the game loop is run. 
     /// </summary>
     private void FixedUpdate()
     {
@@ -93,22 +93,21 @@ public class GameController : MonoBehaviour
     public void NewGame()
     {
         VertexItterator = 0;
-        stack.PopulateTileArray();
-        //Initialize AI player data dependent on tile array.       
-        foreach (Player p in state.players.All)
+        stack.PopulateTileArray(); // Add all the game tiles to the stack
+        foreach (Player p in state.players.All) // Initialize AI player data dependent on tile array.       
         {
-            p.Setup();
+            p.Setup(); // Sets variables for the player, such as meeples etc
             p.GetComponent<CarcassonneAgent>().wrapper.totalTiles = state.tiles.Remaining.Count + 1;
-
         }
-        BaseTileCreation();
-        RotateTile();
-        minX = 20;
+        BaseTileCreation(); // Set the current tile to the designated starting tile
+        RotateTile(); // According to Carcassone rules, this tile has to be rotated once
+        //Variables used for AI placing boundary. It starts at the starting tiles coordinates which would be [20,20] 
+        minX = 20; 
         minZ = 20;
         maxX = 20;
         maxZ = 20;
         PlaceTile(state.tiles.Current, 20, 20); // The first tile is always automatically set in the middle of the board
-        state.phase = Phase.NewTurn;
+        state.phase = Phase.NewTurn; // The current AI player can act only after NewTurn has been set
     }
 
     /// <summary>
@@ -391,7 +390,6 @@ public class GameController : MonoBehaviour
                         meepleController.iMeepleAimX, meepleController.iMeepleAimZ,
                         meepleDirection, meepleController.meepleGeography);
                 }
-
                 else
                 {
                     meepleController.FreeMeeple(state.meeples.Current);
@@ -433,6 +431,8 @@ public class GameController : MonoBehaviour
 
     /// <summary>
     /// Calculate points for players based on board state. If the game is over, points will still be awarded.
+    /// Meeples that are on a finished geography, but do not score any points are not set to free. This needs to be fixed for scoring
+    /// to work properly
     /// </summary>
     /// <param name="RealCheck"></param>
     /// <param name="GameEnd"></param>
@@ -564,7 +564,8 @@ public class GameController : MonoBehaviour
     }
 
     /// <summary>
-    /// Update the boundaries that the AI can place tiles within
+    /// Update the boundaries that the AI can place tiles within. Variablesare based on the
+    /// on tiles furthest in each direction on the grid
     /// </summary>
     /// <param name="x"></param>
     /// <param name="z"></param>
