@@ -10,7 +10,7 @@ an understanding of the general funcionality of the training environment, how it
 
 Every change below has either been addressed due to logic faults when applying the main repository's structure onto the new scenes and scripts we wish to utilize, or
 to minimize the amount of game objects and monobehavior scripts that affect the space and load time of the game. This was important as the training process would require
-simultaneous training and the game running at a higher speed than when played by a person.
+simultaneous training and the game running at a higher speed than when played by a person. We should also mention that every script from the main repository that we kept have been renamed to not include 'script' at the end of their name as it is implied in the nature of the object ;)
 
 ### Photon Network
 
@@ -24,13 +24,29 @@ The solution to this issue was to remake every state class into a regular class 
 
 ### Prefabs
 
+![Training_Environment_Prefabs.png](./resources/Training_Environment_Prefabs.png)
+
 The main repository has a large amount of prefabs to store game data that are both visual and nonvisual. One of our goals with this training environment was to increase efficiency. In order to do that, we got rid of any and all prefabs that did not serve a purpose during training. This ment that tiles, meeples, players and even the board were no longer being represented as a prefab of some sort. Beside removing these prefabs, we have added two new ones. 
+
+##### AI
 
 AI is a prefab that represents an AI player. This prefab is strictly nonvisual and is a required prefab for the ML-Agent framework to operate within the game scene. It is attached to the GameController and is instansiate when the scene loads. 
 
+##### Visualization Board
+
 VisualizationBoard is a prefab that is the only visual element in the training environment. It gathers all the useful visual data that the main game used and places it into one grid object.
 
+##### Creating nonprefab tiles
+
+![Training_Environement_Stack_Create_Tiles.png](./resources/Training_Environement_Stack_Create_Tiles.png)
+
+![Training_Environment_Stack_Populate_Tile_Array.png](./resources/Training_Environment_Stack_Populate_Tile_Array.png)
+
+Tiles do not need to be an instantiated prefab. By changing the script to no lnoger be monohavior we could still keep any data and functionality within it that did not relate to any visual element in the scene. The class Stack 
+
 ### Shader
+
+![board_visualization.png](./resources/board_visualization.png)
 
 The shader is a new concept that we came up with to still have a visual representation of the game state, which would still be useful for testing purposes. The shader is made up of two parts. The VisualizationBoard prefab (see section above) and the Carcassonne Visualization script. The script is fed state data via the GameController and creates a grid based on the number of tiles on the board, while still maintaining the same dimensions in the scene. This also made the game more readable when larger board states are created. 
 
@@ -43,9 +59,13 @@ Currently the training environment holds two different training scenes.
 
 #### OneBoardScene
 
+![Training_Environment_Scene_Single.png](./resources/Training_Environment_Scene_Single.png)
+
 OneBoardScene is used to conduct training on a single board. This is useful to gage certain types of game loop problems and should also serve as the first scene to try out AI versus AI training. 
 
 #### MultiBoardScene
+
+![Training_Environment_Scene_Multi.png](./resources/Training_Environment_Scene_Multi.png)
 
 MultiBoardScene consists of 9 boards placed in a grid that run concurrently with the same AI prefab (see section above), but each agent will operate independently while still contributing to the same training session. Games also start and finish independently on each board. While using 9 boards we have not experienced any drag on loadtimes within the game and as such this type of scene can and should probably be multiplied further to press training towards it's apex. 
 
