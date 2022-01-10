@@ -5,6 +5,9 @@ an understanding of the general funcionality of the training environment, how it
 
 ## Scripts & project structure
 
+![Training_Environement_Structure.png](./resources/Training_Environement_Structure.png)
+
+
 Every change below has either been addressed due to logic faults when applying the main repository's structure onto the new scenes and scripts we wish to utilize, or
 to minimize the amount of game objects and monobehavior scripts that affect the space and load time of the game. This was important as the training process would require
 simultaneous training and the game running at a higher speed than when played by a person.
